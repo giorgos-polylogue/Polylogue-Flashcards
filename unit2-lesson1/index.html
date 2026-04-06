@@ -30,12 +30,15 @@
     margin-bottom: 2rem;
   }
 
-  .logo {
-    font-size: 17px;
-    font-weight: 600;
-    color: #1a1a1a;
-    letter-spacing: -0.01em;
+  .back-link {
+    font-size: 13px;
+    color: #888;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
+  .back-link:hover { color: #1a1a1a; }
 
   .deck-tag {
     font-size: 12px;
@@ -275,8 +278,11 @@
 <body>
 <div id="app">
   <header>
-    <span class="logo">Polylogue</span>
-    <span class="deck-tag">Lesson 1 — Using το</span>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 2 · Lesson 1</span>
   </header>
 
   <div id="study-view">
