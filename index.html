@@ -8,232 +8,44 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #F7F5F0;
-    --ink: #1C1B18;
-    --ink-muted: #8A8880;
-    --ink-faint: #D4D2CC;
-    --teal: #1D9E75;
-    --teal-light: #E8F7F2;
-    --card-bg: #FFFFFF;
-  }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  header {
-    padding: 3rem 2rem 0;
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  .site-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 1rem;
-    display: block;
-  }
-
-  h1 {
-    font-family: 'Instrument Serif', serif;
-    font-size: clamp(2.4rem, 6vw, 3.6rem);
-    font-weight: 400;
-    line-height: 1.1;
-    color: var(--ink);
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.01em;
-  }
-
-  h1 em {
-    font-style: italic;
-    color: var(--teal);
-  }
-
-  .tagline {
-    font-size: 15px;
-    color: var(--ink-muted);
-    font-weight: 300;
-    line-height: 1.6;
-    max-width: 420px;
-    margin-bottom: 3rem;
-  }
-
-  .divider {
-    height: 1px;
-    background: var(--ink-faint);
-    max-width: 680px;
-    margin: 0 auto 2.5rem;
-  }
-
-  main {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 0 2rem 4rem;
-  }
-
-  .unit-block {
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fadeUp 0.5s ease forwards;
-  }
-
+  :root { --bg: #F7F5F0; --ink: #1C1B18; --ink-muted: #8A8880; --ink-faint: #D4D2CC; --teal: #1D9E75; --teal-light: #E8F7F2; --card-bg: #FFFFFF; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; padding: 0; }
+  header { padding: 3rem 2rem 0; max-width: 680px; margin: 0 auto; }
+  .site-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; display: block; }
+  h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 400; line-height: 1.1; color: var(--ink); margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+  h1 em { font-style: italic; color: var(--teal); }
+  .tagline { font-size: 15px; color: var(--ink-muted); font-weight: 300; line-height: 1.6; max-width: 420px; margin-bottom: 3rem; }
+  .divider { height: 1px; background: var(--ink-faint); max-width: 680px; margin: 0 auto 2.5rem; }
+  main { max-width: 680px; margin: 0 auto; padding: 0 2rem 4rem; }
+  .unit-block { margin-bottom: 2.5rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
   .unit-block:nth-child(1) { animation-delay: 0.05s; }
-  .unit-block:nth-child(2) { animation-delay: 0.15s; }
-  .unit-block:nth-child(3) { animation-delay: 0.25s; }
-
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .unit-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: 0.75rem;
-    padding-left: 2px;
-  }
-
-  .lesson-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .lesson-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--card-bg);
-    border: 1px solid var(--ink-faint);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    text-decoration: none;
-    color: var(--ink);
-    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
-  }
-
-  .lesson-card:hover {
-    border-color: var(--teal);
-    box-shadow: 0 2px 12px rgba(29, 158, 117, 0.08);
-    transform: translateY(-1px);
-  }
-
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .unit-label { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.75rem; padding-left: 2px; }
+  .lesson-list { display: flex; flex-direction: column; gap: 8px; }
+  .lesson-card { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--ink-faint); border-radius: 12px; padding: 1rem 1.25rem; text-decoration: none; color: var(--ink); transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+  .lesson-card:hover { border-color: var(--teal); box-shadow: 0 2px 12px rgba(29,158,117,0.08); transform: translateY(-1px); }
   .lesson-info { display: flex; flex-direction: column; gap: 3px; }
-
-  .lesson-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--ink);
-  }
-
-  .lesson-meta {
-    font-size: 12px;
-    color: var(--ink-muted);
-    font-weight: 300;
-  }
-
-  .lesson-arrow {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1px solid var(--ink-faint);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s, border-color 0.15s;
-  }
-
-  .lesson-card:hover .lesson-arrow {
-    background: var(--teal-light);
-    border-color: var(--teal);
-  }
-
+  .lesson-title { font-size: 15px; font-weight: 500; color: var(--ink); }
+  .lesson-meta { font-size: 12px; color: var(--ink-muted); font-weight: 300; }
+  .lesson-arrow { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--ink-faint); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
+  .lesson-card:hover .lesson-arrow { background: var(--teal-light); border-color: var(--teal); }
   .lesson-arrow svg { width: 12px; height: 12px; color: var(--ink-muted); transition: color 0.15s; }
   .lesson-card:hover .lesson-arrow svg { color: var(--teal); }
-
-  .coming-soon {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg);
-    border: 1px dashed var(--ink-faint);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    cursor: default;
-  }
-
-  .coming-soon .lesson-title { color: var(--ink-muted); font-weight: 400; }
-
-  .badge {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    background: var(--ink-faint);
-    padding: 3px 8px;
-    border-radius: 99px;
-  }
-
-  footer {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 0 2rem 3rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .footer-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--teal);
-    flex-shrink: 0;
-  }
-
-  .footer-text {
-    font-size: 12px;
-    color: var(--ink-muted);
-    font-weight: 300;
-  }
-
-  .footer-text a {
-    color: var(--teal);
-    text-decoration: none;
-  }
-
-  @media (max-width: 480px) {
-    header { padding: 2rem 1.25rem 0; }
-    main { padding: 0 1.25rem 3rem; }
-    footer { padding: 0 1.25rem 2rem; }
-  }
+  footer { max-width: 680px; margin: 0 auto; padding: 0 2rem 3rem; display: flex; align-items: center; gap: 8px; }
+  .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+  .footer-text { font-size: 12px; color: var(--ink-muted); font-weight: 300; }
+  .footer-text a { color: var(--teal); text-decoration: none; }
+  @media (max-width: 480px) { header { padding: 2rem 1.25rem 0; } main { padding: 0 1.25rem 3rem; } footer { padding: 0 1.25rem 2rem; } }
 </style>
 </head>
 <body>
-
 <header>
   <span class="site-label">Polylogue</span>
   <h1>Greek<br><em>flashcards</em></h1>
   <p class="tagline">Spaced repetition practice for every lesson. Tap a card to reveal the Greek, rate yourself, and let the algorithm do the rest.</p>
 </header>
-
 <div class="divider"></div>
-
 <main>
-
   <div class="unit-block">
     <div class="unit-label">Unit 2</div>
     <div class="lesson-list">
@@ -243,26 +55,132 @@
           <span class="lesson-meta">33 cards · verbs, pronouns, vocabulary</span>
         </div>
         <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M2 6h8M6 2l4 4-4 4"/>
-          </svg>
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
         </div>
       </a>
-      <div class="coming-soon">
+      <a href="/unit2-lesson2/" class="lesson-card">
         <div class="lesson-info">
-          <span class="lesson-title">Lesson 2 — coming soon</span>
+          <span class="lesson-title">Lesson 2 — New Verbs Built on έχω</span>
+          <span class="lesson-meta">41 cards · verbs, vocabulary</span>
         </div>
-        <span class="badge">Soon</span>
-      </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson3/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 3 — Using και to Link Ideas</span>
+          <span class="lesson-meta">18 cards · connectors, phrases</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson4/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 4 — αυτός — He and Masculine Nouns</span>
+          <span class="lesson-meta">30 cards · pronouns, nouns</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson5/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 5 — αυτή — She and Feminine Nouns</span>
+          <span class="lesson-meta">19 cards · pronouns, nouns</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson6/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 6 — Using να for Shall I / Let's</span>
+          <span class="lesson-meta">16 cards · subjunctive, phrases</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson7/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 7 — Being Somewhere — είμαι, είσαι, είναι</span>
+          <span class="lesson-meta">34 cards · verbs, location</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson8/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 8 — Names, Articles, and Because of This</span>
+          <span class="lesson-meta">19 cards · articles, connectors</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson9/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 9 — Greek Word Building — κατα-, επι-, παρα-</span>
+          <span class="lesson-meta">68 cards · prefixes, vocabulary</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson10/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 10 — The Future with θα</span>
+          <span class="lesson-meta">16 cards · future tense</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson11/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 11 — Open vs Closed Forms</span>
+          <span class="lesson-meta">52 cards · verb forms</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson12/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 12 — αν, New Verb Patterns, and Closed Forms</span>
+          <span class="lesson-meta">48 cards · conditionals, verbs</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson13/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 13 — The -νω Verbs Concluded</span>
+          <span class="lesson-meta">20 cards · verbs</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
+      <a href="/unit2-lesson14/" class="lesson-card">
+        <div class="lesson-info">
+          <span class="lesson-title">Lesson 14 — Plurals and Talking About Groups</span>
+          <span class="lesson-meta">26 cards · plurals, nouns</span>
+        </div>
+        <div class="lesson-arrow">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </div>
+      </a>
     </div>
   </div>
-
 </main>
-
 <footer>
   <div class="footer-dot"></div>
   <p class="footer-text">Part of <a href="https://polylogue.co">Polylogue</a> — learn to speak Greek</p>
 </footer>
-
 </body>
 </html>
