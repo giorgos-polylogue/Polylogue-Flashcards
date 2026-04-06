@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Lesson 11: Open vs Closed Forms</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .stat { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 12px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+  .stat-label { font-size: 11px; color: #999; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #1D9E75; border-color: #1D9E75; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .rating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .rating-btn { padding: 12px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: background 0.15s; }
+  .rating-btn:hover { background: #f5f4f0; }
+  .rating-btn .icon { font-size: 16px; }
+  .rating-btn .rlabel { font-size: 10px; color: #aaa; font-weight: 400; }
+  .r-again .icon { color: #C0392B; } .r-hard .icon { color: #E67E22; } .r-good .icon { color: #2980B9; } .r-easy .icon { color: #1D9E75; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; }
+  .done-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; }
+  .restart-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block; }
+  .restart-btn:hover { background: #f5f4f0; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 2 · Lesson 11</span>
+  </header>
+
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="s-due">0</div><div class="stat-label">Due</div></div>
+      <div class="stat"><div class="stat-num" id="s-good">0</div><div class="stat-label">Good</div></div>
+      <div class="stat"><div class="stat-num" id="s-again">0</div><div class="stat-label">Again</div></div>
+    </div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="rating-row hidden" id="rating-row">
+      <button class="rating-btn r-again" onclick="rate(0)"><span class="icon">✕</span><span class="rlabel">Again</span></button>
+      <button class="rating-btn r-hard" onclick="rate(1)"><span class="icon">~</span><span class="rlabel">Hard</span></button>
+      <button class="rating-btn r-good" onclick="rate(2)"><span class="icon">✓</span><span class="rlabel">Good</span></button>
+      <button class="rating-btn r-easy" onclick="rate(3)"><span class="icon">✓✓</span><span class="rlabel">Easy</span></button>
+    </div>
+  </div>
+
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Session complete</div>
+    <div class="done-sub" id="done-msg"></div>
+    <div class="done-stats">
+      <div class="stat"><div class="stat-num" id="d-good">0</div><div class="stat-label">Good</div></div>
+      <div class="stat"><div class="stat-num" id="d-again">0</div><div class="stat-label">Again</div></div>
+      <div class="stat"><div class="stat-num" id="d-total">0</div><div class="stat-label">Total</div></div>
+    </div>
+    <div class="btn-row">
+      <button class="restart-btn" onclick="restartAll()">Study again</button>
+      <a href="/" class="restart-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH = 'audio/';
+const STORAGE_KEY = 'polylogue_u2l11_v1';
+const CARDS = [{"front": "I write", "back": "γράφω", "audio": "hypertts-0ba08a2767303b4ee044be5ff533e173f7c68a30f7e10a7918172db5.mp3"}, {"front": "I will write it (closed)", "back": "θα το γράψω", "audio": "hypertts-3ad612476fce4d6f33c14a5de27a1bc275d2f7f075fd4ad2bdea9284.mp3"}, {"front": "He will write it", "back": "θα το γράψει", "audio": "hypertts-07a1fcc29947dbb576ba67293a4e603181f49df0b3eb2c6741775af7.mp3"}, {"front": "He will be writing (open)", "back": "θα γράφει", "audio": "hypertts-c872f79ccf198a89f9c955775dc93124215fe7ca103f4f1e137f5b02.mp3"}, {"front": "I want to write (general - open)", "back": "θέλω να γράφω", "audio": "hypertts-3e886e5f7dd82664898390ece742c4bf1fc7b3b7d5ee62a4eaeef411.mp3"}, {"front": "I want to write tomorrow (closed)", "back": "θέλω να γράψω αύριο", "audio": "hypertts-888b28f6fc03e331bea71760a414b0a70e01a52b7bbe97c41efc1e4b.mp3"}, {"front": "I want to write it (closed)", "back": "θέλω να το γράψω", "audio": "hypertts-00428f81e4109bad44d15ade31d221bce17f2356404680864bca44aa.mp3"}, {"front": "I sign", "back": "υπογράφω", "audio": "hypertts-0b375569b0ca76c2534a6b3889ce65b51bc9c0012f4abe0afe184a00.mp3"}, {"front": "I will sign it", "back": "Θα το υπογράψω", "audio": "hypertts-dabe5ccbeed914f4ecf1e4434d051084264c822671603ab84df9aabc.mp3"}, {"front": "I will be signing (open)", "back": "Θα υπογράφω", "audio": "hypertts-f99ec783bc8b9c340908702d027531d27c5a2591514020dcca1dfb22.mp3"}, {"front": "I want to write well (open)", "back": "θέλω να γράφω καλά", "audio": "hypertts-51a3220cc4e78c7873c54168817eb76c99ef4eaa60109c95585212c9.mp3"}, {"front": "I want to write it well (closed)", "back": "θέλω να το γράψω καλά", "audio": "hypertts-393fd7ebf3ea5b8dffbb913a773e500d55621210b4bbac62dae122fa.mp3"}, {"front": "I want you to write it well", "back": "θέλω να γράψεις καλά", "audio": "hypertts-0b4b295708b388fd5e65fbbb1fdd82fc52640b8ad8180a9e6042d735.mp3"}, {"front": "I want to write a book", "back": "θέλω να γράψω ένα βιβλίο", "audio": "hypertts-8a48192719996516e5100f6ee76547f730eac61fa83fe773d34604d1.mp3"}, {"front": "I want to write books (general - open)", "back": "θέλω να γράφω βιβλία", "audio": "hypertts-f52fe8f0f4bc1ee3584dd73cd850345b3c9ae07cf3c558fb1ef7c162.mp3"}, {"front": "I want to write 2 books", "back": "θέλω να γράψω δύο βιβλία", "audio": "hypertts-f654a1b75d8d2d67138eee540425715bfdbb1d023bf4ce6ebece11a0.mp3"}, {"front": "I learn / I am learning", "back": "μαθαίνω", "audio": "hypertts-3c445388f01ff6251b5531266ca682f077fa6ccb64cfce8388527993.mp3"}, {"front": "I want to learn (general - open)", "back": "Θέλω να μαθαίνω", "audio": "hypertts-0db2dac65be70bb13d857b00a6ec8fca37abbb07af276a23a8bac7fa.mp3"}, {"front": "I want to learn it (closed)", "back": "Θέλω να το μάθω", "audio": "hypertts-2a6a1ace776b67b360f48c6422b2866795c57ff3e6742e4e354fcf9b.mp3"}, {"front": "I want to learn to do it", "back": "Θέλω να μάθω να το κάνω", "audio": "hypertts-1398dc0011f035757460ac0e6f70c68070b878d1b1cd9c4e431980e9.mp3"}, {"front": "I bring", "back": "φέρνω", "audio": "hypertts-a1f1f2e52511197682dcfb543908de99a5984df0a5cbdc2d47dfdccf.mp3"}, {"front": "I am bringing it", "back": "το φέρνω", "audio": "hypertts-d418208f559710c90d093ec00d4c57c364cd85976afbd1c9a56f2ac6.mp3"}, {"front": "I will be bringing (open)", "back": "θα φέρνω", "audio": "hypertts-14c04908b7cbd27d5ff3353285323b24202427e7265af602341142f9.mp3"}, {"front": "I will bring it (closed)", "back": "θα το φέρω", "audio": "hypertts-c0f24a9d3f9a1ee7d30c45fabde16898123d2d920dea6838537bc76e.mp3"}, {"front": "She will bring it", "back": "θα το φέρει", "audio": "hypertts-758ca1076818a2b8aeac4e36e8affd56489778df60079027c3fa66b7.mp3"}, {"front": "I manage", "back": "καταφέρνω", "audio": "hypertts-56dfc4b8d6297e7e1e91403a5381cc98b042eeddf874f6ead77bd9b1.mp3"}, {"front": "I will manage it", "back": "θα το καταφέρω", "audio": "hypertts-851a5b74bfa2da12eb7148ae52b4f0b547369bf34f2c63728544fbc7.mp3"}, {"front": "I am going down", "back": "κατεβαίνω", "audio": "hypertts-7ac11b6d35b5bd2904cd14d9c09d75f7e2d7f433c06d33167bd860d7.mp3"}, {"front": "I will go down", "back": "θα κατέβω", "audio": "hypertts-9a1f81569e4e197f904c9b69f8fe9953cd7f3c002ab98e160434109e.mp3"}, {"front": "I will go down in a bit", "back": "θα κατέβω σε λίγο", "audio": "hypertts-101762f9a57298bf1d5455f960206221e4127664beaa8d73f075bbac.mp3"}, {"front": "We will go down in a bit", "back": "θα κατέβουμε σε λίγο", "audio": "hypertts-53be02840ada34e523c5e4732fa4b3ee9fafc0a8360b09fac5b09e3a.mp3"}, {"front": "Let's go down in a bit", "back": "να κατεβούμε σε λίγο", "audio": "hypertts-fff5133e6b92916411fa7874ea4c22a2c4a026a9a9a283c70d21e308.mp3"}, {"front": "Shall we go down in a bit?", "back": "να κατεβούμε σε λίγο;", "audio": "hypertts-1e53a06b63ece4b2398f4c93ad47a764e0aea4aea4f316341788e871.mp3"}, {"front": "I want you to understand", "back": "θέλω να καταλάβεις", "audio": "hypertts-26c0972974aa0988d5150d0e38a372d2d37df049cf8f890e6363254b.mp3"}, {"front": "I want you to understand me (closed)", "back": "θέλω να με καταλάβεις", "audio": "hypertts-5a8fc7ef3394380101b78dc333d8127aab98b313981fca9a5bcfff9b.mp3"}, {"front": "I want you to understand me (general - open)", "back": "θέλω να με καταλαβαίνεις", "audio": "hypertts-201ab086e58da35498768af9cdec1a2108e955eca421e2d2b99bb97e.mp3"}, {"front": "I don't want to drink (closed)", "back": "δεν θέλω να πιω", "audio": "hypertts-6ed32d8cfe654f91a73c8c3800c3575101545b0a2d5ccfd09c0a03f2.mp3"}, {"front": "I don't want to drink (general - open)", "back": "δεν θέλω να πίνω", "audio": "hypertts-995507fdd3906bf3377a61b044ad93151d9de351144c5eed30f32a20.mp3"}, {"front": "I take / I am taking", "back": "Παίρνω", "audio": "hypertts-cdc6489caf821a510b587ffac20e48ee3341788b268469f1ce4bc7e8.mp3"}, {"front": "I take the train", "back": "παίρνω το τρένο", "audio": "hypertts-89c8e0b49a20f1edb07aa99f57f345058ccb6eaec1a21ffcc304f085.mp3"}, {"front": "We are taking the train", "back": "παίρνουμε το τρένο", "audio": "hypertts-d92a64131d2e12f0c0bbbb7590c96f4b4745157c953fd51d3a39cec5.mp3"}, {"front": "Let's take the train", "back": "να πάρουμε το τρένο", "audio": "hypertts-2be14ad882375f5eb974e7f28a8c84d655c97058679b4a578eec3d59.mp3"}, {"front": "Let him take the train", "back": "να πάρει το τρένο", "audio": "hypertts-f60ee9ff19cc5f1ebfbe8c4c450dbf368ee710ac4c7b833fc698f9f8.mp3"}, {"front": "I will call you", "back": "θα σε πάρω τηλέφωνο", "audio": "hypertts-872335059c8faa1be65d2908ae404268203c01159c03b277abfe726f.mp3"}, {"front": "I don't want you to call me", "back": "δεν θέλω να με πάρεις τηλέφωνο", "audio": "hypertts-345889d50735ba0004670261d84af23b42f6b21d901796e556acfa36.mp3"}, {"front": "I will write (closed - most of the time)", "back": "θα γράψω", "audio": "hypertts-fa3aaf9a14176d156299f0e059c9bfe2f161d50c57f6a59b06afcae0.mp3"}, {"front": "I will still be writing (open)", "back": "θα γράφω ακόμα", "audio": "hypertts-f5f0308fa8020da318cf591e9f91f86578d64c5fc80120f0953e1844.mp3"}, {"front": "I return / I am returning", "back": "επιστρέφω", "audio": "hypertts-597f4054dee7763511f851097011cd789f2902afaf31d90e488d8ac9.mp3"}, {"front": "I can't come back (closed)", "back": "δεν μπορώ να επιστρέψω", "audio": "hypertts-a142628d53b7d48e0e48196ad00d5427449931050bfe4d87c61e91ca.mp3"}, {"front": "I can't come back (general - open)", "back": "δεν μπορώ να επιστρέφω", "audio": "hypertts-a5673ffa87ad029f1ef0ebc6ccb9c4514644865cd2570cd453c69f8a.mp3"}, {"front": "But today I can come back", "back": "αλλά σήμερα μπορώ να επιστρέψω", "audio": "hypertts-b1f6a538ba18d7b90823442dde220637e9c3d0d965317ae081d86c8a.mp3"}, {"front": "Maybe he is still coming back", "back": "μπορεί να επιστρέφει ακόμα", "audio": "hypertts-7da4ebbb590259b43fbae3e5f780140891baab8a88d51bd08495e73f.mp3"}];
+
+function initDeck() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) { const d = JSON.parse(saved); if (d.length === CARDS.length) return d; }
+  } catch(e) {}
+  return CARDS.map(c => ({...c, interval:1, ef:2.5, due:Date.now(), reps:0}));
+}
+
+let deck=initDeck(), queue=[], current=null, isFlipped=false, sessionGood=0, sessionAgain=0, currentAudio=null;
+
+function getDue() { return deck.filter(c => c.due <= Date.now()); }
+function buildQueue() { queue = [...getDue()].sort(() => Math.random()-0.5); }
+function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(deck)); } catch(e) {} }
+
+function updateStats() {
+  document.getElementById('s-due').textContent = queue.length;
+  document.getElementById('s-good').textContent = sessionGood;
+  document.getElementById('s-again').textContent = sessionAgain;
+  document.getElementById('prog').style.width = Math.round(((deck.length-queue.length)/deck.length)*100)+'%';
+}
+
+function showCard(card) {
+  current=card; isFlipped=false;
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent = card.front;
+  document.getElementById('greek-text').textContent = card.back;
+  document.getElementById('rating-row').classList.add('hidden');
+  document.getElementById('tap-hint').style.display='';
+  document.getElementById('audio-btn').classList.remove('playing');
+  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
+  updateStats();
+}
+
+function flipCard() {
+  if (!current) return;
+  isFlipped=!isFlipped;
+  document.getElementById('card-inner').classList.toggle('flipped',isFlipped);
+  if (isFlipped) { document.getElementById('rating-row').classList.remove('hidden'); document.getElementById('tap-hint').style.display='none'; playAudio(); }
+}
+
+function playAudio() {
+  if (!current) return;
+  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+current.audio);
+  currentAudio=audio; btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+
+function sm2(card,q) {
+  if (q<3) { card.reps=0; card.interval=1; }
+  else { if(card.reps===0) card.interval=1; else if(card.reps===1) card.interval=6; else card.interval=Math.round(card.interval*card.ef); card.reps+=1; }
+  card.ef=Math.max(1.3, card.ef+0.1-(3-q)*(0.08+(3-q)*0.02));
+  card.due=Date.now()+card.interval*24*60*60*1000;
+}
+
+function rate(q) {
+  if (!current) return;
+  sm2(current,q);
+  if (q>=3) sessionGood++; else { sessionAgain++; queue.push(current); }
+  queue.shift(); saveState();
+  if (queue.length===0) showDone(); else showCard(queue[0]);
+}
+
+function showDone() {
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+  document.getElementById('d-good').textContent=sessionGood;
+  document.getElementById('d-again').textContent=sessionAgain;
+  document.getElementById('d-total').textContent=sessionGood+sessionAgain;
+  const left=getDue().length;
+  document.getElementById('done-msg').textContent=left>0?left+' cards still due — keep going!':'All caught up! Come back tomorrow.';
+}
+
+function restartAll() {
+  sessionGood=0; sessionAgain=0;
+  deck.forEach(c=>{c.due=Date.now();c.interval=1;c.ef=2.5;c.reps=0;});
+  saveState(); buildQueue();
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard(queue[0]);
+}
+
+buildQueue();
+if (queue.length>0) showCard(queue[0]); else showDone();
+</script>
+</body>
+</html>
