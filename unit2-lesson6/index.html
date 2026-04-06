@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Lesson 6: Using να for Shall I / Let's</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .stat { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 12px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+  .stat-label { font-size: 11px; color: #999; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #1D9E75; border-color: #1D9E75; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .rating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .rating-btn { padding: 12px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: background 0.15s; }
+  .rating-btn:hover { background: #f5f4f0; }
+  .rating-btn .icon { font-size: 16px; }
+  .rating-btn .rlabel { font-size: 10px; color: #aaa; font-weight: 400; }
+  .r-again .icon { color: #C0392B; } .r-hard .icon { color: #E67E22; } .r-good .icon { color: #2980B9; } .r-easy .icon { color: #1D9E75; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; }
+  .done-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; }
+  .restart-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block; }
+  .restart-btn:hover { background: #f5f4f0; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 2 · Lesson 6</span>
+  </header>
+
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="s-due">0</div><div class="stat-label">Due</div></div>
+      <div class="stat"><div class="stat-num" id="s-good">0</div><div class="stat-label">Good</div></div>
+      <div class="stat"><div class="stat-num" id="s-again">0</div><div class="stat-label">Again</div></div>
+    </div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="rating-row hidden" id="rating-row">
+      <button class="rating-btn r-again" onclick="rate(0)"><span class="icon">✕</span><span class="rlabel">Again</span></button>
+      <button class="rating-btn r-hard" onclick="rate(1)"><span class="icon">~</span><span class="rlabel">Hard</span></button>
+      <button class="rating-btn r-good" onclick="rate(2)"><span class="icon">✓</span><span class="rlabel">Good</span></button>
+      <button class="rating-btn r-easy" onclick="rate(3)"><span class="icon">✓✓</span><span class="rlabel">Easy</span></button>
+    </div>
+  </div>
+
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Session complete</div>
+    <div class="done-sub" id="done-msg"></div>
+    <div class="done-stats">
+      <div class="stat"><div class="stat-num" id="d-good">0</div><div class="stat-label">Good</div></div>
+      <div class="stat"><div class="stat-num" id="d-again">0</div><div class="stat-label">Again</div></div>
+      <div class="stat"><div class="stat-num" id="d-total">0</div><div class="stat-label">Total</div></div>
+    </div>
+    <div class="btn-row">
+      <button class="restart-btn" onclick="restartAll()">Study again</button>
+      <a href="/" class="restart-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH = 'audio/';
+const STORAGE_KEY = 'polylogue_u2l6_v1';
+const CARDS = [{"front": "I can do it", "back": "μπορώ να το κάνω", "audio": "hypertts-a45e7b9c2364789b14f5e1ac397979cfeed0c6f399061a4568766336.mp3"}, {"front": "Should I wait for you?", "back": "να σε περιμένω;", "audio": "hypertts-0cb7e3a0cef9f791a5434b3add508d7d3448bdd4cf1c8e44fac1d5e1.mp3"}, {"front": "Where shall I wait for you?", "back": "που να σε περιμένω;", "audio": "hypertts-4fa5c32b5ce111c9ab311626fab16cb4eed6511b030baca5debc1cd3.mp3"}, {"front": "Should I wait for you here?", "back": "να σε περιμένω εδώ;", "audio": "hypertts-72550668fb682a102950e715319392055849d0ce512ea5da8888a5db.mp3"}, {"front": "We wait", "back": "περιμένουμε", "audio": "hypertts-771ca37cc696bad187fb409301f1ab78cab4dc7d545b926c20985ded.mp3"}, {"front": "Shall we wait?", "back": "να περιμένουμε", "audio": "hypertts-58de062eea05cd80c4184fd6e7ecbebe0b2b7f6bee635c6d4d0ae388.mp3"}, {"front": "We do / we make", "back": "κάνουμε", "audio": "hypertts-336e33ac5f5ac9afb8b55d2271322c33868f3c23ebcf90eb3350ba1f.mp3"}, {"front": "What shall we do?", "back": "τι να κάνουμε", "audio": "hypertts-b4ac2d187da8f9931f24939abb09d33d4aedba3a36b9bdd63175d477.mp3"}, {"front": "What should I do?", "back": "τι να κάνω;", "audio": "hypertts-db62530f5cbbf3586308fff06249a9c398a1d56c37134d9ec2a641cd.mp3"}, {"front": "Where should we do it?", "back": "που να το κάνουμε;", "audio": "hypertts-621c290db63638d0f927306bd9a7b41826e52a17732c0eb954678c49.mp3"}, {"front": "Where shall we wait for you?", "back": "που να σε περιμένουμε;", "audio": "hypertts-442423f0c178b84228c8a9b0942e067b0b5b6df99cfc9bbca65dc0bc.mp3"}, {"front": "We are waiting in the car", "back": "περιμένουμε στο αυτοκίνητο", "audio": "hypertts-067156544cdf66dca44098a132b6b4029cce826e8a6d94ce8c692847.mp3"}, {"front": "We are waiting for you in the car", "back": "σε περιμένουμε στο αυτοκίνητο", "audio": "hypertts-93c852696a82ec6fe15eef1d12174a32fb9ea08476ef28feabfc17e7.mp3"}, {"front": "Should we wait for you in the car?", "back": "να σε περιμένουμε στο αυτοκίνητο;", "audio": "hypertts-c34e874434b02275249f1b1fd6d8b6719007ad658b1e4c7378a9cfa7.mp3"}, {"front": "Let's wait in the car", "back": "να περιμένουμε στο αυτοκίνητο", "audio": "hypertts-95b8544a3880cbdb8d7cb2453ba6f3e478e700da0465e0ddc87ed4a2.mp3"}, {"front": "Shall we wait in this car?", "back": "να περιμένουμε σε αυτό το αυτοκίνητο;", "audio": "hypertts-98260ea034f48fdbebefcbf091928430413ce19281cd3c5eae67d958.mp3"}];
+
+function initDeck() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) { const d = JSON.parse(saved); if (d.length === CARDS.length) return d; }
+  } catch(e) {}
+  return CARDS.map(c => ({...c, interval:1, ef:2.5, due:Date.now(), reps:0}));
+}
+
+let deck=initDeck(), queue=[], current=null, isFlipped=false, sessionGood=0, sessionAgain=0, currentAudio=null;
+
+function getDue() { return deck.filter(c => c.due <= Date.now()); }
+function buildQueue() { queue = [...getDue()].sort(() => Math.random()-0.5); }
+function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(deck)); } catch(e) {} }
+
+function updateStats() {
+  document.getElementById('s-due').textContent = queue.length;
+  document.getElementById('s-good').textContent = sessionGood;
+  document.getElementById('s-again').textContent = sessionAgain;
+  document.getElementById('prog').style.width = Math.round(((deck.length-queue.length)/deck.length)*100)+'%';
+}
+
+function showCard(card) {
+  current=card; isFlipped=false;
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent = card.front;
+  document.getElementById('greek-text').textContent = card.back;
+  document.getElementById('rating-row').classList.add('hidden');
+  document.getElementById('tap-hint').style.display='';
+  document.getElementById('audio-btn').classList.remove('playing');
+  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
+  updateStats();
+}
+
+function flipCard() {
+  if (!current) return;
+  isFlipped=!isFlipped;
+  document.getElementById('card-inner').classList.toggle('flipped',isFlipped);
+  if (isFlipped) { document.getElementById('rating-row').classList.remove('hidden'); document.getElementById('tap-hint').style.display='none'; playAudio(); }
+}
+
+function playAudio() {
+  if (!current) return;
+  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+current.audio);
+  currentAudio=audio; btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+
+function sm2(card,q) {
+  if (q<3) { card.reps=0; card.interval=1; }
+  else { if(card.reps===0) card.interval=1; else if(card.reps===1) card.interval=6; else card.interval=Math.round(card.interval*card.ef); card.reps+=1; }
+  card.ef=Math.max(1.3, card.ef+0.1-(3-q)*(0.08+(3-q)*0.02));
+  card.due=Date.now()+card.interval*24*60*60*1000;
+}
+
+function rate(q) {
+  if (!current) return;
+  sm2(current,q);
+  if (q>=3) sessionGood++; else { sessionAgain++; queue.push(current); }
+  queue.shift(); saveState();
+  if (queue.length===0) showDone(); else showCard(queue[0]);
+}
+
+function showDone() {
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+  document.getElementById('d-good').textContent=sessionGood;
+  document.getElementById('d-again').textContent=sessionAgain;
+  document.getElementById('d-total').textContent=sessionGood+sessionAgain;
+  const left=getDue().length;
+  document.getElementById('done-msg').textContent=left>0?left+' cards still due — keep going!':'All caught up! Come back tomorrow.';
+}
+
+function restartAll() {
+  sessionGood=0; sessionAgain=0;
+  deck.forEach(c=>{c.due=Date.now();c.interval=1;c.ef=2.5;c.reps=0;});
+  saveState(); buildQueue();
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard(queue[0]);
+}
+
+buildQueue();
+if (queue.length>0) showCard(queue[0]); else showDone();
+</script>
+</body>
+</html>
