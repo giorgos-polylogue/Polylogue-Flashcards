@@ -105,82 +105,61 @@
 </div>
 <script>
 const AUDIO_PATH = 'audio/';
-const STORAGE_KEY = 'polylogue_u2l1_v2';
+const STORAGE_KEY = 'polylogue_u2l1_v3';
 const CARDS = [{"front": "I stay / I am staying", "back": "Μένω", "audio": "hypertts-2343114cc5562cdac4b493d8f2b8f2252cd702979583de3fbfddacfc.mp3"}, {"front": "I wait / I am waiting", "back": "Περιμένω", "audio": "hypertts-fe272818260999520aaca334801a748e3d3304a904758530a138baac.mp3"}, {"front": "I know", "back": "Ξέρω", "audio": "hypertts-6604372f663e78d239eff5099dbc6aa6dea35585e2e58dc39e2d2101.mp3"}, {"front": "I want", "back": "θέλω", "audio": "hypertts-d0d2be7c166c3eee649127cbc58d475cebc7c7739873ed1ec7df51c9.mp3"}, {"front": "He/she wants", "back": "θέλει", "audio": "hypertts-1b38c74184494ef148a4c7bf7061543b683916dc2bcd1179d0d36925.mp3"}, {"front": "You want", "back": "θέλεις", "audio": "hypertts-f859d89da57f31b0c699c008ba8c9a1b3a5c059aec9bc7c20e5a8a0e.mp3"}, {"front": "The mobile phone", "back": "Το κινητό", "audio": "hypertts-d9751ae971c1bb239c9868fbfe8ee8b2c03b8d1639639df56b8233e6.mp3"}, {"front": "I want the mobile phone", "back": "θέλω το κινητό", "audio": "hypertts-09f831d4c6e0c32101296d6f219809182d417e56c10b040cea08a953.mp3"}, {"front": "Don't you want the mobile?", "back": "δεν θέλεις το κινητό;", "audio": "hypertts-f4151e158be834eb4f1ee917284027d587be4c2da93676420c92409a.mp3"}, {"front": "I want it", "back": "το θέλω", "audio": "hypertts-b97db487226def73c4071c602d6b664f4850ae5ccde7cae0fed88ebb.mp3"}, {"front": "I don't want it", "back": "δεν το θέλω", "audio": "hypertts-bd3ba14c670010e175c62375b706ad077804c1873674d4ec08099c3a.mp3"}, {"front": "I am doing it / I am making it", "back": "το κάνω", "audio": "hypertts-85ee49db474f56732d703118ce91f3e4c15e2aa3c1b56db7e8bdfb83.mp3"}, {"front": "I want to do it / I want to make it", "back": "θέλω να το κάνω", "audio": "hypertts-6de5ab5dce3b17219fca5f07e90f14a5d248c349f71a0d776bf5c41c.mp3"}, {"front": "I want you to do it / I want you to make it", "back": "θέλω να το κάνεις", "audio": "hypertts-80cb52ee28127376ff71496d509f0598bb165151f51e38d166fa3060.mp3"}, {"front": "here", "back": "εδώ", "audio": "hypertts-b4c9bc154579ed7274404a1356ba7db95438dcfc4ef6bc04347d1272.mp3"}, {"front": "I don't want you to do it here", "back": "δεν θέλω να το κάνεις εδώ", "audio": "hypertts-b90439692c9760e40514b16d4aa310cc0ab36957430099ba22c28267.mp3"}, {"front": "I have the mobile phone", "back": "έχω το κινητό", "audio": "hypertts-2742064765cde41e269389ad9c6c21ceb0f794f26de4b49cf47555aa.mp3"}, {"front": "I have it", "back": "το έχω", "audio": "hypertts-1d2bd605af706e7361f2cbabdc95a821ddd28303628078dbfbe0dc0f.mp3"}, {"front": "I don't have it", "back": "δεν το έχω", "audio": "hypertts-d4023cf0b84be1a5c26f91c017a21a56e9520c461789eeedfbddab16.mp3"}, {"front": "He/she/it has", "back": "έχει", "audio": "hypertts-18c7c4f8a3fe2b6444a27f95a7ba34b4b973b3da797a69d7170d36fb.mp3"}, {"front": "You have", "back": "έχεις", "audio": "hypertts-b06fec82b3679a8ebb7f1333abf67052e48f9867ac767e42b4edd97a.mp3"}, {"front": "What do you have?", "back": "τι έχεις;", "audio": "hypertts-27920665ca465e9990c259b2d0044576b8656f57cc79f00454e2eb3d.mp3"}, {"front": "What does he have?", "back": "τι έχει;", "audio": "hypertts-699fd219d53ea718f29645c93065616d0146cbf4b09d1aeb185628e5.mp3"}, {"front": "The car", "back": "Το αυτοκίνητο", "audio": "hypertts-c74e42093c658116959694c2b0539c7f267d576518a89ad9dbe87615.mp3"}, {"front": "Do you have the car?", "back": "έχεις το αυτοκίνητο;", "audio": "hypertts-93f87added2e05d41d5cc5b6b7b5e6bdee9a235317e84ef6d7e2650d.mp3"}, {"front": "Do you have it?", "back": "το έχεις;", "audio": "hypertts-8114b70099be3b57ca8c97a3c97896b079c1a92834b74213f4aef891.mp3"}, {"front": "Don't you have it?", "back": "δεν το έχεις;", "audio": "hypertts-e13b7aeffb1c3da9e8895b3753fc4c1576a7b74c89e8697cbf4050fc.mp3"}, {"front": "He/she/it is", "back": "Είναι", "audio": "hypertts-d31fe567b190ec0850acd189f05e8dc457af40a96ad91d8da210aba2.mp3"}, {"front": "Where is it / he / she?", "back": "που είναι;", "audio": "hypertts-ea45ce7ec91b92da77077918e71adeee3a7b00880ab37dd7a4884336.mp3"}, {"front": "Where is the car?", "back": "που είναι το αυτοκίνητο;", "audio": "hypertts-b274739b59e7c8407cc8d320fb7f4eaa90bb1e6d59dbe1efd4c097e9.mp3"}, {"front": "I don't know where it is", "back": "δεν ξέρω που είναι", "audio": "hypertts-c479f001ccb3330344821a4ba6dcfaa3f9b9361de49a6646de39874f.mp3"}, {"front": "Do you know where the car is?", "back": "ξέρεις που είναι το αυτοκίνητο;", "audio": "hypertts-ee11f7a6241edad33b8572d21aecae988ec8a523d619fa5f990d8a29.mp3"}, {"front": "Don't you know where she is?", "back": "δεν ξέρεις που είναι;", "audio": "hypertts-82dce09aafcea817ffbeb506a316a9ae3a65c6c2c01a77296617f7e9.mp3"}];
 
-// State structure:
-// session: { queue: [...indices], goodCount, againCount } — the in-progress session
-// deck: [...card sm2 data] — only updated when session completes
-
 function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
+  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
   return null;
 }
 
 function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch(e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
 function buildDeck() {
-  return CARDS.map(c => ({...c, interval:1, ef:2.5, nextDue: 0, reps:0}));
+  return CARDS.map(c => ({...c, interval:1, ef:2.5, nextDue:0, reps:0}));
 }
 
-function startNewSession(deck) {
-  // Due = cards whose nextDue <= today (day number)
+function startSession(deck) {
   const today = Math.floor(Date.now() / 86400000);
-  const dueIndices = deck.map((c,i) => i).filter(i => deck[i].nextDue <= today);
-  const shuffled = dueIndices.sort(() => Math.random() - 0.5);
-  return { queue: shuffled, pos: 0, againQueue: [], goodCount: 0, againCount: 0 };
+  const due = deck.map((_,i) => i).filter(i => deck[i].nextDue <= today).sort(() => Math.random() - 0.5);
+  return { queue: due, againQueue: [], goodCount: 0, againCount: 0, done: false };
 }
 
-// Load or init
 let state = loadState();
 if (!state) {
   const deck = buildDeck();
-  const session = startNewSession(deck);
-  state = { deck, session };
+  state = { deck, session: startSession(deck) };
   saveState();
-} else if (!state.session || state.session.queue.length === 0 && state.session.againQueue.length === 0) {
-  // Session was completed — start a new one
-  state.session = startNewSession(state.deck);
+} else if (!state.session || state.session.done) {
+  state.session = startSession(state.deck);
   saveState();
 }
 
 let currentAudio = null;
-let currentCardIndex = null;
+let currentIdx = null;
 
-function getNextIndex() {
+function nextCard() {
   const s = state.session;
-  // First work through again queue, then main queue
-  if (s.againQueue && s.againQueue.length > 0) return s.againQueue[0];
-  if (s.pos < s.queue.length) return s.queue[s.pos];
+  if (s.againQueue.length > 0) return s.againQueue[0];
+  if (s.queue.length > 0) return s.queue[0];
   return null;
 }
 
-function totalDue() {
-  const s = state.session;
-  const remaining = s.queue.length - s.pos;
-  const again = s.againQueue ? s.againQueue.length : 0;
-  return remaining + again;
-}
-
 function updateStats() {
-  const due = totalDue();
+  const s = state.session;
+  const due = s.queue.length + s.againQueue.length;
   document.getElementById('s-due').textContent = due;
-  document.getElementById('s-good').textContent = state.session.goodCount;
-  document.getElementById('s-again').textContent = state.session.againCount;
-  const total = state.session.queue.length;
-  const done = state.session.pos;
-  document.getElementById('prog').style.width = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+  document.getElementById('s-good').textContent = s.goodCount;
+  document.getElementById('s-again').textContent = s.againCount;
+  const total = s.queue.length + s.againQueue.length + s.goodCount;
+  const done = s.goodCount;
+  document.getElementById('prog').style.width = total > 0 ? Math.round((done/total)*100)+'%' : '0%';
 }
 
 function showCard(idx) {
-  currentCardIndex = idx;
+  currentIdx = idx;
   const card = state.deck[idx];
   document.getElementById('card-inner').classList.remove('flipped');
   document.getElementById('eng-text').textContent = card.front;
@@ -193,9 +172,8 @@ function showCard(idx) {
 }
 
 function flipCard() {
-  if (currentCardIndex === null) return;
-  const inner = document.getElementById('card-inner');
-  const flipped = inner.classList.toggle('flipped');
+  if (currentIdx === null) return;
+  const flipped = document.getElementById('card-inner').classList.toggle('flipped');
   if (flipped) {
     document.getElementById('rating-row').classList.remove('hidden');
     document.getElementById('tap-hint').style.display = 'none';
@@ -204,108 +182,86 @@ function flipCard() {
 }
 
 function playAudio() {
-  if (currentCardIndex === null) return;
-  const card = state.deck[currentCardIndex];
+  if (currentIdx === null) return;
+  const card = state.deck[currentIdx];
   if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   const btn = document.getElementById('audio-btn');
   const audio = new Audio(AUDIO_PATH + card.audio);
   currentAudio = audio;
   btn.classList.add('playing');
-  audio.play().catch(() => {});
-  audio.onended = () => { btn.classList.remove('playing'); currentAudio = null; };
-  audio.onerror = () => { btn.classList.remove('playing'); currentAudio = null; };
+  audio.play().catch(()=>{});
+  audio.onended = ()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror = ()=>{btn.classList.remove('playing');currentAudio=null;};
 }
 
 function sm2(card, q) {
-  if (q < 3) {
+  if (q === 0) {
     card.reps = 0; card.interval = 1;
-  } else {
+  } else if (q === 1) {
+    card.interval = Math.max(1, Math.round(card.interval * 1.2));
+  } else if (q === 2) {
     if (card.reps === 0) card.interval = 1;
     else if (card.reps === 1) card.interval = 6;
     else card.interval = Math.round(card.interval * card.ef);
     card.reps += 1;
+  } else {
+    if (card.reps === 0) card.interval = 1;
+    else if (card.reps === 1) card.interval = 6;
+    else card.interval = Math.round(card.interval * card.ef * 1.3);
+    card.reps += 1;
   }
-  card.ef = Math.max(1.3, card.ef + 0.1 - (3 - q) * (0.08 + (3 - q) * 0.02));
-  // Schedule for future days — but DON'T change nextDue until session ends
-  return card;
+  card.ef = Math.max(1.3, card.ef + 0.1 - (3-q)*(0.08+(3-q)*0.02));
+  const today = Math.floor(Date.now()/86400000);
+  card.nextDue = today + card.interval;
 }
 
 function rate(q) {
-  if (currentCardIndex === null) return;
+  if (currentIdx === null) return;
   const s = state.session;
-  const card = state.deck[currentCardIndex];
+  const isFromAgain = s.againQueue.length > 0 && s.againQueue[0] === currentIdx;
 
-  if (q >= 3) {
-    // Good/Easy: apply sm2 and schedule
-    sm2(card, q);
-    const today = Math.floor(Date.now() / 86400000);
-    card.nextDue = today + card.interval;
-    s.goodCount++;
-    // Remove from again queue if it was there
-    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
-      s.againQueue.shift();
-    } else {
-      s.pos++;
-    }
-  } else {
-    // Again: put back in again queue
+  if (q === 0) {
+    // Again — remove from current position, push to end of againQueue
+    if (isFromAgain) { s.againQueue.shift(); } else { s.queue.shift(); }
+    s.againQueue.push(currentIdx);
     s.againCount++;
-    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
-      // Already in again queue — move to end
-      s.againQueue.shift();
-      s.againQueue.push(currentCardIndex);
-    } else {
-      s.pos++;
-      if (!s.againQueue) s.againQueue = [];
-      s.againQueue.push(currentCardIndex);
-    }
+  } else {
+    // Hard / Good / Easy — card is done for this session
+    sm2(state.deck[currentIdx], q);
+    if (isFromAgain) { s.againQueue.shift(); } else { s.queue.shift(); }
+    s.goodCount++;
   }
 
   saveState();
-
-  const next = getNextIndex();
-  if (next === null) {
-    showDone();
-  } else {
-    showCard(next);
-  }
+  const next = nextCard();
+  if (next === null) { showDone(); } else { showCard(next); }
 }
 
 function showDone() {
+  state.session.done = true;
+  saveState();
   document.getElementById('study-view').classList.add('hidden');
   document.getElementById('done-view').classList.remove('hidden');
   document.getElementById('d-good').textContent = state.session.goodCount;
   document.getElementById('d-again').textContent = state.session.againCount;
   document.getElementById('d-total').textContent = state.session.goodCount + state.session.againCount;
-  // Mark session complete so next visit starts fresh session
-  state.session.queue = [];
-  state.session.pos = 0;
-  state.session.againQueue = [];
-  saveState();
-  const today = Math.floor(Date.now() / 86400000);
-  const dueCount = state.deck.filter(c => c.nextDue <= today).length;
-  document.getElementById('done-msg').textContent = dueCount > 0
-    ? dueCount + ' cards due — come back tomorrow!'
-    : 'All caught up! Come back tomorrow.';
+  const today = Math.floor(Date.now()/86400000);
+  const due = state.deck.filter(c => c.nextDue <= today).length;
+  document.getElementById('done-msg').textContent = due > 0 ? due+' cards due tomorrow — come back!' : 'All caught up! Come back tomorrow.';
 }
 
 function restartAll() {
   state.deck = buildDeck();
-  state.session = startNewSession(state.deck);
+  state.session = startSession(state.deck);
   saveState();
   document.getElementById('done-view').classList.add('hidden');
   document.getElementById('study-view').classList.remove('hidden');
-  const next = getNextIndex();
-  if (next !== null) showCard(next);
+  const next = nextCard();
+  if (next !== null) showCard(next); else showDone();
 }
 
-// Init
-const first = getNextIndex();
-if (first !== null) {
-  showCard(first);
-} else {
-  showDone();
-}
+const first = nextCard();
+if (first !== null) { showCard(first); } else { showDone(); }
 </script>
 </body>
 </html>
