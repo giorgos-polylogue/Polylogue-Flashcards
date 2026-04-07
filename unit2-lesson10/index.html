@@ -41,9 +41,9 @@
   .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
   .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; }
   .done-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
-  .btn-row { display: flex; gap: 8px; justify-content: center; }
-  .restart-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block; }
-  .restart-btn:hover { background: #f5f4f0; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
   @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
 </style>
 </head>
@@ -98,103 +98,214 @@
       <div class="stat"><div class="stat-num" id="d-total">0</div><div class="stat-label">Total</div></div>
     </div>
     <div class="btn-row">
-      <button class="restart-btn" onclick="restartAll()">Study again</button>
-      <a href="/" class="restart-btn">All lessons</a>
+      <button class="action-btn" onclick="restartAll()">Study again</button>
+      <a href="/" class="action-btn">All lessons</a>
     </div>
   </div>
 </div>
 <script>
 const AUDIO_PATH = 'audio/';
-const STORAGE_KEY = 'polylogue_u2l10_v1';
+const STORAGE_KEY = 'polylogue_u2l10_v2';
 const CARDS = [{"front": "I will wait / I will be waiting", "back": "θα περιμένω", "audio": "hypertts-8f36d2ecee3a9bfd9bc7740d1f66339082ceca5e2cb0d42dc8c7fe2c.mp3"}, {"front": "I will wait for you / I will be waiting for you", "back": "θα σε περιμένω", "audio": "hypertts-49b88de905d11ec7892ebbe62b70953989f8fe7d84fceeb6856d9dd0.mp3"}, {"front": "I will do it / I will be doing it", "back": "θα το κάνω", "audio": "hypertts-0d4cb57e0a74f92f31027c2d84e968c6f1f232f27548007bfdb622c0.mp3"}, {"front": "After / later", "back": "μετά", "audio": "hypertts-da515f0de6df46afde236536fd42216aaba899b8d04319662d9d113f.mp3"}, {"front": "I will do it after", "back": "θα το κάνω μετά", "audio": "hypertts-767976df39f462ab9ac034bf76dbe774d4ecc662e361127108bb4dce.mp3"}, {"front": "Tomorrow", "back": "αύριο", "audio": "hypertts-fe69efd9d0a8dba0b72a000b26ba4597304dfa7656c665b35423706b.mp3"}, {"front": "I thank (thank you)", "back": "ευχαριστώ", "audio": "hypertts-b36a2e486666c02aac91523c73360f202ea7b9cac882b0c68c43a62d.mp3"}, {"front": "We thank", "back": "ευχαριστούμε", "audio": "hypertts-ac9ab6e77642fcefaa119817db9db3841d3d8e4bf263c448a8ab972e.mp3"}, {"front": "A day", "back": "μια μέρα", "audio": "hypertts-8d27f11b6ac47c82720caf5902b49d277672bee5f61e3c1b9cda0830.mp3"}, {"front": "An apology", "back": "μια απολογία", "audio": "hypertts-fd6275210b66aebf7d49192076b445a7d6180524c4ae2e35071bacac.mp3"}, {"front": "A problem", "back": "ένα πρόβλημα", "audio": "hypertts-67af1255324612f9f76b9f51339b9104985d1334989ae8f8253ed506.mp3"}, {"front": "A house", "back": "ένα σπίτι", "audio": "hypertts-5362469393ef746c3d53b3fc2799c8bc069cb1cfcb6043ce887d9393.mp3"}, {"front": "A road", "back": "ένας δρόμος", "audio": "hypertts-254dd9ab06a7b6859d9fd9252c2434d211fcd9447278628b34190254.mp3"}, {"front": "A coffee", "back": "ένας καφές", "audio": "hypertts-408c7a9425d3d2dcaa14be1d869cbb944dbad0531ab57b3a89b88b9d.mp3"}, {"front": "We will do it tomorrow", "back": "θα το κάνουμε αύριο", "audio": "hypertts-f372d916b8813db08300bdd6ce6ce7e8eae38f3493064f02bc85f0ed.mp3"}, {"front": "We won't be doing it tomorrow", "back": "δεν θα το κάνουμε αύριο", "audio": "hypertts-39abbb672acb33262679a6f0c2063bcbbb9fd685ce7dfdfc2e8a6ba7.mp3"}];
 
-function initDeck() {
+// State structure:
+// session: { queue: [...indices], goodCount, againCount } — the in-progress session
+// deck: [...card sm2 data] — only updated when session completes
+
+function loadState() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) { const d = JSON.parse(saved); if (d.length === CARDS.length) return d; }
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
   } catch(e) {}
-  return CARDS.map(c => ({...c, interval:1, ef:2.5, due:Date.now(), reps:0}));
+  return null;
 }
 
-let deck=initDeck(), queue=[], current=null, isFlipped=false, sessionGood=0, sessionAgain=0, currentAudio=null;
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) {}
+}
 
-function getDue() { return deck.filter(c => c.due <= Date.now()); }
-function buildQueue() { queue = [...getDue()].sort(() => Math.random()-0.5); }
-function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(deck)); } catch(e) {} }
+function buildDeck() {
+  return CARDS.map(c => ({...c, interval:1, ef:2.5, nextDue: 0, reps:0}));
+}
+
+function startNewSession(deck) {
+  // Due = cards whose nextDue <= today (day number)
+  const today = Math.floor(Date.now() / 86400000);
+  const dueIndices = deck.map((c,i) => i).filter(i => deck[i].nextDue <= today);
+  const shuffled = dueIndices.sort(() => Math.random() - 0.5);
+  return { queue: shuffled, pos: 0, againQueue: [], goodCount: 0, againCount: 0 };
+}
+
+// Load or init
+let state = loadState();
+if (!state) {
+  const deck = buildDeck();
+  const session = startNewSession(deck);
+  state = { deck, session };
+  saveState();
+} else if (!state.session || state.session.queue.length === 0 && state.session.againQueue.length === 0) {
+  // Session was completed — start a new one
+  state.session = startNewSession(state.deck);
+  saveState();
+}
+
+let currentAudio = null;
+let currentCardIndex = null;
+
+function getNextIndex() {
+  const s = state.session;
+  // First work through again queue, then main queue
+  if (s.againQueue && s.againQueue.length > 0) return s.againQueue[0];
+  if (s.pos < s.queue.length) return s.queue[s.pos];
+  return null;
+}
+
+function totalDue() {
+  const s = state.session;
+  const remaining = s.queue.length - s.pos;
+  const again = s.againQueue ? s.againQueue.length : 0;
+  return remaining + again;
+}
 
 function updateStats() {
-  document.getElementById('s-due').textContent = queue.length;
-  document.getElementById('s-good').textContent = sessionGood;
-  document.getElementById('s-again').textContent = sessionAgain;
-  document.getElementById('prog').style.width = Math.round(((deck.length-queue.length)/deck.length)*100)+'%';
+  const due = totalDue();
+  document.getElementById('s-due').textContent = due;
+  document.getElementById('s-good').textContent = state.session.goodCount;
+  document.getElementById('s-again').textContent = state.session.againCount;
+  const total = state.session.queue.length;
+  const done = state.session.pos;
+  document.getElementById('prog').style.width = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
 }
 
-function showCard(card) {
-  current=card; isFlipped=false;
+function showCard(idx) {
+  currentCardIndex = idx;
+  const card = state.deck[idx];
   document.getElementById('card-inner').classList.remove('flipped');
   document.getElementById('eng-text').textContent = card.front;
   document.getElementById('greek-text').textContent = card.back;
   document.getElementById('rating-row').classList.add('hidden');
-  document.getElementById('tap-hint').style.display='';
+  document.getElementById('tap-hint').style.display = '';
   document.getElementById('audio-btn').classList.remove('playing');
-  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   updateStats();
 }
 
 function flipCard() {
-  if (!current) return;
-  isFlipped=!isFlipped;
-  document.getElementById('card-inner').classList.toggle('flipped',isFlipped);
-  if (isFlipped) { document.getElementById('rating-row').classList.remove('hidden'); document.getElementById('tap-hint').style.display='none'; playAudio(); }
+  if (currentCardIndex === null) return;
+  const inner = document.getElementById('card-inner');
+  const flipped = inner.classList.toggle('flipped');
+  if (flipped) {
+    document.getElementById('rating-row').classList.remove('hidden');
+    document.getElementById('tap-hint').style.display = 'none';
+    playAudio();
+  }
 }
 
 function playAudio() {
-  if (!current) return;
-  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
-  const btn=document.getElementById('audio-btn');
-  const audio=new Audio(AUDIO_PATH+current.audio);
-  currentAudio=audio; btn.classList.add('playing');
-  audio.play().catch(()=>{});
-  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
-  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+  if (currentCardIndex === null) return;
+  const card = state.deck[currentCardIndex];
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  const btn = document.getElementById('audio-btn');
+  const audio = new Audio(AUDIO_PATH + card.audio);
+  currentAudio = audio;
+  btn.classList.add('playing');
+  audio.play().catch(() => {});
+  audio.onended = () => { btn.classList.remove('playing'); currentAudio = null; };
+  audio.onerror = () => { btn.classList.remove('playing'); currentAudio = null; };
 }
 
-function sm2(card,q) {
-  if (q<3) { card.reps=0; card.interval=1; }
-  else { if(card.reps===0) card.interval=1; else if(card.reps===1) card.interval=6; else card.interval=Math.round(card.interval*card.ef); card.reps+=1; }
-  card.ef=Math.max(1.3, card.ef+0.1-(3-q)*(0.08+(3-q)*0.02));
-  card.due=Date.now()+card.interval*24*60*60*1000;
+function sm2(card, q) {
+  if (q < 3) {
+    card.reps = 0; card.interval = 1;
+  } else {
+    if (card.reps === 0) card.interval = 1;
+    else if (card.reps === 1) card.interval = 6;
+    else card.interval = Math.round(card.interval * card.ef);
+    card.reps += 1;
+  }
+  card.ef = Math.max(1.3, card.ef + 0.1 - (3 - q) * (0.08 + (3 - q) * 0.02));
+  // Schedule for future days — but DON'T change nextDue until session ends
+  return card;
 }
 
 function rate(q) {
-  if (!current) return;
-  sm2(current,q);
-  if (q>=3) sessionGood++; else { sessionAgain++; queue.push(current); }
-  queue.shift(); saveState();
-  if (queue.length===0) showDone(); else showCard(queue[0]);
+  if (currentCardIndex === null) return;
+  const s = state.session;
+  const card = state.deck[currentCardIndex];
+
+  if (q >= 3) {
+    // Good/Easy: apply sm2 and schedule
+    sm2(card, q);
+    const today = Math.floor(Date.now() / 86400000);
+    card.nextDue = today + card.interval;
+    s.goodCount++;
+    // Remove from again queue if it was there
+    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
+      s.againQueue.shift();
+    } else {
+      s.pos++;
+    }
+  } else {
+    // Again: put back in again queue
+    s.againCount++;
+    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
+      // Already in again queue — move to end
+      s.againQueue.shift();
+      s.againQueue.push(currentCardIndex);
+    } else {
+      s.pos++;
+      if (!s.againQueue) s.againQueue = [];
+      s.againQueue.push(currentCardIndex);
+    }
+  }
+
+  saveState();
+
+  const next = getNextIndex();
+  if (next === null) {
+    showDone();
+  } else {
+    showCard(next);
+  }
 }
 
 function showDone() {
   document.getElementById('study-view').classList.add('hidden');
   document.getElementById('done-view').classList.remove('hidden');
-  document.getElementById('d-good').textContent=sessionGood;
-  document.getElementById('d-again').textContent=sessionAgain;
-  document.getElementById('d-total').textContent=sessionGood+sessionAgain;
-  const left=getDue().length;
-  document.getElementById('done-msg').textContent=left>0?left+' cards still due — keep going!':'All caught up! Come back tomorrow.';
+  document.getElementById('d-good').textContent = state.session.goodCount;
+  document.getElementById('d-again').textContent = state.session.againCount;
+  document.getElementById('d-total').textContent = state.session.goodCount + state.session.againCount;
+  // Mark session complete so next visit starts fresh session
+  state.session.queue = [];
+  state.session.pos = 0;
+  state.session.againQueue = [];
+  saveState();
+  const today = Math.floor(Date.now() / 86400000);
+  const dueCount = state.deck.filter(c => c.nextDue <= today).length;
+  document.getElementById('done-msg').textContent = dueCount > 0
+    ? dueCount + ' cards due — come back tomorrow!'
+    : 'All caught up! Come back tomorrow.';
 }
 
 function restartAll() {
-  sessionGood=0; sessionAgain=0;
-  deck.forEach(c=>{c.due=Date.now();c.interval=1;c.ef=2.5;c.reps=0;});
-  saveState(); buildQueue();
+  state.deck = buildDeck();
+  state.session = startNewSession(state.deck);
+  saveState();
   document.getElementById('done-view').classList.add('hidden');
   document.getElementById('study-view').classList.remove('hidden');
-  showCard(queue[0]);
+  const next = getNextIndex();
+  if (next !== null) showCard(next);
 }
 
-buildQueue();
-if (queue.length>0) showCard(queue[0]); else showDone();
+// Init
+const first = getNextIndex();
+if (first !== null) {
+  showCard(first);
+} else {
+  showDone();
+}
 </script>
 </body>
 </html>
