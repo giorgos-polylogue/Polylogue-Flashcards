@@ -41,9 +41,9 @@
   .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
   .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; }
   .done-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
-  .btn-row { display: flex; gap: 8px; justify-content: center; }
-  .restart-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block; }
-  .restart-btn:hover { background: #f5f4f0; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
   @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
 </style>
 </head>
@@ -98,103 +98,214 @@
       <div class="stat"><div class="stat-num" id="d-total">0</div><div class="stat-label">Total</div></div>
     </div>
     <div class="btn-row">
-      <button class="restart-btn" onclick="restartAll()">Study again</button>
-      <a href="/" class="restart-btn">All lessons</a>
+      <button class="action-btn" onclick="restartAll()">Study again</button>
+      <a href="/" class="action-btn">All lessons</a>
     </div>
   </div>
 </div>
 <script>
 const AUDIO_PATH = 'audio/';
-const STORAGE_KEY = 'polylogue_u2l9_v1';
+const STORAGE_KEY = 'polylogue_u2l9_v2';
 const CARDS = [{"front": "I am downstairs", "back": "Είμαι κάτω", "audio": "hypertts-be2df0bd77d99706680581c8ce2a61a42999d9843847067a54a25287.mp3"}, {"front": "Are you down?", "back": "Είσαι κάτω;", "audio": "hypertts-bdd8d14edd940acf25cf7e537a005b330ec515436f63a9fdcecbbe5c.mp3"}, {"front": "He/she/it is down?", "back": "Είναι κάτω;", "audio": "hypertts-ecc04684b88704ef4a5eb8a7e2aabdbd6d8bd9e5dee6c4dbb63fda6b.mp3"}, {"front": "I go down", "back": "κατεβαίνω", "audio": "hypertts-7ac11b6d35b5bd2904cd14d9c09d75f7e2d7f433c06d33167bd860d7.mp3"}, {"front": "He is going down", "back": "κατεβαίνει", "audio": "hypertts-fbd08453eced52b10431b313e8037acae75f107a7836f7d940e8aaf2.mp3"}, {"front": "He is getting down from the train", "back": "Κατεβαίνει από το τρένο", "audio": "hypertts-a6c9c1e256ae1df3de056b587a83f7f781eeb786553a566bf6f4ec27.mp3"}, {"front": "Aren't you getting down here?", "back": "δεν κατεβαίνεις εδώ;", "audio": "hypertts-1a835b9dfe34813127d7202f1baf7d285cea16f3ceb9ac9687c4d4a1.mp3"}, {"front": "I understand", "back": "καταλαβαίνω", "audio": "hypertts-5a54d3ef2df12b7785a53bfd958c6344b1baa5e3ca99bff79ab52fa2.mp3"}, {"front": "I don't understand", "back": "δεν καταλαβαίνω", "audio": "hypertts-f5b9405bd062a643263cc7866f9cf3db115e39783a14c27fc88522fd.mp3"}, {"front": "I don't understand you", "back": "δεν σε καταλαβαίνω", "audio": "hypertts-be3bbadd6af31623e9f309c478b8404172ae417b429ba24934c199e2.mp3"}, {"front": "We don't understand you", "back": "δεν σε καταλαβαίνουμε", "audio": "hypertts-edc8015020ddcd1d7a2912eb21e18ee91a51848f67c3d5e1829c6187.mp3"}, {"front": "WE don't understand you (emphatic)", "back": "εμείς δεν σε καταλαβαίνουμε", "audio": "hypertts-d1513f32e58a1e2cac3fa80865501863eb5f09585d8eef388b506df9.mp3"}, {"front": "I drink", "back": "Πίνω", "audio": "hypertts-849d925c82dd0901ea4c460709bb088474c329c8cac75a6716fcb890.mp3"}, {"front": "I don't drink", "back": "Δεν πίνω", "audio": "hypertts-0c9e68f29e79516153517c5542c74b4230ef45bb174117949767186f.mp3"}, {"front": "Do you drink?", "back": "πίνεις;", "audio": "hypertts-5ca0ca463e8e7159f0a616bdf6bf727cc1c35cc63b020001dd0b94a6.mp3"}, {"front": "WE don't drink (emphatic)", "back": "Εμείς δεν πίνουμε", "audio": "hypertts-2591dc6bb37ffabe1c59d7596c14ce0202fadbaae0079e6751f56e66.mp3"}, {"front": "I am bringing it", "back": "Το φέρνω", "audio": "hypertts-62811c8b59f4d7555d4726b4624df10d3470a584e809c0a2a96e01a0.mp3"}, {"front": "We are bringing it", "back": "Το φέρνουμε", "audio": "hypertts-2820f141a5d26cb1868e25968cd27a4a6f47c7d490d863d9f87a7cfb.mp3"}, {"front": "We are bringing the car", "back": "Φέρνουμε το αυτοκίνητο", "audio": "hypertts-07d7132919d0a9a1be3fe2b11ef48a75571afeb0b9f0170a3732fc91.mp3"}, {"front": "I manage / I am managing", "back": "Καταφέρνω", "audio": "hypertts-60330964681960e3805bd3708de7710c6c68b13c51726d006be12551.mp3"}, {"front": "I am managing to do it", "back": "Καταφέρνω να το κάνω", "audio": "hypertts-654419c495d92979884251dd08ab7c79ace1b67c3547d8a9a8ce622a.mp3"}, {"front": "Because of this I don't manage to do it again", "back": "Για αυτό δεν καταφέρνω να το κάνω πάλι", "audio": "hypertts-39142d5c04f7322f88a48e79c216b45b9d8c94fa3751d3271ddd7529.mp3"}, {"front": "Are you managing to do it?", "back": "Καταφέρνεις να το κάνεις;", "audio": "hypertts-37724f0725455cea8b0db630a4baf183372689b7386a9ba563598ee9.mp3"}, {"front": "The turning", "back": "η στροφή", "audio": "hypertts-5900b231643c8b1c4f1f34488234bcbb46985176bd0f0c6eeaf756d2.mp3"}, {"front": "This turning", "back": "αυτή η στροφή", "audio": "hypertts-0af1d844a641a74a2028cb8952a143323e9800b28cd7c70927bc668b.mp3"}, {"front": "It's this turning", "back": "είναι αυτή η στροφή", "audio": "hypertts-b76701b0f7dfc2fc02dae186e7eac3621ab25ea3b1caf468ab1f0344.mp3"}, {"front": "I return / I come back", "back": "Επιστρέφω", "audio": "hypertts-4c366a8bf83f38c00b8959ca11218801cd3604ecbf3b9548dd60546b.mp3"}, {"front": "We return / we come back", "back": "Επιστρέφουμε", "audio": "hypertts-5ad960ae318d70e1ef9f8d3c055cdf5c7263096c552610faf94f0c99.mp3"}, {"front": "The friend (masc.)", "back": "ο φίλος", "audio": "hypertts-11d225dafd2ef2049d07011b68b53f7fc91289a3c420781e0c6d7238.mp3"}, {"front": "My friend (masc.)", "back": "Ο φίλος μου", "audio": "hypertts-c97d6f08785b4e925eecac117206ca9b162934b34f9a809c57a617aa.mp3"}, {"front": "My friend is waiting for me", "back": "Ο φίλος μου με περιμένει", "audio": "hypertts-1bccaf62740c3ad016303da2487496fed560df68b927693d6a4f0027.mp3"}, {"front": "My friend is bringing it", "back": "Ο φίλος μου το φέρνει", "audio": "hypertts-fced2db2b36bf7e5b53e43166ee9c2f6b6b4b6ad63a4d17b14de08bb.mp3"}, {"front": "The friend (fem.)", "back": "Η φίλη", "audio": "hypertts-ad9f86ff925f978bfbdd384d6c4bbff02ef2326a2b8e7c1008261b29.mp3"}, {"front": "My female friend is waiting for me", "back": "Η φίλη μου με περιμένει", "audio": "hypertts-ce7d53c0f5d463c9a2251ce5cd54e5fdba4ea0bd84dbc6e03dbba06c.mp3"}, {"front": "My friend is returning tomorrow (female)", "back": "Η φίλη μου επιστρέφει αύριο", "audio": "hypertts-4521ea75ef2fad4ee1b580fed4b0eb56df751c2b1ce09c4eb5717387.mp3"}, {"front": "My friend is not returning tomorrow (male)", "back": "Ο φίλος μου δεν επιστρέφει αύριο", "audio": "hypertts-391915a1448a5d032798a48b0011772db4b5345ecd68afed22c3d708.mp3"}, {"front": "Your friend (masc.)", "back": "ο φίλος σου", "audio": "hypertts-0cf345a99955724e2091c75e962fbed3327fe710682d6e11bafc60bd.mp3"}, {"front": "Where is your friend?", "back": "που είναι ο φίλος σου;", "audio": "hypertts-109de9a2b482567a4235532758e9ad29c02e48dd0b2090cc39ea5801.mp3"}, {"front": "Is your friend bringing it? (female)", "back": "Η φίλη σου το φέρνει;", "audio": "hypertts-256158049fa73471a3b33039deaa202a13643e2cd4b046ad68432ce7.mp3"}, {"front": "Isn't your friend bringing it? (female)", "back": "Δεν το φέρνει η φίλη σου;", "audio": "hypertts-6a5841c96836255688a76c7256b910b6e7912f1ebed36fb60ecdba82.mp3"}, {"front": "I learn", "back": "Μαθαίνω", "audio": "hypertts-9c19b0dc8535a482b19e01083fd58b005ec014e9e2a8177d9d4eecd0.mp3"}, {"front": "He/she/it learns", "back": "Μαθαίνει", "audio": "hypertts-4a03f2ab9f5aed8f30e48da5980551c444484b89a35a78e54822bb49.mp3"}, {"front": "The child", "back": "Το παιδί", "audio": "hypertts-60ee141c07e55dda3aae8ba3ca870414069a2732ed2e098364930ee1.mp3"}, {"front": "The child learns", "back": "Το παιδί μαθαίνει", "audio": "hypertts-a83bf78dc4a3d1e34cc1f80b2f3e521c398dec1e9f8e26442fb09ab0.mp3"}, {"front": "The course / class", "back": "το μάθημα", "audio": "hypertts-acd6eb424751013a1a3e41e51738eb72f949642ca7ab2250040bf245.mp3"}, {"front": "The course starts tomorrow", "back": "το μάθημα αρχίζει αύριο", "audio": "hypertts-bb177f511e1194e912cbafa0978fe51704e1ec6129f9b3cf2d99cbff.mp3"}, {"front": "I have class", "back": "έχω μάθημα", "audio": "hypertts-9a447098b3502aa7528cc7a817d1695a1888c9cdca28ff8c2a5d6684.mp3"}, {"front": "She has class", "back": "έχει μάθημα", "audio": "hypertts-343153a810e35148516211d9ae32513df6b94ab10f6e4156b237f4b8.mp3"}, {"front": "There is", "back": "υπάρχει", "audio": "hypertts-e59829b26ba361a01a9aded1f6edbc0312ef2442c2c4261685a28e65.mp3"}, {"front": "There is a problem", "back": "υπάρχει ένα πρόβλημα", "audio": "hypertts-36f19eac47d12ab95495717d4140b80094b432e09923108dccba8091.mp3"}, {"front": "There is no problem", "back": "δεν υπάρχει πρόβλημα", "audio": "hypertts-32ebbef8f147616f2f9263dd517d119de5eda18f6cbca57c23d7d47c.mp3"}, {"front": "There is a coffee here", "back": "υπάρχει ένας καφές εδώ", "audio": "hypertts-99360ee347681158a8aef378e5531cf0aa6a0eb59a9342b3e6e3e83d.mp3"}, {"front": "That day", "back": "Εκείνη η μέρα", "audio": "hypertts-20211f6ed1ca3a919ee15b1ce417044a3502565df562345ed0fc7a96.mp3"}, {"front": "That road", "back": "εκείνος ο δρόμος", "audio": "hypertts-0b75e2f0da77b294af9e02b5f71fb407ce294f9c9b43bc36d6d4a6b1.mp3"}, {"front": "That problem", "back": "εκείνο το πρόβλημα", "audio": "hypertts-0d906f148d4fc769917277419e5aefe3a9e51c47e823750f0c5bafc2.mp3"}, {"front": "That person", "back": "εκείνο το άτομο", "audio": "hypertts-a7856677d1f7009c418435e93a506e69c368fe14e4ac26451a2260bd.mp3"}, {"front": "That evening", "back": "εκείνο το βράδυ", "audio": "hypertts-df7fbad87d4cbb209bdd7433deba1327e250c7296bed863cf5df6c5d.mp3"}, {"front": "I am inviting you", "back": "Σε καλώ", "audio": "hypertts-c06a508a86b910d14bca6ff0ff0a98f254b3b051a3bc5e5f690234bd.mp3"}, {"front": "I am inviting him", "back": "τον καλώ", "audio": "hypertts-566888761f67dc9bacd154b4bda7c98514e32c9cdaebfd8cea329693.mp3"}, {"front": "We are inviting him", "back": "τον καλούμε", "audio": "hypertts-04973d0156dcdbc437414b416c01b8e6249d64cad31869f8f738003c.mp3"}, {"front": "We are inviting him (emphatic)", "back": "εμείς τον καλούμε", "audio": "hypertts-611a149f0c902e7d401b6e5ee028b99948e3e575946d8f7ad1f19b8b.mp3"}, {"front": "He is inviting us", "back": "μας καλεί", "audio": "hypertts-7f534b6fbde67950f88f0cf2a6574998243b318281efc934047b309e.mp3"}, {"front": "He is inviting us (emphatic)", "back": "Αυτός μας καλεί", "audio": "hypertts-a39bbee9a44c84c577fd3e293dc1cf1d47692cfd75c49d1e4499b277.mp3"}, {"front": "You are inviting us", "back": "Μας καλείς", "audio": "hypertts-45a8a231e5e666a5cb0e77429dc8af22fe9e3dc8a98fba343d3505ee.mp3"}, {"front": "Aren't you inviting us?", "back": "Δεν μας καλείς;", "audio": "hypertts-3c8f55ff558c818bac5345b64a820852d87d58db58c9d82e25171591.mp3"}, {"front": "I plead / please", "back": "σε παρακαλώ", "audio": "hypertts-c0b3734177990a16472fc5dd04e6b5c0bdd826bcfe943b6726a5073d.mp3"}, {"front": "We are remaining here", "back": "παραμένουμε εδώ", "audio": "hypertts-e00dc95e36288ea9640557c923396c06615e5e96aa00c37773e03ca5.mp3"}, {"front": "We are remaining there", "back": "παραμένουμε εκεί", "audio": "hypertts-a830b2d9b2d622967f2c7ef540e99ec5507c3c4177e69e535cde6daf.mp3"}];
 
-function initDeck() {
+// State structure:
+// session: { queue: [...indices], goodCount, againCount } — the in-progress session
+// deck: [...card sm2 data] — only updated when session completes
+
+function loadState() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) { const d = JSON.parse(saved); if (d.length === CARDS.length) return d; }
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
   } catch(e) {}
-  return CARDS.map(c => ({...c, interval:1, ef:2.5, due:Date.now(), reps:0}));
+  return null;
 }
 
-let deck=initDeck(), queue=[], current=null, isFlipped=false, sessionGood=0, sessionAgain=0, currentAudio=null;
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) {}
+}
 
-function getDue() { return deck.filter(c => c.due <= Date.now()); }
-function buildQueue() { queue = [...getDue()].sort(() => Math.random()-0.5); }
-function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(deck)); } catch(e) {} }
+function buildDeck() {
+  return CARDS.map(c => ({...c, interval:1, ef:2.5, nextDue: 0, reps:0}));
+}
+
+function startNewSession(deck) {
+  // Due = cards whose nextDue <= today (day number)
+  const today = Math.floor(Date.now() / 86400000);
+  const dueIndices = deck.map((c,i) => i).filter(i => deck[i].nextDue <= today);
+  const shuffled = dueIndices.sort(() => Math.random() - 0.5);
+  return { queue: shuffled, pos: 0, againQueue: [], goodCount: 0, againCount: 0 };
+}
+
+// Load or init
+let state = loadState();
+if (!state) {
+  const deck = buildDeck();
+  const session = startNewSession(deck);
+  state = { deck, session };
+  saveState();
+} else if (!state.session || state.session.queue.length === 0 && state.session.againQueue.length === 0) {
+  // Session was completed — start a new one
+  state.session = startNewSession(state.deck);
+  saveState();
+}
+
+let currentAudio = null;
+let currentCardIndex = null;
+
+function getNextIndex() {
+  const s = state.session;
+  // First work through again queue, then main queue
+  if (s.againQueue && s.againQueue.length > 0) return s.againQueue[0];
+  if (s.pos < s.queue.length) return s.queue[s.pos];
+  return null;
+}
+
+function totalDue() {
+  const s = state.session;
+  const remaining = s.queue.length - s.pos;
+  const again = s.againQueue ? s.againQueue.length : 0;
+  return remaining + again;
+}
 
 function updateStats() {
-  document.getElementById('s-due').textContent = queue.length;
-  document.getElementById('s-good').textContent = sessionGood;
-  document.getElementById('s-again').textContent = sessionAgain;
-  document.getElementById('prog').style.width = Math.round(((deck.length-queue.length)/deck.length)*100)+'%';
+  const due = totalDue();
+  document.getElementById('s-due').textContent = due;
+  document.getElementById('s-good').textContent = state.session.goodCount;
+  document.getElementById('s-again').textContent = state.session.againCount;
+  const total = state.session.queue.length;
+  const done = state.session.pos;
+  document.getElementById('prog').style.width = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
 }
 
-function showCard(card) {
-  current=card; isFlipped=false;
+function showCard(idx) {
+  currentCardIndex = idx;
+  const card = state.deck[idx];
   document.getElementById('card-inner').classList.remove('flipped');
   document.getElementById('eng-text').textContent = card.front;
   document.getElementById('greek-text').textContent = card.back;
   document.getElementById('rating-row').classList.add('hidden');
-  document.getElementById('tap-hint').style.display='';
+  document.getElementById('tap-hint').style.display = '';
   document.getElementById('audio-btn').classList.remove('playing');
-  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   updateStats();
 }
 
 function flipCard() {
-  if (!current) return;
-  isFlipped=!isFlipped;
-  document.getElementById('card-inner').classList.toggle('flipped',isFlipped);
-  if (isFlipped) { document.getElementById('rating-row').classList.remove('hidden'); document.getElementById('tap-hint').style.display='none'; playAudio(); }
+  if (currentCardIndex === null) return;
+  const inner = document.getElementById('card-inner');
+  const flipped = inner.classList.toggle('flipped');
+  if (flipped) {
+    document.getElementById('rating-row').classList.remove('hidden');
+    document.getElementById('tap-hint').style.display = 'none';
+    playAudio();
+  }
 }
 
 function playAudio() {
-  if (!current) return;
-  if (currentAudio) { currentAudio.pause(); currentAudio=null; }
-  const btn=document.getElementById('audio-btn');
-  const audio=new Audio(AUDIO_PATH+current.audio);
-  currentAudio=audio; btn.classList.add('playing');
-  audio.play().catch(()=>{});
-  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
-  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+  if (currentCardIndex === null) return;
+  const card = state.deck[currentCardIndex];
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  const btn = document.getElementById('audio-btn');
+  const audio = new Audio(AUDIO_PATH + card.audio);
+  currentAudio = audio;
+  btn.classList.add('playing');
+  audio.play().catch(() => {});
+  audio.onended = () => { btn.classList.remove('playing'); currentAudio = null; };
+  audio.onerror = () => { btn.classList.remove('playing'); currentAudio = null; };
 }
 
-function sm2(card,q) {
-  if (q<3) { card.reps=0; card.interval=1; }
-  else { if(card.reps===0) card.interval=1; else if(card.reps===1) card.interval=6; else card.interval=Math.round(card.interval*card.ef); card.reps+=1; }
-  card.ef=Math.max(1.3, card.ef+0.1-(3-q)*(0.08+(3-q)*0.02));
-  card.due=Date.now()+card.interval*24*60*60*1000;
+function sm2(card, q) {
+  if (q < 3) {
+    card.reps = 0; card.interval = 1;
+  } else {
+    if (card.reps === 0) card.interval = 1;
+    else if (card.reps === 1) card.interval = 6;
+    else card.interval = Math.round(card.interval * card.ef);
+    card.reps += 1;
+  }
+  card.ef = Math.max(1.3, card.ef + 0.1 - (3 - q) * (0.08 + (3 - q) * 0.02));
+  // Schedule for future days — but DON'T change nextDue until session ends
+  return card;
 }
 
 function rate(q) {
-  if (!current) return;
-  sm2(current,q);
-  if (q>=3) sessionGood++; else { sessionAgain++; queue.push(current); }
-  queue.shift(); saveState();
-  if (queue.length===0) showDone(); else showCard(queue[0]);
+  if (currentCardIndex === null) return;
+  const s = state.session;
+  const card = state.deck[currentCardIndex];
+
+  if (q >= 3) {
+    // Good/Easy: apply sm2 and schedule
+    sm2(card, q);
+    const today = Math.floor(Date.now() / 86400000);
+    card.nextDue = today + card.interval;
+    s.goodCount++;
+    // Remove from again queue if it was there
+    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
+      s.againQueue.shift();
+    } else {
+      s.pos++;
+    }
+  } else {
+    // Again: put back in again queue
+    s.againCount++;
+    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
+      // Already in again queue — move to end
+      s.againQueue.shift();
+      s.againQueue.push(currentCardIndex);
+    } else {
+      s.pos++;
+      if (!s.againQueue) s.againQueue = [];
+      s.againQueue.push(currentCardIndex);
+    }
+  }
+
+  saveState();
+
+  const next = getNextIndex();
+  if (next === null) {
+    showDone();
+  } else {
+    showCard(next);
+  }
 }
 
 function showDone() {
   document.getElementById('study-view').classList.add('hidden');
   document.getElementById('done-view').classList.remove('hidden');
-  document.getElementById('d-good').textContent=sessionGood;
-  document.getElementById('d-again').textContent=sessionAgain;
-  document.getElementById('d-total').textContent=sessionGood+sessionAgain;
-  const left=getDue().length;
-  document.getElementById('done-msg').textContent=left>0?left+' cards still due — keep going!':'All caught up! Come back tomorrow.';
+  document.getElementById('d-good').textContent = state.session.goodCount;
+  document.getElementById('d-again').textContent = state.session.againCount;
+  document.getElementById('d-total').textContent = state.session.goodCount + state.session.againCount;
+  // Mark session complete so next visit starts fresh session
+  state.session.queue = [];
+  state.session.pos = 0;
+  state.session.againQueue = [];
+  saveState();
+  const today = Math.floor(Date.now() / 86400000);
+  const dueCount = state.deck.filter(c => c.nextDue <= today).length;
+  document.getElementById('done-msg').textContent = dueCount > 0
+    ? dueCount + ' cards due — come back tomorrow!'
+    : 'All caught up! Come back tomorrow.';
 }
 
 function restartAll() {
-  sessionGood=0; sessionAgain=0;
-  deck.forEach(c=>{c.due=Date.now();c.interval=1;c.ef=2.5;c.reps=0;});
-  saveState(); buildQueue();
+  state.deck = buildDeck();
+  state.session = startNewSession(state.deck);
+  saveState();
   document.getElementById('done-view').classList.add('hidden');
   document.getElementById('study-view').classList.remove('hidden');
-  showCard(queue[0]);
+  const next = getNextIndex();
+  if (next !== null) showCard(next);
 }
 
-buildQueue();
-if (queue.length>0) showCard(queue[0]); else showDone();
+// Init
+const first = getNextIndex();
+if (first !== null) {
+  showCard(first);
+} else {
+  showDone();
+}
 </script>
 </body>
 </html>
