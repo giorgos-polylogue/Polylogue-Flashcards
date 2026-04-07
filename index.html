@@ -8,16 +8,41 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --bg: #F7F5F0; --ink: #1C1B18; --ink-muted: #8A8880; --ink-faint: #D4D2CC; --teal: #1D9E75; --teal-light: #E8F7F2; --card-bg: #FFFFFF; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; padding: 0; }
-  header { padding: 3rem 2rem 0; max-width: 680px; margin: 0 auto; }
+  :root {
+    --bg: #F7F5F0; --ink: #1C1B18; --ink-muted: #8A8880;
+    --ink-faint: #D4D2CC; --teal: #1D9E75; --teal-light: #E8F7F2; --card-bg: #FFFFFF;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 2rem; }
+  header { padding-top: 3rem; margin-bottom: 0; }
   .site-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; display: block; }
   h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 400; line-height: 1.1; color: var(--ink); margin-bottom: 0.75rem; letter-spacing: -0.01em; }
   h1 em { font-style: italic; color: var(--teal); }
-  .tagline { font-size: 15px; color: var(--ink-muted); font-weight: 300; line-height: 1.6; max-width: 420px; margin-bottom: 3rem; }
-  .divider { height: 1px; background: var(--ink-faint); max-width: 680px; margin: 0 auto 2.5rem; }
-  main { max-width: 680px; margin: 0 auto; padding: 0 2rem 4rem; }
-  .unit-block { margin-bottom: 2.5rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
+  .tagline { font-size: 15px; color: var(--ink-muted); font-weight: 300; line-height: 1.6; max-width: 420px; margin-bottom: 2.5rem; }
+  .divider { height: 1px; background: var(--ink-faint); margin-bottom: 2.5rem; }
+  .how-section { margin-bottom: 2.5rem; }
+  .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 1rem; padding-left: 2px; }
+  .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .how-card { background: var(--card-bg); border: 1px solid var(--ink-faint); border-radius: 12px; padding: 1rem 1.25rem; }
+  .how-card-num { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--teal); line-height: 1; margin-bottom: 6px; }
+  .how-card-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .how-card-text { font-size: 12px; color: var(--ink-muted); line-height: 1.5; font-weight: 300; }
+  .rating-explainer { background: var(--card-bg); border: 1px solid var(--ink-faint); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 8px; }
+  .rating-explainer-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 10px; }
+  .rating-list { display: flex; flex-direction: column; gap: 8px; }
+  .rating-item { display: flex; align-items: flex-start; gap: 10px; }
+  .rating-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; flex-shrink: 0; min-width: 52px; text-align: center; }
+  .badge-again { background: #FDECEA; color: #C0392B; }
+  .badge-hard  { background: #FEF3E2; color: #E67E22; }
+  .badge-good  { background: #E8F4FB; color: #2980B9; }
+  .badge-easy  { background: #E8F7F2; color: #1D9E75; }
+  .rating-desc { font-size: 12px; color: var(--ink-muted); line-height: 1.5; font-weight: 300; }
+  .rating-desc strong { color: var(--ink); font-weight: 500; }
+  .tip-box { background: var(--teal-light); border: 1px solid #9FE1CB; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 8px; }
+  .tip-box-text { font-size: 13px; color: #0F6E56; line-height: 1.6; }
+  .tip-box-text strong { font-weight: 500; }
+  .lessons-section { margin-bottom: 2.5rem; }
+  .unit-block { margin-bottom: 2rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
   .unit-block:nth-child(1) { animation-delay: 0.05s; }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
   .unit-label { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.75rem; padding-left: 2px; }
@@ -31,156 +56,108 @@
   .lesson-card:hover .lesson-arrow { background: var(--teal-light); border-color: var(--teal); }
   .lesson-arrow svg { width: 12px; height: 12px; color: var(--ink-muted); transition: color 0.15s; }
   .lesson-card:hover .lesson-arrow svg { color: var(--teal); }
-  footer { max-width: 680px; margin: 0 auto; padding: 0 2rem 3rem; display: flex; align-items: center; gap: 8px; }
+  footer { padding: 0 0 3rem; display: flex; align-items: center; gap: 8px; }
   .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
   .footer-text { font-size: 12px; color: var(--ink-muted); font-weight: 300; }
   .footer-text a { color: var(--teal); text-decoration: none; }
-  @media (max-width: 480px) { header { padding: 2rem 1.25rem 0; } main { padding: 0 1.25rem 3rem; } footer { padding: 0 1.25rem 2rem; } }
+  @media (max-width: 480px) { .wrap { padding: 0 1.25rem; } .how-grid { grid-template-columns: 1fr; } header { padding-top: 2rem; } }
 </style>
 </head>
 <body>
-<header>
-  <span class="site-label">Polylogue</span>
-  <h1>Greek<br><em>flashcards</em></h1>
-  <p class="tagline">Spaced repetition practice for every lesson. Tap a card to reveal the Greek, rate yourself, and let the algorithm do the rest.</p>
-</header>
-<div class="divider"></div>
-<main>
-  <div class="unit-block">
-    <div class="unit-label">Unit 2</div>
-    <div class="lesson-list">
-      <a href="/unit2-lesson1/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 1 — Using το to say "it"</span>
-          <span class="lesson-meta">33 cards · verbs, pronouns, vocabulary</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson2/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 2 — New Verbs Built on έχω</span>
-          <span class="lesson-meta">41 cards · verbs, vocabulary</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson3/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 3 — Using και to Link Ideas</span>
-          <span class="lesson-meta">18 cards · connectors, phrases</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson4/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 4 — αυτός — He and Masculine Nouns</span>
-          <span class="lesson-meta">30 cards · pronouns, nouns</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson5/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 5 — αυτή — She and Feminine Nouns</span>
-          <span class="lesson-meta">19 cards · pronouns, nouns</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson6/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 6 — Using να for Shall I / Let's</span>
-          <span class="lesson-meta">16 cards · subjunctive, phrases</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson7/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 7 — Being Somewhere — είμαι, είσαι, είναι</span>
-          <span class="lesson-meta">34 cards · verbs, location</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson8/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 8 — Names, Articles, and Because of This</span>
-          <span class="lesson-meta">19 cards · articles, connectors</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson9/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 9 — Greek Word Building — κατα-, επι-, παρα-</span>
-          <span class="lesson-meta">68 cards · prefixes, vocabulary</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson10/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 10 — The Future with θα</span>
-          <span class="lesson-meta">16 cards · future tense</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson11/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 11 — Open vs Closed Forms</span>
-          <span class="lesson-meta">52 cards · verb forms</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson12/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 12 — αν, New Verb Patterns, and Closed Forms</span>
-          <span class="lesson-meta">48 cards · conditionals, verbs</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson13/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 13 — The -νω Verbs Concluded</span>
-          <span class="lesson-meta">20 cards · verbs</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
-      <a href="/unit2-lesson14/" class="lesson-card">
-        <div class="lesson-info">
-          <span class="lesson-title">Lesson 14 — Plurals and Talking About Groups</span>
-          <span class="lesson-meta">26 cards · plurals, nouns</span>
-        </div>
-        <div class="lesson-arrow">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-        </div>
-      </a>
+<div class="wrap">
+
+  <header>
+    <span class="site-label">Polylogue</span>
+    <h1>Greek<br><em>flashcards</em></h1>
+    <p class="tagline">Practice your lesson vocabulary using spaced repetition — the same method used by Anki.</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <section class="how-section">
+    <div class="section-label">How it works</div>
+
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-card-num">1</div>
+        <div class="how-card-title">Open a lesson</div>
+        <div class="how-card-text">Pick any lesson below. On your first visit you'll see all the cards for that lesson.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-card-num">2</div>
+        <div class="how-card-title">Tap to reveal</div>
+        <div class="how-card-text">Each card shows English first. Tap to flip and reveal the Greek — and hear it spoken aloud.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-card-num">3</div>
+        <div class="how-card-title">Rate yourself honestly</div>
+        <div class="how-card-text">After seeing the Greek, rate how well you knew it. Honest ratings make the system work.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-card-num">4</div>
+        <div class="how-card-title">Come back daily</div>
+        <div class="how-card-text">Cards get scheduled into the future. Each day you only see what's due — fewer cards, better memory.</div>
+      </div>
     </div>
-  </div>
-</main>
-<footer>
-  <div class="footer-dot"></div>
-  <p class="footer-text">Part of <a href="https://polylogue.co">Polylogue</a> — learn to speak Greek</p>
-</footer>
+
+    <div class="rating-explainer">
+      <div class="rating-explainer-title">What the ratings mean</div>
+      <div class="rating-list">
+        <div class="rating-item">
+          <span class="rating-badge badge-again">Again</span>
+          <span class="rating-desc"><strong>You didn't know it.</strong> The card comes back again in this session, and is due again tomorrow.</span>
+        </div>
+        <div class="rating-item">
+          <span class="rating-badge badge-hard">Hard</span>
+          <span class="rating-desc"><strong>You knew it, but with effort.</strong> The card is done for today and comes back in 1–2 days.</span>
+        </div>
+        <div class="rating-item">
+          <span class="rating-badge badge-good">Good</span>
+          <span class="rating-desc"><strong>You knew it well.</strong> The card comes back in a few days, then the interval grows each time.</span>
+        </div>
+        <div class="rating-item">
+          <span class="rating-badge badge-easy">Easy</span>
+          <span class="rating-desc"><strong>You knew it immediately.</strong> The card is pushed far into the future — weeks or more.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-text">
+        <strong>The goal is not to finish the deck in one sitting.</strong> The goal is to come back daily and work through whatever is due. Over time, cards you know well disappear for weeks. Cards you struggle with keep coming back until they stick. 5–10 minutes a day is enough.
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="lessons-section">
+    <div class="unit-block">
+      <div class="unit-label">Unit 2</div>
+      <div class="lesson-list">
+        <a href="/unit2-lesson1/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 1 — Using το to say "it"</span><span class="lesson-meta">33 cards · verbs, pronouns, vocabulary</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson2/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 2 — New Verbs Built on έχω</span><span class="lesson-meta">41 cards · verbs, vocabulary</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson3/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 3 — Using και to Link Ideas</span><span class="lesson-meta">18 cards · connectors, phrases</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson4/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 4 — αυτός: He and Masculine Nouns</span><span class="lesson-meta">30 cards · pronouns, nouns</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson5/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 5 — αυτή: She and Feminine Nouns</span><span class="lesson-meta">19 cards · pronouns, nouns</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson6/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 6 — Using να for Shall I / Let's</span><span class="lesson-meta">16 cards · subjunctive, phrases</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson7/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 7 — Being Somewhere: είμαι, είσαι, είναι</span><span class="lesson-meta">34 cards · verbs, location</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson8/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 8 — Names, Articles, and Because of This</span><span class="lesson-meta">19 cards · articles, connectors</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson9/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 9 — Greek Word Building: κατα-, επι-, παρα-</span><span class="lesson-meta">68 cards · prefixes, vocabulary</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson10/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 10 — The Future with θα</span><span class="lesson-meta">16 cards · future tense</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson11/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 11 — Open vs Closed Forms</span><span class="lesson-meta">52 cards · verb forms</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson12/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 12 — αν, New Verb Patterns, and Closed Forms</span><span class="lesson-meta">48 cards · conditionals, verbs</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson13/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 13 — The -νω Verbs Concluded</span><span class="lesson-meta">20 cards · verbs</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit2-lesson14/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 14 — Plurals and Talking About Groups</span><span class="lesson-meta">26 cards · plurals, nouns</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-dot"></div>
+    <p class="footer-text">Part of <a href="https://polylogue.co">Polylogue</a> — learn to speak Greek</p>
+  </footer>
+
+</div>
 </body>
 </html>
