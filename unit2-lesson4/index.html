@@ -105,82 +105,61 @@
 </div>
 <script>
 const AUDIO_PATH = 'audio/';
-const STORAGE_KEY = 'polylogue_u2l4_v2';
+const STORAGE_KEY = 'polylogue_u2l4_v3';
 const CARDS = [{"front": "The problem", "back": "το πρόβλημα", "audio": "hypertts-6bdeca14ea031971ebabbf298dd81387b310cba5ef78282880c3c6e2.mp3"}, {"front": "The car", "back": "το αυτοκίνητο", "audio": "hypertts-05bb2537bcf2062d324ec00ef8bfac1f1f2950577fcb6bdf78e6618a.mp3"}, {"front": "This car", "back": "αυτό το αυτοκίνητο", "audio": "hypertts-fac59933f34c46fb1fb453dd9854a301fb3dc7edf5474ff91c4bbb93.mp3"}, {"front": "He wants it", "back": "αυτός το θέλει", "audio": "hypertts-dd837acde53c6fe4e1cbc8adfc6acfe44e79feabb9259b201e79e5a6.mp3"}, {"front": "He is waiting for me", "back": "αυτός με περιμένει", "audio": "hypertts-95c01d17110a0b09f7a8bc265ed76fa3598fde6b216f39ed20e4ac96.mp3"}, {"front": "He is also waiting for me", "back": "και αυτός με περιμένει", "audio": "hypertts-a502e5adcd94f2adad3fe8dd068ed4ed9d2fb76ab27fd11ac619badc.mp3"}, {"front": "He stays", "back": "μένει", "audio": "hypertts-a2bfeea42f018abad7eb51c9288001940bb2afadb42ff669f8a157f5.mp3"}, {"front": "You stay", "back": "μένεις", "audio": "hypertts-5586447db4304919cb462ef88e980d0e87bd2966e7a751097162c530.mp3"}, {"front": "The road", "back": "ο δρόμος", "audio": "hypertts-23b1de12677e5a31a3314630aa2ddea502b1fd2a5a7c2853c394e4d6.mp3"}, {"front": "This road", "back": "αυτός ο δρόμος", "audio": "hypertts-a6b6e763cfb4a4a831cf89e925ab8ef62933263be4afb790d2f20efe.mp3"}, {"front": "The coffee", "back": "ο καφές", "audio": "hypertts-d55d0a718d99a9924b35930ba13d4d7cb0705f292a1c7a2f9b3ec2f3.mp3"}, {"front": "This coffee", "back": "αυτός ο καφές", "audio": "hypertts-9f838c68390690267b60d40f600ac65176be4afcb5deb9acce29521a.mp3"}, {"front": "The man", "back": "ο άντρας", "audio": "hypertts-43aded03b577fba83c0ea37b6e8b57e5b3beb0853f801b03fcd35bc2.mp3"}, {"front": "This man", "back": "αυτός ο άντρας", "audio": "hypertts-ccd1f8a5420537c3827631a5d11560743581f9b2d361b19e961a6c8f.mp3"}, {"front": "The man is here", "back": "ο άντρας είναι εδώ", "audio": "hypertts-94827e0cf113e2d084f2e436817d987072c0e0cc7b728466c807defd.mp3"}, {"front": "This man is here because he is waiting for me", "back": "αυτός ο άντρας είναι εδώ γιατί με περιμένει", "audio": "hypertts-58b2d8e2c70f3919b13f3ee7de51add396ca85a326a208519fb22998.mp3"}, {"front": "He is here because he is waiting for me", "back": "αυτός είναι εδώ γιατί με περιμένει", "audio": "hypertts-e606d44ff6ec0048d888bd079bea8ad5defe239b4a64d78259e45390.mp3"}, {"front": "He sees", "back": "αυτός βλέπει", "audio": "hypertts-85dae88b5e93df1349b73f164eb3cf9b27e632390090b980c8e81aec.mp3"}, {"front": "He sees you", "back": "αυτός σε βλέπει", "audio": "hypertts-f3348bce33284a18f11e03c55040ce626ecda7b76052546fc1548222.mp3"}, {"front": "He also sees you", "back": "και αυτός σε βλέπει", "audio": "hypertts-99459fbba3991d67f960c54d00157784f9c8cc71aa8932200c0702b1.mp3"}, {"front": "Doesn't he see you?", "back": "δεν σε βλέπει;", "audio": "hypertts-75f5848d7d01a568dcf45ed7b25461dfcca20847ce9bf2ff837ec942.mp3"}, {"front": "Doesn't he see you? (emphatic)", "back": "αυτός δεν σε βλέπει;", "audio": "hypertts-6d46cd7efb98cb16d253f694eb8b0684b70c8b77670a079435c406ca.mp3"}, {"front": "Doesn't he wait for you?", "back": "Δεν σε περιμένει;", "audio": "hypertts-e2bf2a14b6ef308631ed4b4baf63571ab5b8cd0d23601b9128853999.mp3"}, {"front": "Isn't he also waiting for you?", "back": "Και αυτός δεν σε περιμένει;", "audio": "hypertts-f9774e69a11ce70466cb77000c1ea2f042f5423821d16cfa2d7ccadc.mp3"}, {"front": "He is from here", "back": "αυτός είναι από εδώ", "audio": "hypertts-ae6658553ae2ac2f2c646b517e6a01c1ae809e226e777b02027fba55.mp3"}, {"front": "He is not from here", "back": "αυτός δεν είναι από εδώ", "audio": "hypertts-048646b4294c3289e89607921cfae6d636ab885daf56ca579d928365.mp3"}, {"front": "He is also from here", "back": "και αυτός είναι από εδώ", "audio": "hypertts-f7a2485c2b7c950b27c0c511cbb8e1e337d5ea2bde090a2fa6a2b950.mp3"}, {"front": "Where is he from?", "back": "από που είναι;", "audio": "hypertts-ab38382b19c87a3996a2e9b7626ad406aefe5a7f449218af8a42b5ae.mp3"}, {"front": "This problem", "back": "αυτό το πρόβλημα", "audio": "hypertts-93ba7f3bf0ecee6fbe8eb0bc0948c6645c4c867065bc086129ca54e8.mp3"}, {"front": "This man", "back": "αυτός ο άντρας", "audio": "hypertts-ccd1f8a5420537c3827631a5d11560743581f9b2d361b19e961a6c8f.mp3"}];
 
-// State structure:
-// session: { queue: [...indices], goodCount, againCount } — the in-progress session
-// deck: [...card sm2 data] — only updated when session completes
-
 function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
+  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e) {}
   return null;
 }
 
 function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch(e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
 function buildDeck() {
-  return CARDS.map(c => ({...c, interval:1, ef:2.5, nextDue: 0, reps:0}));
+  return CARDS.map(c => ({...c, interval:1, ef:2.5, nextDue:0, reps:0}));
 }
 
-function startNewSession(deck) {
-  // Due = cards whose nextDue <= today (day number)
+function startSession(deck) {
   const today = Math.floor(Date.now() / 86400000);
-  const dueIndices = deck.map((c,i) => i).filter(i => deck[i].nextDue <= today);
-  const shuffled = dueIndices.sort(() => Math.random() - 0.5);
-  return { queue: shuffled, pos: 0, againQueue: [], goodCount: 0, againCount: 0 };
+  const due = deck.map((_,i) => i).filter(i => deck[i].nextDue <= today).sort(() => Math.random() - 0.5);
+  return { queue: due, againQueue: [], goodCount: 0, againCount: 0, done: false };
 }
 
-// Load or init
 let state = loadState();
 if (!state) {
   const deck = buildDeck();
-  const session = startNewSession(deck);
-  state = { deck, session };
+  state = { deck, session: startSession(deck) };
   saveState();
-} else if (!state.session || state.session.queue.length === 0 && state.session.againQueue.length === 0) {
-  // Session was completed — start a new one
-  state.session = startNewSession(state.deck);
+} else if (!state.session || state.session.done) {
+  state.session = startSession(state.deck);
   saveState();
 }
 
 let currentAudio = null;
-let currentCardIndex = null;
+let currentIdx = null;
 
-function getNextIndex() {
+function nextCard() {
   const s = state.session;
-  // First work through again queue, then main queue
-  if (s.againQueue && s.againQueue.length > 0) return s.againQueue[0];
-  if (s.pos < s.queue.length) return s.queue[s.pos];
+  if (s.againQueue.length > 0) return s.againQueue[0];
+  if (s.queue.length > 0) return s.queue[0];
   return null;
 }
 
-function totalDue() {
-  const s = state.session;
-  const remaining = s.queue.length - s.pos;
-  const again = s.againQueue ? s.againQueue.length : 0;
-  return remaining + again;
-}
-
 function updateStats() {
-  const due = totalDue();
+  const s = state.session;
+  const due = s.queue.length + s.againQueue.length;
   document.getElementById('s-due').textContent = due;
-  document.getElementById('s-good').textContent = state.session.goodCount;
-  document.getElementById('s-again').textContent = state.session.againCount;
-  const total = state.session.queue.length;
-  const done = state.session.pos;
-  document.getElementById('prog').style.width = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+  document.getElementById('s-good').textContent = s.goodCount;
+  document.getElementById('s-again').textContent = s.againCount;
+  const total = s.queue.length + s.againQueue.length + s.goodCount;
+  const done = s.goodCount;
+  document.getElementById('prog').style.width = total > 0 ? Math.round((done/total)*100)+'%' : '0%';
 }
 
 function showCard(idx) {
-  currentCardIndex = idx;
+  currentIdx = idx;
   const card = state.deck[idx];
   document.getElementById('card-inner').classList.remove('flipped');
   document.getElementById('eng-text').textContent = card.front;
@@ -193,9 +172,8 @@ function showCard(idx) {
 }
 
 function flipCard() {
-  if (currentCardIndex === null) return;
-  const inner = document.getElementById('card-inner');
-  const flipped = inner.classList.toggle('flipped');
+  if (currentIdx === null) return;
+  const flipped = document.getElementById('card-inner').classList.toggle('flipped');
   if (flipped) {
     document.getElementById('rating-row').classList.remove('hidden');
     document.getElementById('tap-hint').style.display = 'none';
@@ -204,108 +182,86 @@ function flipCard() {
 }
 
 function playAudio() {
-  if (currentCardIndex === null) return;
-  const card = state.deck[currentCardIndex];
+  if (currentIdx === null) return;
+  const card = state.deck[currentIdx];
   if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   const btn = document.getElementById('audio-btn');
   const audio = new Audio(AUDIO_PATH + card.audio);
   currentAudio = audio;
   btn.classList.add('playing');
-  audio.play().catch(() => {});
-  audio.onended = () => { btn.classList.remove('playing'); currentAudio = null; };
-  audio.onerror = () => { btn.classList.remove('playing'); currentAudio = null; };
+  audio.play().catch(()=>{});
+  audio.onended = ()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror = ()=>{btn.classList.remove('playing');currentAudio=null;};
 }
 
 function sm2(card, q) {
-  if (q < 3) {
+  if (q === 0) {
     card.reps = 0; card.interval = 1;
-  } else {
+  } else if (q === 1) {
+    card.interval = Math.max(1, Math.round(card.interval * 1.2));
+  } else if (q === 2) {
     if (card.reps === 0) card.interval = 1;
     else if (card.reps === 1) card.interval = 6;
     else card.interval = Math.round(card.interval * card.ef);
     card.reps += 1;
+  } else {
+    if (card.reps === 0) card.interval = 1;
+    else if (card.reps === 1) card.interval = 6;
+    else card.interval = Math.round(card.interval * card.ef * 1.3);
+    card.reps += 1;
   }
-  card.ef = Math.max(1.3, card.ef + 0.1 - (3 - q) * (0.08 + (3 - q) * 0.02));
-  // Schedule for future days — but DON'T change nextDue until session ends
-  return card;
+  card.ef = Math.max(1.3, card.ef + 0.1 - (3-q)*(0.08+(3-q)*0.02));
+  const today = Math.floor(Date.now()/86400000);
+  card.nextDue = today + card.interval;
 }
 
 function rate(q) {
-  if (currentCardIndex === null) return;
+  if (currentIdx === null) return;
   const s = state.session;
-  const card = state.deck[currentCardIndex];
+  const isFromAgain = s.againQueue.length > 0 && s.againQueue[0] === currentIdx;
 
-  if (q >= 3) {
-    // Good/Easy: apply sm2 and schedule
-    sm2(card, q);
-    const today = Math.floor(Date.now() / 86400000);
-    card.nextDue = today + card.interval;
-    s.goodCount++;
-    // Remove from again queue if it was there
-    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
-      s.againQueue.shift();
-    } else {
-      s.pos++;
-    }
-  } else {
-    // Again: put back in again queue
+  if (q === 0) {
+    // Again — remove from current position, push to end of againQueue
+    if (isFromAgain) { s.againQueue.shift(); } else { s.queue.shift(); }
+    s.againQueue.push(currentIdx);
     s.againCount++;
-    if (s.againQueue && s.againQueue[0] === currentCardIndex) {
-      // Already in again queue — move to end
-      s.againQueue.shift();
-      s.againQueue.push(currentCardIndex);
-    } else {
-      s.pos++;
-      if (!s.againQueue) s.againQueue = [];
-      s.againQueue.push(currentCardIndex);
-    }
+  } else {
+    // Hard / Good / Easy — card is done for this session
+    sm2(state.deck[currentIdx], q);
+    if (isFromAgain) { s.againQueue.shift(); } else { s.queue.shift(); }
+    s.goodCount++;
   }
 
   saveState();
-
-  const next = getNextIndex();
-  if (next === null) {
-    showDone();
-  } else {
-    showCard(next);
-  }
+  const next = nextCard();
+  if (next === null) { showDone(); } else { showCard(next); }
 }
 
 function showDone() {
+  state.session.done = true;
+  saveState();
   document.getElementById('study-view').classList.add('hidden');
   document.getElementById('done-view').classList.remove('hidden');
   document.getElementById('d-good').textContent = state.session.goodCount;
   document.getElementById('d-again').textContent = state.session.againCount;
   document.getElementById('d-total').textContent = state.session.goodCount + state.session.againCount;
-  // Mark session complete so next visit starts fresh session
-  state.session.queue = [];
-  state.session.pos = 0;
-  state.session.againQueue = [];
-  saveState();
-  const today = Math.floor(Date.now() / 86400000);
-  const dueCount = state.deck.filter(c => c.nextDue <= today).length;
-  document.getElementById('done-msg').textContent = dueCount > 0
-    ? dueCount + ' cards due — come back tomorrow!'
-    : 'All caught up! Come back tomorrow.';
+  const today = Math.floor(Date.now()/86400000);
+  const due = state.deck.filter(c => c.nextDue <= today).length;
+  document.getElementById('done-msg').textContent = due > 0 ? due+' cards due tomorrow — come back!' : 'All caught up! Come back tomorrow.';
 }
 
 function restartAll() {
   state.deck = buildDeck();
-  state.session = startNewSession(state.deck);
+  state.session = startSession(state.deck);
   saveState();
   document.getElementById('done-view').classList.add('hidden');
   document.getElementById('study-view').classList.remove('hidden');
-  const next = getNextIndex();
-  if (next !== null) showCard(next);
+  const next = nextCard();
+  if (next !== null) showCard(next); else showDone();
 }
 
-// Init
-const first = getNextIndex();
-if (first !== null) {
-  showCard(first);
-} else {
-  showDone();
-}
+const first = nextCard();
+if (first !== null) { showCard(first); } else { showDone(); }
 </script>
 </body>
 </html>
