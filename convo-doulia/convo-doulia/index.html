@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Conversation Lab: Η δουλειά μου</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #534AB7; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .stat { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 12px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+  .stat-label { font-size: 11px; color: #999; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; }
+  .audio-btn.playing { color: #534AB7; border-color: #534AB7; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .rating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .rating-btn { padding: 12px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: background 0.15s; }
+  .rating-btn:hover { background: #f5f4f0; }
+  .rating-btn .icon { font-size: 16px; }
+  .rating-btn .rlabel { font-size: 10px; color: #aaa; font-weight: 400; }
+  .r-again .icon { color: #C0392B; } .r-hard .icon { color: #E67E22; } .r-good .icon { color: #2980B9; } .r-easy .icon { color: #534AB7; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .done-explainer { background: #f5f4f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 1.5rem; font-size: 12px; color: #888; line-height: 1.6; text-align: left; }
+  .done-explainer strong { color: #555; font-weight: 500; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Conversation Lab</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="s-due">0</div><div class="stat-label">Due</div></div>
+      <div class="stat"><div class="stat-num" id="s-good">0</div><div class="stat-label">Good</div></div>
+      <div class="stat"><div class="stat-num" id="s-again">0</div><div class="stat-label">Again</div></div>
+    </div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="rating-row hidden" id="rating-row">
+      <button class="rating-btn r-again" onclick="rate(0)"><span class="icon">✕</span><span class="rlabel">Again</span></button>
+      <button class="rating-btn r-hard" onclick="rate(1)"><span class="icon">~</span><span class="rlabel">Hard</span></button>
+      <button class="rating-btn r-good" onclick="rate(2)"><span class="icon">✓</span><span class="rlabel">Good</span></button>
+      <button class="rating-btn r-easy" onclick="rate(3)"><span class="icon">✓✓</span><span class="rlabel">Easy</span></button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Session complete</div>
+    <div class="done-stats">
+      <div class="stat"><div class="stat-num" id="d-good">0</div><div class="stat-label">Good</div></div>
+      <div class="stat"><div class="stat-num" id="d-again">0</div><div class="stat-label">Again</div></div>
+      <div class="stat"><div class="stat-num" id="d-total">0</div><div class="stat-label">Total</div></div>
+    </div>
+    <div class="done-explainer">Your cards have been scheduled. <strong>Come back tomorrow</strong> to review what's due.</div>
+    <div class="done-sub" id="done-msg"></div>
+    <div class="btn-row">
+      <button class="action-btn" onclick="restartAll()">Start over</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const STORAGE_KEY='polylogue_convo_doulia_v1';
+const CARDS=[{"front": "I work", "back": "δουλεύω", "audio": "hypertts-1266784eb10eaa66659937a782f6e471b441228876ccfa22505287e4.mp3"}, {"front": "the office", "back": "το γραφείο", "audio": "hypertts-6529384dbee8cbf6e5f2ec6ae7ddfd165d42e90c2b1c44cc4c4b2736.mp3"}, {"front": "the factory", "back": "το εργοστάσιο", "audio": "hypertts-3e57f3a2b33d2eaf30f551bdb87985f786f98e53747db23525252d49.mp3"}, {"front": "the shop", "back": "το κατάστημα", "audio": "hypertts-76d0ab60c08cf201e4c885aeb8220a038ae5793bc6b7008cd01734c1.mp3"}, {"front": "the school", "back": "το σχολείο", "audio": "hypertts-dc66f5fbf3088278df75327af1d0ed903cd076714c6ac04f2de9f9d9.mp3"}, {"front": "the hospital", "back": "το νοσοκομείο", "audio": "hypertts-f6613aa0c85a943aa772c640acee25d807a7e83ca7c5ec7d58a80388.mp3"}, {"front": "from home", "back": "από το σπίτι", "audio": "hypertts-5193d573e6bd3fcee49516a8d7aa26adfe7b22540bed107ac2c7be2e.mp3"}, {"front": "outdoors", "back": "εξωτερικά", "audio": "hypertts-7e2dbd0af7d8b3da67709fbcaa3ad2e973cee55bd11882ec09d53cfe.mp3"}, {"front": "full time", "back": "πλήρες ωράριο", "audio": "hypertts-7ce1e2060065c498cb279a46f474387a5d399b0fb8218901ab51d7f5.mp3"}, {"front": "part time", "back": "μερικό ωράριο", "audio": "hypertts-72c5b3bc36042dde186b92e3a9d88c57587b30434da917d2d52603ad.mp3"}, {"front": "alone", "back": "μόνος/η", "audio": "hypertts-dc5fdabc75337eefd93d99469a1fd624dcc3dac1fedfdc35410f181e.mp3"}, {"front": "with a team", "back": "με ομάδα", "audio": "hypertts-b164f3fb20a01ea3d2adaf12a37fb4d3634e4524752f92581d48fd7e.mp3"}, {"front": "the colleague (masc.)", "back": "ο συνάδελφος", "audio": "hypertts-97c71148c9eb44e2446227217cc46ca28e8889a06246b512e6a9e367.mp3"}, {"front": "the colleague (fem.)", "back": "η συναδέλφισσα", "audio": "hypertts-43db04e2507ccfd8a780a6d36525be7185436693665a80de1cc1e50b.mp3"}, {"front": "the manager (masc.)", "back": "ο προϊστάμενος", "audio": "hypertts-27735f133d1d97444aeeacdc4e6e701c79b5179527fc26364f0d4dc1.mp3"}, {"front": "the manager (fem.)", "back": "η προϊσταμένη", "audio": "hypertts-302308b8881747c23663b70d06449350250bbd1061bf76e945580ad3.mp3"}, {"front": "the employer", "back": "ο εργοδότης", "audio": "hypertts-eddb77050f8393ffcd6ff663a986769f9893194730df44e0d8e8c132.mp3"}, {"front": "I start at…", "back": "αρχίζω στις…", "audio": "hypertts-489292f7dc20d49189b4342413dacdec7b8b1b96ae7cbe47c47764d8.mp3"}, {"front": "I finish at…", "back": "τελειώνω στις…", "audio": "hypertts-615e47232873cabc6975c56d1b8c3929b380c5cb4c7e9859d178595c.mp3"}, {"front": "the break", "back": "το διάλειμμα", "audio": "hypertts-6c4f2be4a069b1da2d633d1286420f14b7969d6cc33de2123b2972c9.mp3"}, {"front": "the lunch break", "back": "το μεσημεριανό διάλειμμα", "audio": "hypertts-5d4bc85e4d7471dfce78e22d63d2b7f497f49c55670c96cd8f9dafef.mp3"}, {"front": "the meeting", "back": "η συνάντηση", "audio": "hypertts-d6529ae5a1f61a98d6205d294de21c63932228f825e478f0f800ed8d.mp3"}, {"front": "the schedule", "back": "το πρόγραμμα", "audio": "hypertts-940a28c0ae97979946dc4940d321e408d85a164dde1c0fdc3b38818e.mp3"}, {"front": "the deadline", "back": "η προθεσμία", "audio": "hypertts-934e9fc8d9b0b225a2cd842a19d93ae40b5613de656e0c6cf0ec4bef.mp3"}, {"front": "the report", "back": "η αναφορά", "audio": "hypertts-1929ad1c4c4cb19e588a87a60c82e6735168723c0a76ad0e6845af08.mp3"}, {"front": "I reply to emails", "back": "απαντώ email", "audio": "hypertts-aabb3d75f3a3989432927f52cea6297c1d2296585330ef1674ca3f75.mp3"}, {"front": "I talk on the phone", "back": "μιλώ στο τηλέφωνο", "audio": "hypertts-9f8adde03c14b817a3f91c300df1ec02650174efda2bff1a90d86d93.mp3"}, {"front": "I am busy", "back": "είμαι απασχολημένος/η", "audio": "hypertts-bfaaa6cf0986958f7a2360086ba4d8cd111607e0fd0dd004606926ad.mp3"}, {"front": "I am tired", "back": "είμαι κουρασμένος/η", "audio": "hypertts-7410a5974ea509eedca1654b6b93073deb811641dc07cca66ebaf89b.mp3"}, {"front": "I am focused", "back": "είμαι συγκεντρωμένος/η", "audio": "hypertts-c9ee92f1c47e318a49280ccb8e9e550bbb230ea3152ac7d8234247a3.mp3"}, {"front": "I finish early", "back": "τελειώνω νωρίς", "audio": "hypertts-270a26b0a425d97fd61eef1d603826197bddb9035b6442b28e0c762c.mp3"}, {"front": "I finish late", "back": "τελειώνω αργά", "audio": "hypertts-7d08078cc397dad3cc39e58f2720f13287a3eb3000c7b18bc1329a38.mp3"}, {"front": "stressful", "back": "αγχωτικός/η", "audio": "hypertts-5a43c73b5f6e57f79aa6374ba135fb4f95c2796e3972a35e39a53cac.mp3"}, {"front": "relaxed", "back": "χαλαρός/η", "audio": "hypertts-46ede2b833d775b44f2e59df40583d149a3a6e1569791cd6f0c69596.mp3"}, {"front": "demanding", "back": "απαιτητικός/η", "audio": "hypertts-74a0add7425c8936578d30b13e815ca3487710001d57081d4b2ed2aa.mp3"}, {"front": "interesting", "back": "ενδιαφέρον", "audio": "hypertts-b51fbd85440948ebd989d4e2d97c4ff087045cbfe5ed8959f1eedeb1.mp3"}, {"front": "boring", "back": "βαρετός/η", "audio": "hypertts-aace6d4f2ab1831a2bd800e603dd85e207498d11b80d90deb5336ad2.mp3"}, {"front": "creative", "back": "δημιουργικός/η", "audio": "hypertts-2b530bcc4dc03f02af8cc2bb5f312a9797f14d156ff301fd6db6642a.mp3"}, {"front": "repetitive", "back": "επαναλαμβανόμενος/η", "audio": "hypertts-f21159cc2e38dbad8f038c066f9e6ca7467c293e854406f5568062d8.mp3"}, {"front": "independent", "back": "ανεξάρτητος/η", "audio": "hypertts-54418b9740667dae046d463ca5b3258e511e85596e29c1d8f1d5521b.mp3"}, {"front": "team-based", "back": "ομαδικός/η", "audio": "hypertts-610db54b6064719e443ac4b746e00e8c1f9c2cd67fd9335624460e49.mp3"}, {"front": "well paid", "back": "καλά πληρωμένος/η", "audio": "hypertts-3cea55cddab3ab31def8b93e765b779d95facf338cd513658956d647.mp3"}, {"front": "poorly paid", "back": "άσχημα πληρωμένος/η", "audio": "hypertts-7404e5e279e3cfce56c8a8544bcaa5b98ceef3f92dd0e1681fa70610.mp3"}, {"front": "ideal", "back": "ιδανικός/η", "audio": "hypertts-19d0e9a78e023c7201dae8df833870ef9ab1deb63605934342a04afb.mp3"}, {"front": "routine", "back": "ρουτίνα", "audio": "hypertts-0842ecd2d953dd2589a610208ce06a569bfc9204ac3f20ba73ab1097.mp3"}, {"front": "variety", "back": "ποικιλία", "audio": "hypertts-84ab1d0f68e022b704770d14ec2ad3860ada56353c4c3fe4893d16b8.mp3"}, {"front": "I work in / at…", "back": "Δουλεύω σε…", "audio": "hypertts-be94e601d16e994673af490310519dfdfdcce0bcf23b5e3781906226.mp3"}, {"front": "My job is…", "back": "Η δουλειά μου είναι…", "audio": "hypertts-6955b1b347393e8ca1738af2eb1403aecf700079f3ac64dcef58ea7c.mp3"}, {"front": "My typical day is…", "back": "Η τυπική μου μέρα είναι…", "audio": "hypertts-06a365eb3c23b107ee88ad0ea9a980d7aaa20a8aab014c1486245c60.mp3"}, {"front": "I like it because…", "back": "Μου αρέσει γιατί…", "audio": "hypertts-bfed570c77a5fa0bdaaf499ffa8d34cdc009c0d07a60e90d5bca3b23.mp3"}, {"front": "I don't like that…", "back": "Δεν μου αρέσει που…", "audio": "hypertts-e15b3c1da1120c0043e135b31c4881386fb13eb5ab34150a849ce99e.mp3"}, {"front": "The hardest part is…", "back": "Το πιο δύσκολο είναι…", "audio": "hypertts-04f1472451dc2279091329a9c0303a2b93322b7f7f9a67611776c794.mp3"}, {"front": "The best part is…", "back": "Το πιο ωραίο είναι…", "audio": "hypertts-90c1aa945ccd966661122a4b7a5ade129d58ed9bcb237d1675b1f825.mp3"}, {"front": "I would like to…", "back": "Θα ήθελα να…", "audio": "hypertts-c7f637d8d0239cce832b7a789de6cec07fad592ec49ac3f8936a583a.mp3"}, {"front": "I would change…", "back": "Θα άλλαζα…", "audio": "hypertts-226ae6e3a7d7c9f5e1e84075a9b9bfd867b990b11ddcfe4a4250b2e4.mp3"}, {"front": "I feel… at the end of the day", "back": "Νιώθω… στο τέλος της μέρας", "audio": "hypertts-cc6e5d5d952189f7610caea7dfd83faf9058adf4185faa947011b6ee.mp3"}];
+function loadState(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r);}catch(e){}return null;}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
+function buildDeck(){return CARDS.map(c=>({...c,interval:1,ef:2.5,nextDue:0,reps:0}));}
+function startSession(deck){
+  const today=Math.floor(Date.now()/86400000);
+  const due=deck.map((_,i)=>i).filter(i=>deck[i].nextDue<=today).sort(()=>Math.random()-0.5);
+  return {queue:due,againQueue:[],goodCount:0,againCount:0,done:false};
+}
+let state=loadState();
+if(!state){const deck=buildDeck();state={deck,session:startSession(deck)};saveState();}
+else if(!state.session||state.session.done){state.session=startSession(state.deck);saveState();}
+let currentAudio=null,currentIdx=null;
+function nextCard(){const s=state.session;if(s.againQueue.length>0)return s.againQueue[0];if(s.queue.length>0)return s.queue[0];return null;}
+function updateStats(){
+  const s=state.session;
+  document.getElementById('s-due').textContent=s.queue.length+s.againQueue.length;
+  document.getElementById('s-good').textContent=s.goodCount;
+  document.getElementById('s-again').textContent=s.againCount;
+  const total=s.queue.length+s.againQueue.length+s.goodCount;
+  document.getElementById('prog').style.width=total>0?Math.round((s.goodCount/total)*100)+'%':'0%';
+}
+function showCard(idx){
+  currentIdx=idx;const card=state.deck[idx];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('rating-row').classList.add('hidden');
+  document.getElementById('tap-hint').style.display='';
+  document.getElementById('audio-btn').classList.remove('playing');
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateStats();
+}
+function flipCard(){
+  if(currentIdx===null)return;
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('rating-row').classList.remove('hidden');document.getElementById('tap-hint').style.display='none';playAudio();}
+}
+function playAudio(){
+  if(currentIdx===null)return;
+  const card=state.deck[currentIdx];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function sm2(card,q){
+  if(q===0){card.reps=0;card.interval=1;}
+  else if(q===1){card.interval=Math.max(1,Math.round(card.interval*1.2));}
+  else if(q===2){if(card.reps===0)card.interval=1;else if(card.reps===1)card.interval=6;else card.interval=Math.round(card.interval*card.ef);card.reps+=1;}
+  else{if(card.reps===0)card.interval=1;else if(card.reps===1)card.interval=6;else card.interval=Math.round(card.interval*card.ef*1.3);card.reps+=1;}
+  card.ef=Math.max(1.3,card.ef+0.1-(3-q)*(0.08+(3-q)*0.02));
+  card.nextDue=Math.floor(Date.now()/86400000)+card.interval;
+}
+function rate(q){
+  if(currentIdx===null)return;
+  const s=state.session;
+  const fromAgain=s.againQueue.length>0&&s.againQueue[0]===currentIdx;
+  if(q===0){if(fromAgain){s.againQueue.shift();}else{s.queue.shift();}s.againQueue.push(currentIdx);s.againCount++;}
+  else{sm2(state.deck[currentIdx],q);if(fromAgain){s.againQueue.shift();}else{s.queue.shift();}s.goodCount++;}
+  saveState();
+  const next=nextCard();
+  if(next===null){showDone();}else{showCard(next);}
+}
+function showDone(){
+  state.session.done=true;saveState();
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+  document.getElementById('d-good').textContent=state.session.goodCount;
+  document.getElementById('d-again').textContent=state.session.againCount;
+  document.getElementById('d-total').textContent=state.session.goodCount+state.session.againCount;
+  const today=Math.floor(Date.now()/86400000);
+  const due=state.deck.filter(c=>c.nextDue<=today).length;
+  document.getElementById('done-msg').textContent=due>0?due+' cards due right now.':'No cards due today — check back tomorrow.';
+}
+function restartAll(){
+  state.deck=buildDeck();state.session=startSession(state.deck);saveState();
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  const next=nextCard();if(next!==null)showCard(next);else showDone();
+}
+const first=nextCard();
+if(first!==null){showCard(first);}else{showDone();}
+</script>
+</body>
+</html>
