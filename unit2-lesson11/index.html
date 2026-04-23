@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polylogue — Lesson 11 — Open vs Closed Forms</title>
+<title>Polylogue — Open vs Closed Forms</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
@@ -55,11 +55,9 @@
     </a>
     <span class="deck-tag">Unit 2 · Lesson 11</span>
   </header>
-
   <div id="study-view">
     <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
     <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
-
     <div class="card-scene" onclick="flipCard()">
       <div class="card-inner" id="card-inner">
         <div class="card-face">
@@ -77,13 +75,11 @@
       </div>
     </div>
     <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
-
     <div class="nav-row">
       <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
       <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
     </div>
   </div>
-
   <div id="done-view" class="done-screen hidden">
     <div class="done-title">Deck complete</div>
     <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
@@ -93,86 +89,54 @@
     </div>
   </div>
 </div>
-
 <script>
 const AUDIO_PATH='audio/';
 const CARDS=[{"front": "I write", "back": "γράφω", "audio": "hypertts-0ba08a2767303b4ee044be5ff533e173f7c68a30f7e10a7918172db5.mp3"}, {"front": "I will write it (closed)", "back": "θα το γράψω", "audio": "hypertts-3ad612476fce4d6f33c14a5de27a1bc275d2f7f075fd4ad2bdea9284.mp3"}, {"front": "He will write it", "back": "θα το γράψει", "audio": "hypertts-07a1fcc29947dbb576ba67293a4e603181f49df0b3eb2c6741775af7.mp3"}, {"front": "He will be writing (open)", "back": "θα γράφει", "audio": "hypertts-c872f79ccf198a89f9c955775dc93124215fe7ca103f4f1e137f5b02.mp3"}, {"front": "I want to write (general - open)", "back": "θέλω να γράφω", "audio": "hypertts-3e886e5f7dd82664898390ece742c4bf1fc7b3b7d5ee62a4eaeef411.mp3"}, {"front": "I want to write tomorrow (closed)", "back": "θέλω να γράψω αύριο", "audio": "hypertts-888b28f6fc03e331bea71760a414b0a70e01a52b7bbe97c41efc1e4b.mp3"}, {"front": "I want to write it (closed)", "back": "θέλω να το γράψω", "audio": "hypertts-00428f81e4109bad44d15ade31d221bce17f2356404680864bca44aa.mp3"}, {"front": "I sign", "back": "υπογράφω", "audio": "hypertts-0b375569b0ca76c2534a6b3889ce65b51bc9c0012f4abe0afe184a00.mp3"}, {"front": "I will sign it", "back": "Θα το υπογράψω", "audio": "hypertts-dabe5ccbeed914f4ecf1e4434d051084264c822671603ab84df9aabc.mp3"}, {"front": "I will be signing (open)", "back": "Θα υπογράφω", "audio": "hypertts-f99ec783bc8b9c340908702d027531d27c5a2591514020dcca1dfb22.mp3"}, {"front": "I want to write well (open)", "back": "θέλω να γράφω καλά", "audio": "hypertts-51a3220cc4e78c7873c54168817eb76c99ef4eaa60109c95585212c9.mp3"}, {"front": "I want to write it well (closed)", "back": "θέλω να το γράψω καλά", "audio": "hypertts-393fd7ebf3ea5b8dffbb913a773e500d55621210b4bbac62dae122fa.mp3"}, {"front": "I want you to write it well", "back": "θέλω να γράψεις καλά", "audio": "hypertts-0b4b295708b388fd5e65fbbb1fdd82fc52640b8ad8180a9e6042d735.mp3"}, {"front": "I want to write a book", "back": "θέλω να γράψω ένα βιβλίο", "audio": "hypertts-8a48192719996516e5100f6ee76547f730eac61fa83fe773d34604d1.mp3"}, {"front": "I want to write books (general - open)", "back": "θέλω να γράφω βιβλία", "audio": "hypertts-f52fe8f0f4bc1ee3584dd73cd850345b3c9ae07cf3c558fb1ef7c162.mp3"}, {"front": "I want to write 2 books", "back": "θέλω να γράψω δύο βιβλία", "audio": "hypertts-f654a1b75d8d2d67138eee540425715bfdbb1d023bf4ce6ebece11a0.mp3"}, {"front": "I learn / I am learning", "back": "μαθαίνω", "audio": "hypertts-3c445388f01ff6251b5531266ca682f077fa6ccb64cfce8388527993.mp3"}, {"front": "I want to learn (general - open)", "back": "Θέλω να μαθαίνω", "audio": "hypertts-0db2dac65be70bb13d857b00a6ec8fca37abbb07af276a23a8bac7fa.mp3"}, {"front": "I want to learn it (closed)", "back": "Θέλω να το μάθω", "audio": "hypertts-2a6a1ace776b67b360f48c6422b2866795c57ff3e6742e4e354fcf9b.mp3"}, {"front": "I want to learn to do it", "back": "Θέλω να μάθω να το κάνω", "audio": "hypertts-1398dc0011f035757460ac0e6f70c68070b878d1b1cd9c4e431980e9.mp3"}, {"front": "I bring", "back": "φέρνω", "audio": "hypertts-a1f1f2e52511197682dcfb543908de99a5984df0a5cbdc2d47dfdccf.mp3"}, {"front": "I am bringing it", "back": "το φέρνω", "audio": "hypertts-d418208f559710c90d093ec00d4c57c364cd85976afbd1c9a56f2ac6.mp3"}, {"front": "I will be bringing (open)", "back": "θα φέρνω", "audio": "hypertts-14c04908b7cbd27d5ff3353285323b24202427e7265af602341142f9.mp3"}, {"front": "I will bring it (closed)", "back": "θα το φέρω", "audio": "hypertts-c0f24a9d3f9a1ee7d30c45fabde16898123d2d920dea6838537bc76e.mp3"}, {"front": "She will bring it", "back": "θα το φέρει", "audio": "hypertts-758ca1076818a2b8aeac4e36e8affd56489778df60079027c3fa66b7.mp3"}, {"front": "I manage", "back": "καταφέρνω", "audio": "hypertts-56dfc4b8d6297e7e1e91403a5381cc98b042eeddf874f6ead77bd9b1.mp3"}, {"front": "I will manage it", "back": "θα το καταφέρω", "audio": "hypertts-851a5b74bfa2da12eb7148ae52b4f0b547369bf34f2c63728544fbc7.mp3"}, {"front": "I am going down", "back": "κατεβαίνω", "audio": "hypertts-7ac11b6d35b5bd2904cd14d9c09d75f7e2d7f433c06d33167bd860d7.mp3"}, {"front": "I will go down", "back": "θα κατέβω", "audio": "hypertts-9a1f81569e4e197f904c9b69f8fe9953cd7f3c002ab98e160434109e.mp3"}, {"front": "I will go down in a bit", "back": "θα κατέβω σε λίγο", "audio": "hypertts-101762f9a57298bf1d5455f960206221e4127664beaa8d73f075bbac.mp3"}, {"front": "We will go down in a bit", "back": "θα κατέβουμε σε λίγο", "audio": "hypertts-53be02840ada34e523c5e4732fa4b3ee9fafc0a8360b09fac5b09e3a.mp3"}, {"front": "Let's go down in a bit", "back": "να κατεβούμε σε λίγο", "audio": "hypertts-fff5133e6b92916411fa7874ea4c22a2c4a026a9a9a283c70d21e308.mp3"}, {"front": "Shall we go down in a bit?", "back": "να κατεβούμε σε λίγο;", "audio": "hypertts-1e53a06b63ece4b2398f4c93ad47a764e0aea4aea4f316341788e871.mp3"}, {"front": "I want you to understand", "back": "θέλω να καταλάβεις", "audio": "hypertts-26c0972974aa0988d5150d0e38a372d2d37df049cf8f890e6363254b.mp3"}, {"front": "I want you to understand me (closed)", "back": "θέλω να με καταλάβεις", "audio": "hypertts-5a8fc7ef3394380101b78dc333d8127aab98b313981fca9a5bcfff9b.mp3"}, {"front": "I want you to understand me (general - open)", "back": "θέλω να με καταλαβαίνεις", "audio": "hypertts-201ab086e58da35498768af9cdec1a2108e955eca421e2d2b99bb97e.mp3"}, {"front": "I don't want to drink (closed)", "back": "δεν θέλω να πιω", "audio": "hypertts-6ed32d8cfe654f91a73c8c3800c3575101545b0a2d5ccfd09c0a03f2.mp3"}, {"front": "I don't want to drink (general - open)", "back": "δεν θέλω να πίνω", "audio": "hypertts-995507fdd3906bf3377a61b044ad93151d9de351144c5eed30f32a20.mp3"}, {"front": "I take / I am taking", "back": "Παίρνω", "audio": "hypertts-cdc6489caf821a510b587ffac20e48ee3341788b268469f1ce4bc7e8.mp3"}, {"front": "I take the train", "back": "παίρνω το τρένο", "audio": "hypertts-89c8e0b49a20f1edb07aa99f57f345058ccb6eaec1a21ffcc304f085.mp3"}, {"front": "We are taking the train", "back": "παίρνουμε το τρένο", "audio": "hypertts-d92a64131d2e12f0c0bbbb7590c96f4b4745157c953fd51d3a39cec5.mp3"}, {"front": "Let's take the train", "back": "να πάρουμε το τρένο", "audio": "hypertts-2be14ad882375f5eb974e7f28a8c84d655c97058679b4a578eec3d59.mp3"}, {"front": "Let him take the train", "back": "να πάρει το τρένο", "audio": "hypertts-f60ee9ff19cc5f1ebfbe8c4c450dbf368ee710ac4c7b833fc698f9f8.mp3"}, {"front": "I will call you", "back": "θα σε πάρω τηλέφωνο", "audio": "hypertts-872335059c8faa1be65d2908ae404268203c01159c03b277abfe726f.mp3"}, {"front": "I don't want you to call me", "back": "δεν θέλω να με πάρεις τηλέφωνο", "audio": "hypertts-345889d50735ba0004670261d84af23b42f6b21d901796e556acfa36.mp3"}, {"front": "I will write (closed - most of the time)", "back": "θα γράψω", "audio": "hypertts-fa3aaf9a14176d156299f0e059c9bfe2f161d50c57f6a59b06afcae0.mp3"}, {"front": "I will still be writing (open)", "back": "θα γράφω ακόμα", "audio": "hypertts-f5f0308fa8020da318cf591e9f91f86578d64c5fc80120f0953e1844.mp3"}, {"front": "I return / I am returning", "back": "επιστρέφω", "audio": "hypertts-597f4054dee7763511f851097011cd789f2902afaf31d90e488d8ac9.mp3"}, {"front": "I can't come back (closed)", "back": "δεν μπορώ να επιστρέψω", "audio": "hypertts-a142628d53b7d48e0e48196ad00d5427449931050bfe4d87c61e91ca.mp3"}, {"front": "I can't come back (general - open)", "back": "δεν μπορώ να επιστρέφω", "audio": "hypertts-a5673ffa87ad029f1ef0ebc6ccb9c4514644865cd2570cd453c69f8a.mp3"}, {"front": "But today I can come back", "back": "αλλά σήμερα μπορώ να επιστρέψω", "audio": "hypertts-b1f6a538ba18d7b90823442dde220637e9c3d0d965317ae081d86c8a.mp3"}, {"front": "Maybe he is still coming back", "back": "μπορεί να επιστρέφει ακόμα", "audio": "hypertts-7da4ebbb590259b43fbae3e5f780140891baab8a88d51bd08495e73f.mp3"}];
-
-function shuffle(arr) {
-  const a=[...arr];
-  for (let i=a.length-1; i>0; i--) {
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
-
-let deck=shuffle(CARDS);
-let pos=0;
-let currentAudio=null;
-
-function updateProgress() {
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
   document.getElementById('current-num').textContent=pos+1;
   document.getElementById('total-num').textContent=deck.length;
   document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
   document.getElementById('prev-btn').disabled=pos===0;
 }
-
-function showCard() {
+function showCard(){
   const card=deck[pos];
   document.getElementById('card-inner').classList.remove('flipped');
   document.getElementById('eng-text').textContent=card.front;
   document.getElementById('greek-text').textContent=card.back;
   document.getElementById('audio-btn').classList.remove('playing');
   document.getElementById('tap-hint').style.display='';
-  if (currentAudio) {currentAudio.pause();currentAudio=null;}
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
   updateProgress();
 }
-
-function flipCard() {
+function flipCard(){
   const flipped=document.getElementById('card-inner').classList.toggle('flipped');
-  if (flipped) {
-    document.getElementById('tap-hint').style.display='none';
-    playAudio();
-  } else {
-    document.getElementById('tap-hint').style.display='';
-  }
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
 }
-
-function playAudio() {
+function playAudio(){
   const card=deck[pos];
-  if (currentAudio) {currentAudio.pause();currentAudio=null;}
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
   const btn=document.getElementById('audio-btn');
   const audio=new Audio(AUDIO_PATH+card.audio);
-  currentAudio=audio;
-  btn.classList.add('playing');
+  currentAudio=audio;btn.classList.add('playing');
   audio.play().catch(()=>{});
   audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
   audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
 }
-
-function nextCard() {
-  if (pos<deck.length-1) {pos++; showCard();}
-  else {showDone();}
-}
-
-function prevCard() {
-  if (pos>0) {pos--; showCard();}
-}
-
-function showDone() {
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
   document.getElementById('study-view').classList.add('hidden');
   document.getElementById('done-view').classList.remove('hidden');
 }
-
-function restart() {
-  deck=shuffle(CARDS);
-  pos=0;
+function restart(){
+  deck=shuffle(CARDS);pos=0;
   document.getElementById('done-view').classList.add('hidden');
   document.getElementById('study-view').classList.remove('hidden');
   showCard();
 }
-
 showCard();
 </script>
 </body>
