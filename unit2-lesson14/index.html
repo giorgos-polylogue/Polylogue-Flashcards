@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polylogue — Lesson 14 — Plurals and Talking About Groups</title>
+<title>Polylogue — Plurals and Talking About Groups</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
@@ -55,11 +55,9 @@
     </a>
     <span class="deck-tag">Unit 2 · Lesson 14</span>
   </header>
-
   <div id="study-view">
     <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
     <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
-
     <div class="card-scene" onclick="flipCard()">
       <div class="card-inner" id="card-inner">
         <div class="card-face">
@@ -77,13 +75,11 @@
       </div>
     </div>
     <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
-
     <div class="nav-row">
       <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
       <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
     </div>
   </div>
-
   <div id="done-view" class="done-screen hidden">
     <div class="done-title">Deck complete</div>
     <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
@@ -93,86 +89,54 @@
     </div>
   </div>
 </div>
-
 <script>
 const AUDIO_PATH='audio/';
 const CARDS=[{"front": "They want (fem. emphatic)", "back": "αυτές θέλουν", "audio": "hypertts-9afe4f5e0646e5df52d544c63e80196dc0553befb5227c150f95060f.mp3"}, {"front": "We don't want but they do (emphatic)", "back": "Εμείς δεν θέλουμε αλλά αυτές θέλουν", "audio": "hypertts-5e128cf5c0c51b3017840b65314560b403c95d3e2dd2660029a386ca.mp3"}, {"front": "They are there (fem.)", "back": "αυτές είναι εκεί", "audio": "hypertts-915cb42485c635094207eea55cbc127907be3352db6f3c934bce146f.mp3"}, {"front": "Those girls want", "back": "εκείνες θέλουν", "audio": "hypertts-3984f1139a2669b76dfce7b1af1d2b7742562801c5a1307f8de94ceb.mp3"}, {"front": "Those (women) are doing it", "back": "εκείνες το κάνουν", "audio": "hypertts-86e8fe48aeef1a8635d3914f86a2a0b41ed7fdd9e207195bfbe08985.mp3"}, {"front": "The day", "back": "η μέρα", "audio": "hypertts-26661afcebd4948c921027c8da9b08da46fbe382ec67eb26a697c031.mp3"}, {"front": "days", "back": "μέρες", "audio": "hypertts-d5820dd07971d26645ba08be082cf1784d546525d1bebe121019ca18.mp3"}, {"front": "The days", "back": "οι μέρες", "audio": "hypertts-daf2deafd537fd0934559aa3cc9cf92580a5a26d92943785d10ba557.mp3"}, {"front": "Those days", "back": "εκείνες οι μέρες", "audio": "hypertts-32a268ba9ab8ec42d5cc8e107fbd3834606f0b76b040fdc1b6ff385f.mp3"}, {"front": "These days", "back": "αυτές οι μέρες", "audio": "hypertts-98fe60717e4030095031f5518d19086d61800dd68458e05ac87a1401.mp3"}, {"front": "They are finishing not us (masc. emphatic)", "back": "αυτοί τελειώνουν όχι εμείς", "audio": "hypertts-038539f6b6870787fb4a5b974f8bac1f62ec30002349aebda2d0cc17.mp3"}, {"front": "The road", "back": "ο δρόμος", "audio": "hypertts-23b1de12677e5a31a3314630aa2ddea502b1fd2a5a7c2853c394e4d6.mp3"}, {"front": "Roads", "back": "δρόμοι", "audio": "hypertts-df1e4e69d4ab62325c68abf36b310c038fbad64f41a427c0afcb749e.mp3"}, {"front": "The roads", "back": "οι δρόμοι", "audio": "hypertts-334a1e88bbcd1fe34a554a35d4e40823e7c2ef611b7cb602b22bfa93.mp3"}, {"front": "These roads", "back": "αυτοί οι δρόμοι", "audio": "hypertts-27857d03ab7dada1ec04d294160acf3270c92f19d27b65bfe8f192d1.mp3"}, {"front": "Those roads", "back": "εκείνοι οι δρόμοι", "audio": "hypertts-186ac843c60f6dd317ed8f9b40d55a3c51eb700e782e0f046b1e861f.mp3"}, {"front": "When are they arriving? (masc. emphatic)", "back": "πότε φτάνουν αυτοί;", "audio": "hypertts-182d8781851abfe6d4f1dc58373b5dc9aad9be64c5bba1b55cd8499f.mp3"}, {"front": "The world", "back": "ο κόσμος", "audio": "hypertts-11dd60b81b7ca0e00b4ce339b6805057a60a4d5fadb93a747070c1cf.mp3"}, {"front": "Worlds", "back": "κόσμοι", "audio": "hypertts-f7717aa7c3c93e36d740020729a38412fabecf33671d7370d515985d.mp3"}, {"front": "Other worlds", "back": "άλλοι κόσμοι", "audio": "hypertts-52ac3575b036483859665cd9d9f90c8c12a74cc63f29b9e3919de95a.mp3"}, {"front": "He wants (emphatic)", "back": "αυτός θέλει", "audio": "hypertts-f1cc5c3cffa88d814e717c5b7d053587ee79d0e58eaf22e1c957b7b1.mp3"}, {"front": "They want (masc. emphatic)", "back": "αυτοί θέλουν", "audio": "hypertts-8bdb26d09b4ed73e9e518bd196b88699767058e6da6007627aecb978.mp3"}, {"front": "She wants (emphatic)", "back": "αυτή θέλει", "audio": "hypertts-8620a9c093db39eb9278dbf129c1c94192c1682411a843cd3ae076c0.mp3"}, {"front": "They want (fem. emphatic)", "back": "αυτές θέλουν", "audio": "hypertts-9afe4f5e0646e5df52d544c63e80196dc0553befb5227c150f95060f.mp3"}, {"front": "The house", "back": "το σπίτι", "audio": "hypertts-343d16f64e36fe23a9ee4dbd35c90b5433a1eb0b4153297489f45d9e.mp3"}, {"front": "The houses", "back": "τα σπίτια", "audio": "hypertts-681e19b3c73c519bcdd7d96110d1663fbe0ce3621f4abf6f238c94b7.mp3"}];
-
-function shuffle(arr) {
-  const a=[...arr];
-  for (let i=a.length-1; i>0; i--) {
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
-
-let deck=shuffle(CARDS);
-let pos=0;
-let currentAudio=null;
-
-function updateProgress() {
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
   document.getElementById('current-num').textContent=pos+1;
   document.getElementById('total-num').textContent=deck.length;
   document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
   document.getElementById('prev-btn').disabled=pos===0;
 }
-
-function showCard() {
+function showCard(){
   const card=deck[pos];
   document.getElementById('card-inner').classList.remove('flipped');
   document.getElementById('eng-text').textContent=card.front;
   document.getElementById('greek-text').textContent=card.back;
   document.getElementById('audio-btn').classList.remove('playing');
   document.getElementById('tap-hint').style.display='';
-  if (currentAudio) {currentAudio.pause();currentAudio=null;}
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
   updateProgress();
 }
-
-function flipCard() {
+function flipCard(){
   const flipped=document.getElementById('card-inner').classList.toggle('flipped');
-  if (flipped) {
-    document.getElementById('tap-hint').style.display='none';
-    playAudio();
-  } else {
-    document.getElementById('tap-hint').style.display='';
-  }
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
 }
-
-function playAudio() {
+function playAudio(){
   const card=deck[pos];
-  if (currentAudio) {currentAudio.pause();currentAudio=null;}
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
   const btn=document.getElementById('audio-btn');
   const audio=new Audio(AUDIO_PATH+card.audio);
-  currentAudio=audio;
-  btn.classList.add('playing');
+  currentAudio=audio;btn.classList.add('playing');
   audio.play().catch(()=>{});
   audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
   audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
 }
-
-function nextCard() {
-  if (pos<deck.length-1) {pos++; showCard();}
-  else {showDone();}
-}
-
-function prevCard() {
-  if (pos>0) {pos--; showCard();}
-}
-
-function showDone() {
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
   document.getElementById('study-view').classList.add('hidden');
   document.getElementById('done-view').classList.remove('hidden');
 }
-
-function restart() {
-  deck=shuffle(CARDS);
-  pos=0;
+function restart(){
+  deck=shuffle(CARDS);pos=0;
   document.getElementById('done-view').classList.add('hidden');
   document.getElementById('study-view').classList.remove('hidden');
   showCard();
 }
-
 showCard();
 </script>
 </body>
