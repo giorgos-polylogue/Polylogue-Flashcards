@@ -20,7 +20,6 @@
   h1 em { font-style: italic; color: var(--teal); }
   .tagline { font-size: 15px; color: var(--ink-muted); font-weight: 300; line-height: 1.6; max-width: 440px; margin-bottom: 2.5rem; }
   .divider { height: 1px; background: var(--ink-faint); margin-bottom: 2.5rem; }
-
   .how-section { margin-bottom: 2.5rem; }
   .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 1rem; padding-left: 2px; }
   .how-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
@@ -28,14 +27,14 @@
   .how-card-num { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--teal); line-height: 1; margin-bottom: 6px; }
   .how-card-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
   .how-card-text { font-size: 12px; color: var(--ink-muted); line-height: 1.5; font-weight: 300; }
-
   .tip-box { background: var(--teal-light); border: 1px solid #9FE1CB; border-radius: 12px; padding: 1rem 1.25rem; }
   .tip-box-text { font-size: 13px; color: #0F6E56; line-height: 1.6; }
   .tip-box-text strong { font-weight: 500; }
-
   .lessons-section { margin-bottom: 2.5rem; }
   .unit-block { margin-bottom: 2rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
   .unit-block:nth-child(1) { animation-delay: 0.05s; }
+  .unit-block:nth-child(2) { animation-delay: 0.15s; }
+  .unit-block:nth-child(3) { animation-delay: 0.25s; }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
   .unit-label { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.75rem; padding-left: 2px; }
   .lesson-list { display: flex; flex-direction: column; gap: 8px; }
@@ -48,19 +47,12 @@
   .lesson-card:hover .lesson-arrow { background: var(--teal-light); border-color: var(--teal); }
   .lesson-arrow svg { width: 12px; height: 12px; color: var(--ink-muted); transition: color 0.15s; }
   .lesson-card:hover .lesson-arrow svg { color: var(--teal); }
-
   footer { padding: 0 0 3rem; display: flex; align-items: center; gap: 8px; }
   .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
   .footer-text { font-size: 12px; color: var(--ink-muted); font-weight: 300; }
   .footer-text a { color: var(--teal); text-decoration: none; }
-
-  @media (max-width: 560px) {
-    .how-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 480px) {
-    .wrap { padding: 0 1.25rem; }
-    header { padding-top: 2rem; }
-  }
+  @media (max-width: 560px) { .how-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .wrap { padding: 0 1.25rem; } header { padding-top: 2rem; } }
 </style>
 </head>
 <body>
@@ -93,7 +85,6 @@
         <div class="how-card-text">When you reach the end, hit "Practice again" to reshuffle and go through the deck again.</div>
       </div>
     </div>
-
     <div class="tip-box">
       <div class="tip-box-text">
         <strong>Speak out loud before flipping.</strong> Don't just think the answer — say it. The goal isn't to finish the deck, it's to build the reflex of speaking Greek. 5–10 minutes a day beats one long session.
@@ -104,6 +95,7 @@
   <div class="divider"></div>
 
   <section class="lessons-section">
+
     <div class="unit-block">
       <div class="unit-label">Unit 2</div>
       <div class="lesson-list">
@@ -125,6 +117,30 @@
     </div>
 
     <div class="unit-block">
+      <div class="unit-label">Unit 3</div>
+      <div class="lesson-list">
+        <a href="/unit3-lesson1/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 1 — Lost, Forgotten — Closed Forms</span><span class="lesson-meta">51 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson2/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 2 — Eat, See, Say</span><span class="lesson-meta">38 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson3/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 3 — Give It to Me — Stacking Pronouns</span><span class="lesson-meta">13 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson4/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 4 — If, When & όταν</span><span class="lesson-meta">15 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson5/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 5 — World Building</span><span class="lesson-meta">58 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson6/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 6 — I Haven't Danced in Years</span><span class="lesson-meta">52 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson7/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 7 — Alone, Together & μόνος</span><span class="lesson-meta">34 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson8/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 8 — She vs Her</span><span class="lesson-meta">28 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson9/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 9 — The verb for "I like" & he/him noun changes</span><span class="lesson-meta">44 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson10/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 10 — Drop the S — How Masculine Nouns Change</span><span class="lesson-meta">71 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson11/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 11 — Comparing</span><span class="lesson-meta">27 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson12/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 12 — Bigger, Better, Missing You</span><span class="lesson-meta">62 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson13/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 13 — Yesterday in Greek — Building the Closed Past</span><span class="lesson-meta">54 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson14/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 14 — More Verbs in Open/Closed Past & Must Have</span><span class="lesson-meta">68 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson15/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 15 — I Would Have Called You — The Greek Conditional</span><span class="lesson-meta">40 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson16/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 16 — Wanted, Knew, Saw</span><span class="lesson-meta">30 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson17/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 17 — I Was There — ήμουν, ήταν, είχα</span><span class="lesson-meta">73 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+        <a href="/unit3-lesson18/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 18 — I Think That… & Talking to a Group</span><span class="lesson-meta">64 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+      </div>
+    </div>
+
+    <div class="unit-block">
       <div class="unit-label">Conversation Lab</div>
       <div class="lesson-list">
         <a href="/convo-spiti/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Το σπίτι μου — My Home</span><span class="lesson-meta">38 cards · vocabulary for Saturday's class</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
@@ -132,6 +148,7 @@
         <a href="/convo-diakopes/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Κάνουμε διακοπές μαζί — Let's Holiday Together</span><span class="lesson-meta">37 cards · vocabulary for Saturday's class</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
       </div>
     </div>
+
   </section>
 
   <footer>
