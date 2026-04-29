@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Lesson 16: Wanted, Knew, Saw</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #1D9E75; border-color: #1D9E75; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 3 · Lesson 16</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "I wanted", "back": "ήθελα", "audio": "hypertts-ebb195e948137456d40abd1fe89d8bfaabdada19c516e2c903808dff.mp3"}, {"front": "They wanted", "back": "ήθελαν", "audio": "hypertts-1094e773a644b7f28f5256692e303afaf98abb8aec0535a17ec0068e.mp3"}, {"front": "We wanted", "back": "θέλαμε", "audio": "hypertts-9004a54a3b0a9505a9217d90fd842a511ea5654917d18edf609a827a.mp3"}, {"front": "He/she/it wanted", "back": "ήθελε", "audio": "hypertts-66610a9cb8091ccde06b1554b4e12e35b22c62a10841e3415115c072.mp3"}, {"front": "You wanted", "back": "ήθελες", "audio": "hypertts-ae5d339d48261bd510d3c90031280c058ec9eba523496b04d0ccd540.mp3"}, {"front": "I would like", "back": "θα ήθελα", "audio": "hypertts-e59c03dd9caa0a1c77b44e2602bc2c16208130353269cf1c1a7c6ca1.mp3"}, {"front": "I would like a gyros", "back": "θα ήθελα έναν γύρο", "audio": "hypertts-87900b178b4a6c6cfaede3e24c0f3e87a0ef50d68a575dc56a8342f4.mp3"}, {"front": "I knew", "back": "ήξερα", "audio": "hypertts-e493afc2ae8a12d2d71d4ef754547c0d9962dce2b7cc44db8d237d93.mp3"}, {"front": "We knew", "back": "ξέραμε", "audio": "hypertts-aab7aaca5531b3b76551ae8c3aa1312a38558ff733dd20730395b948.mp3"}, {"front": "They knew", "back": "ήξεραν", "audio": "hypertts-31615c4b59bace9c416f31143f74be7c95c5f1115e20f1fa851605a0.mp3"}, {"front": "He/she knew", "back": "ήξερε", "audio": "hypertts-5a7bdfdada370f42ec2cd611d7766a7ed0e187a6c12d2db26f008087.mp3"}, {"front": "Did you know?", "back": "ήξερες;", "audio": "hypertts-0e9116a5086f29abc0f12f99fe3df9200aa226f1b2856c7ac7d3959a.mp3"}, {"front": "Did you know it?", "back": "το ήξερες;", "audio": "hypertts-ec4b5a643f40adb9d7a31b3487f5ccb2290c4c3bbce965c26d33b287.mp3"}, {"front": "I wanted to tell you something", "back": "ήθελα να σου πω κάτι", "audio": "hypertts-7ba8ebd57ba7a67142a7586c780687e3f9c84e6e5ce7d4cd67d5ef2e.mp3"}, {"front": "I wanted you to tell me it", "back": "ήθελα να μου το πεις", "audio": "hypertts-e36c7916f67774bd3fd937911f15d7350c70a67caab36aba5236a993.mp3"}, {"front": "I said", "back": "είπα", "audio": "hypertts-1ed7844e505c9e2bd4edbfd11fa949ac791698e46ded94a507531347.mp3"}, {"front": "He/she said", "back": "είπε", "audio": "hypertts-49d119361fde89d3f63d001d434de0c9cfb0b638527d34e9e54998b4.mp3"}, {"front": "You said", "back": "είπες", "audio": "hypertts-45a4e3f490ce7136828a3310d6f00ecac420a58d83b5e60f71e7dc4c.mp3"}, {"front": "What did you say?", "back": "τι είπες", "audio": "hypertts-6016180601cd65d41fb793bf936fa57767a6e7520931dcbf488c38b8.mp3"}, {"front": "I told you", "back": "σου είπα", "audio": "hypertts-9ba2edc13b2be43707c6beb8e17b49c9b675bdb81981d2649bcfcff4.mp3"}, {"front": "What did I tell you?", "back": "τι σου είπα;", "audio": "hypertts-e3a74bd72efe9b7ffca19df8e7da81c9bf4b42f77baef044d1cab55b.mp3"}, {"front": "We said / told", "back": "είπαμε", "audio": "hypertts-86e10bdc913951372ac7b9c13d7d1a23eabef4728039df2b7b66025a.mp3"}, {"front": "They said", "back": "είπανε", "audio": "hypertts-306565cc5d1dd15611bea21627cf19e3e46492395354f409d5c317d1.mp3"}, {"front": "You didn't tell me where you were", "back": "δεν μου είπες που ήσουν", "audio": "hypertts-5eedd2cb122b7b1cdf291d3b862514804d3f3c67a4d2d1149ae63a7d.mp3"}, {"front": "I was going to be there but they told me to stay here", "back": "θα ήμουν εκεί αλλά μου είπαν να μείνω εδώ", "audio": "hypertts-1af86e8638e773e911aaed2446608bc287b99fd5a550befb633afc82.mp3"}, {"front": "I saw", "back": "Είδα", "audio": "hypertts-e26cca751facb7259c701c6267ab89a8eb3c0dcb5276aebf1f7bc09f.mp3"}, {"front": "We saw", "back": "Είδαμε", "audio": "hypertts-a82de9a4c4a38ba231dcd5cf45abec8c62dc6b2b0b576ec29810fedc.mp3"}, {"front": "They saw", "back": "Είδανε", "audio": "hypertts-3a37ff035bffc0473162cb7115dc49e54ae40a66666183030d91c6cf.mp3"}, {"front": "He/she saw", "back": "Είδε", "audio": "hypertts-f7d6c02cbea11ff2b4153f9e403052001f42883d93af311dbf7c89bc.mp3"}, {"front": "You saw", "back": "Είδες", "audio": "hypertts-6a3a9900061429707365592fe28a9ad2641a16ab51c8dc134cffb4b3.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
