@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Lesson 10: Drop the S — How Masculine Nouns Change</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #1D9E75; border-color: #1D9E75; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 3 · Lesson 10</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "My friend (masc.)", "back": "ο φίλος μου", "audio": "hypertts-d40626a88b17e69727b71c8e518850d8af9a801cc781fc4c191e9de7.mp3"}, {"front": "My new friend (masc.)", "back": "ο νέος μου φίλος", "audio": "hypertts-4181b4d5d010e2b98bd7fea9f58e48053e183300f74e4cdc03e96f97.mp3"}, {"front": "He is waiting for my friend", "back": "περιμένει τον φίλο μου", "audio": "hypertts-876b52e81a0c4790928a817d8f05306a705fbbab3c7a4fdb666771cf.mp3"}, {"front": "My friend is waiting for him", "back": "ο φίλος μου τον περιμένει", "audio": "hypertts-67d94dff65f799b11e50968decd905126dce3935f51bbf36d92e0e63.mp3"}, {"front": "Do you know my friend?", "back": "ξέρεις τον φίλο μου;", "audio": "hypertts-811c60fb57d2bb71f1decd2825b64072c6a31f19caba26b83b83ad58.mp3"}, {"front": "Do you know my new friend?", "back": "ξέρεις τον νέο μου φίλο;", "audio": "hypertts-b3dd4cb0b8d741e8bf79fed123e993d2489ccb63402b65e0be5438e3.mp3"}, {"front": "I find", "back": "βρίσκω", "audio": "hypertts-a8b5a9b4fb6b1a688cae29476670bfe1239b0a87999d38f913c0bfe7.mp3"}, {"front": "I don't find the road", "back": "δεν βρίσκω τον δρόμο", "audio": "hypertts-6d58acf05b8d6799e675b5ddade90d0c25752d8e8f9e9cad8dc6ea09.mp3"}, {"front": "I can't find the road", "back": "δεν μπορώ να βρω τον δρόμο", "audio": "hypertts-edd7c5b83724fe986353d9fb78b91685f3cc0777150558464f203680.mp3"}, {"front": "You find", "back": "βρίσκεις", "audio": "hypertts-d7595bd6a754524a2f3f6f621d9e586d0eeaafdb8b751be9c506d1c4.mp3"}, {"front": "Don't you find it? (neuter)", "back": "δεν το βρίσκεις", "audio": "hypertts-d3faf422850a75609803219c69f631fa8b95fa645deed6cbbf7cb343.mp3"}, {"front": "Don't you find it? (the road)", "back": "δεν τον βρίσκεις", "audio": "hypertts-ef43520f229e3253aca192e68c93452fc29c0ffb6dc8c0fa8dacf739.mp3"}, {"front": "The bill", "back": "ο λογαριασμός", "audio": "hypertts-1ecbf8bc133e18d12a4748beffbdfca49894ec30a8436e556063dbe6.mp3"}, {"front": "I want the bill", "back": "θέλω τον λογαριασμό", "audio": "hypertts-40ced227331270127f3b92d4b87c28afc587c703620dd703242eccca.mp3"}, {"front": "The bill please", "back": "τον λογαριασμό παρακαλώ", "audio": "hypertts-7da58e5e9ae4fbdd2e7b040765ddbdc30d0f96b13f3f3c82cd476687.mp3"}, {"front": "Where is the bill?", "back": "που είναι ο λογαριασμός;", "audio": "hypertts-99d183ef72263f157ecf2c60ab89f741337a425cbbc3db1ee0a90e85.mp3"}, {"front": "I don't find the bill", "back": "δεν βρίσκω τον λογαριασμό", "audio": "hypertts-c3c7061696b67dbb22a1df875ce68c85dae8ba19d6143e228a7e5955.mp3"}, {"front": "I don't find the bills", "back": "δεν βρίσκω τους λογαριασμούς", "audio": "hypertts-1d70fa77e0eb34012ada70e60bdcb42df3cf23ef58251726b9548f5b.mp3"}, {"front": "I can't find it by myself (neuter)", "back": "δεν μπορώ να το βρω μόνος μου", "audio": "hypertts-43113fad437f1dfeceb943cbf80cfb6b84e107cf7d9a17b2415d8528.mp3"}, {"front": "Do you have my own? (masc.)", "back": "έχεις τον δικό μου;", "audio": "hypertts-b9e48c40a10c68f0191d1ba9a0c093b52f3eaddd11713c43d2725035.mp3"}, {"front": "Do you have my own? (fem.)", "back": "έχεις την δική μου;", "audio": "hypertts-b2df63f071420f098fc200cd350309bdb28f4b3f68e94d5421a23108.mp3"}, {"front": "You like my own (fem.)", "back": "σου αρέσει η δική μου", "audio": "hypertts-e2b9d1b2964af062191177bff07a709e0a7fac24cd67215d09d1e37c.mp3"}, {"front": "I will give you my own (masc.)", "back": "θα σου δώσω τον δικό μου", "audio": "hypertts-d7f0a9718c1d45098b144b05762c0b646de383b2047767f692da11ef.mp3"}, {"front": "Shall I give you them? (masc.)", "back": "να σου τους δώσω;", "audio": "hypertts-838b93444be1b42d3a12c64fc229176216db4a11e97e7a829307b4f0.mp3"}, {"front": "Shall I give you my own? (masc. them)", "back": "να σου δώσω δικούς μου;", "audio": "hypertts-5fa109e80bef4b05d7b74b265e007d90ce8d1e2e6372e68ca6e4554f.mp3"}, {"front": "Shall I give you my own? (fem. them)", "back": "να σου δώσω τις δικές μου;", "audio": "hypertts-7300a24edee947766fe024490726070d160ce905eb5781c1692487d6.mp3"}, {"front": "Shall I give you my own? (neut. them)", "back": "να σου δώσω τα δικά μου;", "audio": "hypertts-e945dd9231cde16e122da2a45d8702b6051f0a72814acd08781bcff8.mp3"}, {"front": "Let's give him our own (neuter)", "back": "ας του δώσουμε το δικό μας", "audio": "hypertts-2be4a1f3ea9e9eabd34755fa2d98561c928f157869c76bfec8c3881a.mp3"}, {"front": "Where is my own (feminine)", "back": "που είναι η δική μου", "audio": "hypertts-1b47a829e8cf92559240f852501ef722f7147bbb650bddba4af15531.mp3"}, {"front": "I want my own (feminine)", "back": "θέλω την δική μου", "audio": "hypertts-9552381dac711cbfb61c692b58d13fe15bb0c59cec1e604d9db704ea.mp3"}, {"front": "I want my own (feminine them)", "back": "θέλω τις δικές μου", "audio": "hypertts-e716439e3b01f70ef008c31b0c6240b183bd94fb9fecb7f3990d46bb.mp3"}, {"front": "Where are my own (feminine them)", "back": "που είναι οι δικές μου", "audio": "hypertts-4e77b004b80bb29d27ca3ba4f4bee2d3e98452e1d475fd8518e3492c.mp3"}, {"front": "I have left them outside (masc. or mixed)", "back": "τους έχω αφήσει έξω", "audio": "hypertts-dfd7dfec6cc6fe7561bee6e8a2e41a2c673be7a90bbade839d69ee24.mp3"}, {"front": "I have left them by themselves (masc. or mixed)", "back": "τους έχω αφήσει μόνους τους", "audio": "hypertts-f37dcdaa1216f8b81866b957f0842874ad23904b30ae9d5472b8aedf.mp3"}, {"front": "They have done it by themselves", "back": "το έχουν κάνει μόνοι τους", "audio": "hypertts-73476e0ad69795b6ba5c56bf04c8eaf22ffdcef76621f055a198fa9d.mp3"}, {"front": "I have left my own at home (masc. them)", "back": "έχω αφήσει τους δικούς μου σπίτι", "audio": "hypertts-8bf91c431e3b8e0615ab669df82f97ace9f0f5ffc6c97a319fe25200.mp3"}, {"front": "For my friend (masc.)", "back": "για τον φίλο μου", "audio": "hypertts-556fea985e02bdaa2d9fec4b547af61dbacfbb444e6694a7d4b9016e.mp3"}, {"front": "For my friend (fem.)", "back": "για την φίλη μου", "audio": "hypertts-2a25b3e8db3032e47dd8558cbe80709db321c2fbe471639352a654f5.mp3"}, {"front": "For my friends (masc.)", "back": "για τους φίλους μου", "audio": "hypertts-47b0082f228be43802e694cb4a430048e6299b831ce0cfb58bed9432.mp3"}, {"front": "For my new friends (masc.)", "back": "για τους νέους μου φίλους", "audio": "hypertts-5b74c79fc81944e147804c5817adb0feac4f8bedad18e598d2136421.mp3"}, {"front": "For my friends (fem.)", "back": "για τις φίλες μου", "audio": "hypertts-345ef272517dd6ab3770382f7e6d537767cdef591ee39a18bb6b4b1a.mp3"}, {"front": "For my new friends (fem.)", "back": "για τις νέες μου φίλες", "audio": "hypertts-6c0eeaf6466b3c29634b7bb5295c0affd91d60be09907dc9e68a9949.mp3"}, {"front": "The coffee", "back": "ο καφές", "audio": "hypertts-d55d0a718d99a9924b35930ba13d4d7cb0705f292a1c7a2f9b3ec2f3.mp3"}, {"front": "This coffee", "back": "αυτός ο καφές", "audio": "hypertts-9f838c68390690267b60d40f600ac65176be4afcb5deb9acce29521a.mp3"}, {"front": "This coffee is for my friend", "back": "αυτός ο καφές είναι για τον φίλο μου", "audio": "hypertts-54a8a2fb1037459445dbe9ff64d1e61ee4a9a6de35c30424de5156a2.mp3"}, {"front": "This one is for my friend", "back": "αυτός είναι για τον φίλο μου", "audio": "hypertts-cb7f357bbc72554292decb4d74f0cd6601829f5e3a0ac379d6f79807.mp3"}, {"front": "Coffees", "back": "καφέδες", "audio": "hypertts-f4920f21fb092e3bef928e9366e94d25ee4f2cb2379e36b5d4602eed.mp3"}, {"front": "These coffees are for my friends (masc.)", "back": "αυτοί οι καφέδες είναι για τους φίλους μου", "audio": "hypertts-72b86c5706441853c8c0158929468c4f8d543a0e7407ee5a97528681.mp3"}, {"front": "These coffees are for my friends (fem.)", "back": "αυτοί οι καφέδες είναι για τις φίλες μου", "audio": "hypertts-c2526450b9892abac7bbbf62ab5495688549313bb2b067c8edd2ed22.mp3"}, {"front": "I want two coffees", "back": "Θέλω δύο καφέδες", "audio": "hypertts-369ce97dcd8b43e9334bb93c46f11a4cff143a68585dab191005b4cc.mp3"}, {"front": "We are waiting for our coffees", "back": "Περιμένουμε τους καφέδες μας", "audio": "hypertts-8d0dbc225e0eaa775762080fb73be0db52f5e75185d2801a40b640b7.mp3"}, {"front": "We are waiting for our own coffees", "back": "Περιμένουμε τους δικούς μας καφέδες", "audio": "hypertts-93c7294685c629975d8940b81dae8810164c1f5dfa231ccdc8bfeafe.mp3"}, {"front": "I am waiting for my coffee", "back": "Περιμένω τον καφέ μου", "audio": "hypertts-f9c1e8c9c6780f00e76cb0eb2507997fe7ace75b179bb47aa86ba6ef.mp3"}, {"front": "I see the friend", "back": "Βλέπω τον φίλο", "audio": "hypertts-af208cc48f90013ce9fe3da3bf42354d749577fd2e51cb30f1629bc1.mp3"}, {"front": "I want the coffee", "back": "Θέλω τον καφέ", "audio": "hypertts-4c2c466da000f9ffa0e75c764b6279bfdea6c91deb6d3be8680cc3e5.mp3"}, {"front": "I see the friends (them)", "back": "Βλέπω τους φίλους", "audio": "hypertts-54cb15150eb770ea53170a7a4d81eff6dbb7c60f90818058d19e3769.mp3"}, {"front": "I want the coffees (them)", "back": "Θέλω τους καφέδες", "audio": "hypertts-306fb8cc85e1d0f4e9cd297d4468ad9b1de0c6902347b5d8f5bd25a4.mp3"}, {"front": "I see the man", "back": "Βλέπω τον άντρα", "audio": "hypertts-3287febc036f8aa3d60268d8ed92a682938c1dd691b509e4297250c2.mp3"}, {"front": "The men", "back": "οι άνδρες", "audio": "hypertts-0df9e7fba9d11728e3a0dce4a2ba0ce07b5ad8f52fab43b0e72c892f.mp3"}, {"front": "I see the men", "back": "Βλέπω τους άντρες", "audio": "hypertts-cc705a07ae9c0cb46c9b8e2f0853dc82eecf823971d5802f542b984c.mp3"}, {"front": "I have my coffee", "back": "έχω τον καφέ μου", "audio": "hypertts-273436e4683b566c3b6f2bfeeb99ccad3f89039ba7f63869a215d94b.mp3"}, {"front": "Do you have the bill?", "back": "έχεις τον λογαριασμό;", "audio": "hypertts-c6eaa04cf40739ae840919834530c03f9b94dcc7cbe4b1ad94e5e3bb.mp3"}, {"front": "The day", "back": "η μέρα", "audio": "hypertts-26661afcebd4948c921027c8da9b08da46fbe382ec67eb26a697c031.mp3"}, {"front": "A day", "back": "μια μέρα", "audio": "hypertts-8d27f11b6ac47c82720caf5902b49d277672bee5f61e3c1b9cda0830.mp3"}, {"front": "Days", "back": "μέρες", "audio": "hypertts-d5820dd07971d26645ba08be082cf1784d546525d1bebe121019ca18.mp3"}, {"front": "The days", "back": "οι μέρες", "audio": "hypertts-daf2deafd537fd0934559aa3cc9cf92580a5a26d92943785d10ba557.mp3"}, {"front": "City", "back": "η πόλη", "audio": "hypertts-725a22086356553084e3b6bc635c0b31bccc7c8561c05a7ba284824b.mp3"}, {"front": "The cities", "back": "οι πόλεις", "audio": "hypertts-f68f60b2196f8a4e84aa2ab4d8ed23aa7e8450b3e28e380b3d1fc16d.mp3"}, {"front": "Big city", "back": "μεγάλη πόλη", "audio": "hypertts-f144a2194ee377ddd28f929a6126e422e55d9f524e41223850011034.mp3"}, {"front": "Big cities", "back": "μεγάλες πόλεις", "audio": "hypertts-c2ceea7640154756a3a4f99c57a0391814830ff2423f19e6c44a23bf.mp3"}, {"front": "I don't like big cities", "back": "δεν μου αρέσουν οι μεγάλες πόλεις", "audio": "hypertts-dc0deaa0c4468d3dd5546ec2b192f0a78cbaced08fcc1c58d142911c.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
