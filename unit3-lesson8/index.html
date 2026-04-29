@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Lesson 8: She vs Her</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #1D9E75; border-color: #1D9E75; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 3 · Lesson 8</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "I want it (neuter)", "back": "το θέλω", "audio": "hypertts-b97db487226def73c4071c602d6b664f4850ae5ccde7cae0fed88ebb.mp3"}, {"front": "I want it (feminine - the movie)", "back": "την θέλω", "audio": "hypertts-d661fddbd080e56816c45101a1b3f91ecddcd562cc5a906ffe4374c0.mp3"}, {"front": "I want to see it (feminine)", "back": "θέλω να την δω", "audio": "hypertts-c9602088eb43004fcc5cee42e79c2025f2456cafdae15607c52189f4.mp3"}, {"front": "I start", "back": "αρχίζω", "audio": "hypertts-dd3f2002aff3831e62561e7c131a9ce000b12dc2750d68aed914a914.mp3"}, {"front": "The movie is starting now", "back": "η ταινία αρχίζει τώρα", "audio": "hypertts-fbc848031a495c700180cfa256e87dbc17647f4d2e9edd69867824a0.mp3"}, {"front": "I am watching/seeing the movie", "back": "βλέπω την ταινία", "audio": "hypertts-f02890ec7e024b7e5a4046cf1f657c2ec4ebd088a908dad60e49a38d.mp3"}, {"front": "I am watching it (feminine)", "back": "την βλέπω", "audio": "hypertts-f9fdc54b324c5e1da1fe29aebddd0b07a484cbfb7a5fa4f7beb28496.mp3"}, {"front": "My friend (male)", "back": "ο φίλος μου", "audio": "hypertts-d40626a88b17e69727b71c8e518850d8af9a801cc781fc4c191e9de7.mp3"}, {"front": "My friend (female)", "back": "η φίλη μου", "audio": "hypertts-b4f461613d2e060718e644ae12876e3c6744bb7d6dee4e764f79a498.mp3"}, {"front": "My friend wants (female)", "back": "η φίλη μου θέλει", "audio": "hypertts-d7844911d27fdbd097b6841d810c1da94fa19615100f45dac073990c.mp3"}, {"front": "My friend wants to see me", "back": "η φίλη μου θέλει να με δει", "audio": "hypertts-32543be1477ccdc29e3d69335b031e5b0c8a26e33b595fb9880c3b6d.mp3"}, {"front": "I want to see my friend (female)", "back": "θέλω να δω την φίλη μου", "audio": "hypertts-1cc551b47990f3e25e25d48fdb1a33a5105d542fd5ea467a47e4bfa5.mp3"}, {"front": "I want to do it with my friend (female)", "back": "θέλω να κάνω με την φίλη μου", "audio": "hypertts-b535b78c88057ebe7a787f2aa86f69277b2cf0dd58e7c8a1453782f4.mp3"}, {"front": "I want to see the movie with my friend", "back": "θέλω να δω την ταινία με την φίλη μου", "audio": "hypertts-9b60fa4f6eaba9d2786b91e696f0d96c5942a9cd81d44ddeee619269.mp3"}, {"front": "Far / far away", "back": "Μακριά", "audio": "hypertts-2e2e1dc1beb2e4d0bb0fadb648e053458965e48182b5c4d6917cbe54.mp3"}, {"front": "Far away from", "back": "Μακριά από", "audio": "hypertts-a1647bee060a256aa7d0658b4266a3ba071222b59e754b26c1274680.mp3"}, {"front": "The only thing we want is to stay by ourselves far away from the city", "back": "το μόνο που θέλουμε είναι να μείνουμε μόνοι μας μακριά από την πόλη", "audio": "hypertts-c39905eed9dcf54755831e98455078404343cd8c729b01a5d7259559.mp3"}, {"front": "My friend wants to do it by herself", "back": "η φίλη μου θέλει να το κάνει μόνη της", "audio": "hypertts-ae3fa17bc81851dee0d6b9e9e3e95a51af1f1541dcbb4cef434a3f53.mp3"}, {"front": "My friends want to do it by themselves (female)", "back": "οι φίλες μου θέλουν να το κάνουν μόνες τους", "audio": "hypertts-b011bbe983dcfea38faec505da439b50e9cd10f0a978771c0800aee4.mp3"}, {"front": "My friends (feminine)", "back": "οι φίλες μου", "audio": "hypertts-2a34acadf5d48d3249a2d3eb04424dd0d5eb5885dca69d9bc802b7e5.mp3"}, {"front": "With my friends (feminine)", "back": "με τις φίλες μου", "audio": "hypertts-ba68213b77ce139fdb99090a64a742e725d2b5a6727c2069a507c903.mp3"}, {"front": "With his friends (feminine)", "back": "με τις φίλες του", "audio": "hypertts-93af9cdbe085058bea6b1ca46e015117dc904724d417c5d203912c3b.mp3"}, {"front": "This one (neuter)", "back": "αυτό", "audio": "hypertts-dfdac5f1c3eaf3db6e4e88682273d45519de2cc083c82ed4ca30c503.mp3"}, {"front": "This (masc.)", "back": "αυτός", "audio": "hypertts-9e0cd91a0c0aa126e36716100a8aadc9bf2894b35f9c43ed90e25d16.mp3"}, {"front": "This (fem.)", "back": "αυτή", "audio": "hypertts-665de60ca64013384ba7bc5927d24d7e4ba1f1a68d5dc4ff1b481caa.mp3"}, {"front": "This one is for his friend (fem.)", "back": "αυτό είναι για την φίλη του", "audio": "hypertts-9d3f5d039a4446b4a0eb3db0cb3cbb418f9a18efec2dce4c2a038310.mp3"}, {"front": "This one is for his friends (fem.)", "back": "αυτό είναι για τις φίλες του", "audio": "hypertts-3674fa5dc7ccd85370b3331ee321808ede14c67a27c22df8e8149f71.mp3"}, {"front": "So that my friends cook (fem.)", "back": "για να μαγειρέψουν οι φίλες μου", "audio": "hypertts-c70fe4c937cda199ad1066bca09575b6cc85b2abecc28686059298d0.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
