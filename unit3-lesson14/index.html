@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Lesson 14: More Verbs in Open/Closed Past & Must Have</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #1D9E75; border-color: #1D9E75; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 3 · Lesson 14</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "Do you want more salad?", "back": "θέλεις (και) άλλη σαλάτα;", "audio": "hypertts-6930373c91c1ed06f5917ed8b4f7b115c49083b28aa9a1447dd9bcd6.mp3"}, {"front": "Do you want more coffee?", "back": "θες (και) άλλο καφέ;", "audio": "hypertts-d104a2cab16d373f85cafeedc3dc18e317ec9f66da2ab08e6045feeb.mp3"}, {"front": "Do you want coffee with milk?", "back": "Θέλεις καφέ με γάλα", "audio": "hypertts-5e7a47b9efb005d6c54d408f31a9fa0022ca3cac2504d22c4fc44314.mp3"}, {"front": "when", "back": "πότε", "audio": "hypertts-26397467fead7b7c2f43416438a07542df53a2a1a65120fb67a42c25.mp3"}, {"front": "Then (by then)", "back": "τότε", "audio": "hypertts-3a6b426ad12e6b4a5e9119a225a92787d97914d41d1249336b31d822.mp3"}, {"front": "another place", "back": "αλλού", "audio": "hypertts-67b5599afd57eaa2d3aed717419ef5e4a055da038e0441d5394ef62d.mp3"}, {"front": "but", "back": "μα / αλλά", "audio": "hypertts-6b7c39e82e5387e31f973adf5923743028c42dc14e8f1a22c06b3771.mp3"}, {"front": "She changed", "back": "άλλαξε", "audio": "hypertts-c496d3bbde1056a994c717f23a0bdbfad4cf9c57393a70337f4b1b59.mp3"}, {"front": "You changed", "back": "άλλαξες", "audio": "hypertts-b9b170c39526e89b0bcb0a412ed634336d506e48ab84a6e353608ebf.mp3"}, {"front": "You have changed", "back": "έχεις αλλάξει", "audio": "hypertts-a9fd98798cb8c528905d79e17bd53194182a218d522cd561e22815b9.mp3"}, {"front": "The music", "back": "η μουσική", "audio": "hypertts-8816e5d688e188475938aaaab2ff808bfbc685046d5b67530ff7e274.mp3"}, {"front": "Do you like the music?", "back": "σου αρέσει η μουσική;", "audio": "hypertts-6915f6aac88a2febdf109b98f207864a0b38d61981bddb6b44f65cc6.mp3"}, {"front": "Or", "back": "ή", "audio": "hypertts-5ca58b4b913dc7aaaf58f00bcc9cfe90eb5639dae2e8f6e30763900b.mp3"}, {"front": "Do you like the music or should we change it?", "back": "σου αρέσει η μουσική ή να την αλλάξουμε;", "audio": "hypertts-9e513d48babca374f4eafd1d994e86c051414bf2bc812a50d28c184c.mp3"}, {"front": "I changed the music because I don't like it", "back": "άλλαξα την μουσική γιατί δεν μου αρέσει", "audio": "hypertts-e21be08e7948fca0b5b7fa6d8b008fe59505e7eb10519b9132e8956b.mp3"}, {"front": "The clothes", "back": "Τα ρούχα", "audio": "hypertts-0c89d4c512144d05b112507b6018c88a47e625b2159a2414944f14ad.mp3"}, {"front": "My clothes", "back": "τα ρούχα μου", "audio": "hypertts-739a3a27a0ed0c3052095044d4d417ddd4f80e93c0b0a864a704555a.mp3"}, {"front": "I am changing my clothes", "back": "αλλάζω τα ρούχα μου", "audio": "hypertts-ea0f69ab2b89439e289079c9ba52126551352b780c1ffab7c3b25f72.mp3"}, {"front": "I was changing my clothes", "back": "άλλαζα τα ρούχα μου", "audio": "hypertts-c983163a428561915787833063b9b1af0bc4df101d480bc74026e37a.mp3"}, {"front": "She was changing her clothes", "back": "άλλαζε τα ρούχα της", "audio": "hypertts-5cfa51622fe9ef218029a43c1c3433b42e621da3e25b883f9b1da27b.mp3"}, {"front": "Money", "back": "λεφτά", "audio": "hypertts-4d961e589df2c78a372e01c1fe2dd71eb15393bb24e23b4361878ed6.mp3"}, {"front": "She was changing her money", "back": "άλλαζε τα λεφτά της", "audio": "hypertts-d61a2284f1315c81d01ca53c3d53dec473c0570eb2f0f1cfe31bfd8a.mp3"}, {"front": "She changed her money", "back": "άλλαξε τα λεφτά της", "audio": "hypertts-efa4c5ea4998b33b29ff13c8ebc78f1560e6aa12160b0f7d514d5d5a.mp3"}, {"front": "We changed our clothes", "back": "αλλάξαμε τα ρούχα μας", "audio": "hypertts-d5cc0c82a68448a3c18f40068ca03bf7fae4dd1084638348abf4fd28.mp3"}, {"front": "They changed their clothes", "back": "άλλαξαν τα ρούχα τους", "audio": "hypertts-36de6ed7209d74a509bb76a644c78dec88c5b84c083950bf55c35dac.mp3"}, {"front": "I was giving", "back": "έδινα", "audio": "hypertts-6c5842f06a9c51fa45244df1dab0fbb95cd1625da2db275870b87938.mp3"}, {"front": "You were giving", "back": "έδινες", "audio": "hypertts-78782a06177b51c81a7488c0268a85f54de24c58b61b3dff734c3e22.mp3"}, {"front": "We were giving", "back": "δίναμε", "audio": "hypertts-d7f81230b595fa708d7428501fbb84a4da5cb53a755e0c99aaa28465.mp3"}, {"front": "They were giving", "back": "έδιναν", "audio": "hypertts-3ada38ce04145d7ca20cfc33cd7ceff906d4e7c2d620a50a6d285889.mp3"}, {"front": "I gave", "back": "έδωσα", "audio": "hypertts-b047b7f67ab0a2749367fba0fd924e0b64da7c0a5c703ff41c29d83f.mp3"}, {"front": "Already", "back": "ήδη", "audio": "hypertts-75761c1a8712f0bb201d494b361bdc70f6e3eba7847eeafdf9567c41.mp3"}, {"front": "I gave it to you already", "back": "σου το έδωσα ήδη", "audio": "hypertts-b3338d08af3bea50941a70ba3a8b7bce6a291fb149bb7cc7f2da9d30.mp3"}, {"front": "I gave it to you already (masc. it)", "back": "σου τον έδωσα ήδη", "audio": "hypertts-007497ddaab276ec93505d2ae69d0cbd8e83a55279bc076082f13f2a.mp3"}, {"front": "I did it", "back": "το έκανα", "audio": "hypertts-ec22536ea06bf4c9def6fd65ca217063a8508285e9b73c06d17696a4.mp3"}, {"front": "He did it", "back": "το έκανε", "audio": "hypertts-61a97402f66e89be5f0095c63c1ec37f110561f9594883ab4c979cd5.mp3"}, {"front": "Did you do it?", "back": "το έκανες;", "audio": "hypertts-8506a3ad706ae16ffd5e333b91c251334cb26fc6d359a3942e18824a.mp3"}, {"front": "We did it", "back": "το κάναμε", "audio": "hypertts-cb74ad4a2deffb44da5c03a5047c8b9bf96c702dfeeeab3baee06e1f.mp3"}, {"front": "They did it", "back": "το κάνανε", "audio": "hypertts-774719ae003bc8a416f7419537d4de5b13094591c79def066bfec1bb.mp3"}, {"front": "I missed you (you were absent to me)", "back": "μου έλειψες", "audio": "hypertts-f02dbb619d79338029efc417e97ecb76cb6b5fa9f946ed5c33b6ce4f.mp3"}, {"front": "Did you miss me?", "back": "σου έλειψα;", "audio": "hypertts-6f73b8148e56d63dc02d864cdd252ed452de25c63d444f040f5912a9.mp3"}, {"front": "Monday", "back": "Δευτέρα", "audio": "hypertts-46620395f0a0df63b36a2c3a70d2429a5600c9ada736a363e8754171.mp3"}, {"front": "Thursday", "back": "Πέμπτη", "audio": "hypertts-3677a9e146e4d2a6102590c31e64004245ea156d2252f001e790272e.mp3"}, {"front": "They will do it on Thursday", "back": "Θα το κάνουν την Πέμπτη", "audio": "hypertts-fda48989b18630257ad96082bab25b4282e27002c6493609c345c797.mp3"}, {"front": "They did it on Thursday", "back": "Το κάνανε την Πέμπτη", "audio": "hypertts-2071dbda231e2e5c5107043575a4fc7f5a15d4347a2cc4e9c9e6b6e7.mp3"}, {"front": "He was playing", "back": "έπαιζε", "audio": "hypertts-c3f6caa56460412730dd2cb9c93272e5dc86a9873ee5c64046ba2896.mp3"}, {"front": "He was just playing", "back": "μόνο έπαιζε", "audio": "hypertts-f53e44701d94ed205b0c929b59a9214872b8942901eda50e171e7e8f.mp3"}, {"front": "She was just playing by herself", "back": "μόνο έπαιζε μόνη της", "audio": "hypertts-9b9cd06a5de34e688dabcaa1e3399a83b54ae4920c26c4e1ae4d547c.mp3"}, {"front": "She was playing with her friend (masc.)", "back": "έπαιζε με τον φίλο της", "audio": "hypertts-ecfbe887c1cc465c7fc00dd7882dd37e8908e58852ecda3f6d468d5e.mp3"}, {"front": "Were you playing?", "back": "έπαιζες;", "audio": "hypertts-73c43972993cd7a43b6553078185309d024ab5e672cc4b4700da38af.mp3"}, {"front": "Did you play?", "back": "έπαιξες;", "audio": "hypertts-0f7cc90025e855f7b1c6ed48cb0a1fd5f05c575d74ec29e93f86e2b3.mp3"}, {"front": "Did they play?", "back": "έπαιξαν", "audio": "hypertts-fe0bb432ad8b4d568e795f4f12a65e04fe300d2d85306ec95b4e9bcd.mp3"}, {"front": "Have they played?", "back": "έχουν παίξει;", "audio": "hypertts-ffd98292ab600455d898400f0ce357f41922c3a8f25bd6d41bc93c57.mp3"}, {"front": "I did it / I was doing it", "back": "το έκανα", "audio": "hypertts-ec22536ea06bf4c9def6fd65ca217063a8508285e9b73c06d17696a4.mp3"}, {"front": "I have done it", "back": "το έχω κάνει", "audio": "hypertts-ba9b46e6ca47a0f3025e226a7be10418ccc99ecde01e8e35ec1adb25.mp3"}, {"front": "You did it", "back": "το έκανες", "audio": "hypertts-5a2d05dd301162107072b5ccd8393acf30ec495904c45375068eb12d.mp3"}, {"front": "What did you do?", "back": "τι έκανες;", "audio": "hypertts-60919a2c3fad5eab7f6495ba0080812a6a0c0aef9673d126d895dd74.mp3"}, {"front": "Well you did", "back": "καλά έκανες", "audio": "hypertts-8fbc6d9279790056df84bfea7a285bc1d05d37c4c16f34d9f340f0ff.mp3"}, {"front": "It was necessary", "back": "έπρεπε", "audio": "hypertts-d369831a0684ed24869907fc00bac2d06dc7564148568580f15a90b6.mp3"}, {"front": "I had to buy it", "back": "έπρεπε να το αγοράσω", "audio": "hypertts-1eca1a6aa33869289d893a6e79c4e4c045eee8eed1e04849b8d1ebc0.mp3"}, {"front": "I had to finish it", "back": "έπρεπε να το τελειώσω", "audio": "hypertts-24494150e2d1ea776dfbfe9671c20d96ce4f6c040c06908dad2ca668.mp3"}, {"front": "I was waiting for it to finish", "back": "περίμενα να τελειώσει", "audio": "hypertts-feb9bd4275498dfb314fed6746c1ccd3212a4264cd75f6c3afe4d6aa.mp3"}, {"front": "I was waiting for him/her to finish it", "back": "περίμενα να το τελειώσει", "audio": "hypertts-dfdb356db5891283355949c8455083d45348d022e48fdc0dbd4471ca.mp3"}, {"front": "It must have finished", "back": "πρέπει να τελείωσε", "audio": "hypertts-661f374b949bfd35c988fe351487d26bf403acdbc3754f87b57f361f.mp3"}, {"front": "It must have been finishing (open)", "back": "πρέπει να τελείωνε", "audio": "hypertts-9319985e594a839e5293379b09dbfc367c93a996e8cef20d7db9ecc3.mp3"}, {"front": "They have to change it", "back": "πρέπει να το αλλάξουν", "audio": "hypertts-5acc05d8dca684ac3d0069028fc5ab55a81cdbeba7ead98d56d4e4f6.mp3"}, {"front": "They had to change it", "back": "έπρεπε να το αλλάξουν", "audio": "hypertts-fb906a72a28ece85030b33a1010082371f18fefe6deeac7cb49d786f.mp3"}, {"front": "They must have changed it", "back": "πρέπει να το άλλαξαν", "audio": "hypertts-9dbc04c5e4cedd2d2f1f7b3460129e50a26be58c62d81063a4e856ec.mp3"}, {"front": "It must have changed", "back": "πρέπει να άλλαξε", "audio": "hypertts-f8d92fa5022aa01d32645837d406026f8ce37df071ade5ff93d05000.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
