@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Unit 4 Lesson 3</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #1D9E75; border-color: #1D9E75; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Unit 4 · Lesson 3</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "I sell", "back": "Πουλάω", "audio": "hypertts-fff0244a11a4c33f97f32d7be046e8c68ed8cbe767bd847ede5c4f5f.mp3"}, {"front": "I want to sell them (neuter)", "back": "θέλω να τα πουλήσω", "audio": "hypertts-e7c8b1ad7a95daabaac00e1432a62cdef3c747c90f5da704dd87f7e8.mp3"}, {"front": "I want to sell everything", "back": "θέλω να τα πουλήσω όλα", "audio": "hypertts-cc5905fd7884d321833cbf78cb16303c7b9f24b99c4cff69443ee299.mp3"}, {"front": "I want to sell everything (alt)", "back": "θέλω να πουλήσω τα πάντα", "audio": "hypertts-dbab477e502d41c19ddcefb09c89f63de504257b624e6768e7d3f3ea.mp3"}, {"front": "We have 2 months in order to sell everything", "back": "έχουμε 2 μήνες για να τα πουλήσουμε όλα", "audio": "hypertts-b88943af70fbe79ad3aabab81d2053986d6ccc8146bf89b6333d6889.mp3"}, {"front": "I ask", "back": "Ρωτάω", "audio": "hypertts-711955c12c42be2a3449f86862b4dd1496dbe1d6c976d3f02e232144.mp3"}, {"front": "I ask you", "back": "Σε ρωτάω", "audio": "hypertts-f9c4e99d5aa058ad52e7c8c81fe0c021b26ecb7e0ec3897d054e2d8f.mp3"}, {"front": "I asked him yesterday", "back": "τον ρώτησα χθες", "audio": "hypertts-4ef6f8cb2d59b5961179ab949d23d89fd7acdea62e8ec77b6eda2b4c.mp3"}, {"front": "I asked him it yesterday", "back": "του το ρώτησα χθες", "audio": "hypertts-fd1d65192d2b8a270218f662442c9c5defbd2182625f396a095497dc.mp3"}, {"front": "I ask for", "back": "ζητάω / ζητώ", "audio": "hypertts-cde39cdae22e2d9023bbba8df4c63b0775852584cbd6ad5feec9de8e.mp3"}, {"front": "I asked him for it yesterday", "back": "του το ζήτησα χθες", "audio": "hypertts-1a956ddf3c44388803935fe8195810dbdb8f7141662a5c65be1eafec.mp3"}, {"front": "Let's ask", "back": "ας ρωτήσουμε", "audio": "hypertts-21447b6a9fd99f3825b1385dc9e8f094233e4e885e2da261be6d9e8d.mp3"}, {"front": "Let's ask (for sth)", "back": "ας ζητήσουμε", "audio": "hypertts-9ed6e91e838d206639b58fc3ac7411db0c24890ac8eb875de12eb8bd.mp3"}, {"front": "Let's ask them for it (masc.)", "back": "ας τους τον ζητήσουμε", "audio": "hypertts-4d0e678db2a92fb42df0b958efcf21a79895139af334a4f859c5bcc3.mp3"}, {"front": "I can", "back": "μπορώ", "audio": "hypertts-88437654e2d6a9c5c8a4ac150b4890379f9df984a14d35e80f7c5c36.mp3"}, {"front": "He/she/it can / maybe", "back": "μπορεί", "audio": "hypertts-37cac3b266368e7802ead0ee7b6baa5e53e2c342beb34fce18d4d513.mp3"}, {"front": "You can (informal)", "back": "μπορείς", "audio": "hypertts-49982e8eca4ac64edfc045bb4d8746a938c18218e74dc40d042a0a0a.mp3"}, {"front": "We can", "back": "μπορούμε", "audio": "hypertts-af2b08a66574e40f0e1faaea7d8a2ff253dd41e5aae1e16849f26d8c.mp3"}, {"front": "They can", "back": "μπορούν", "audio": "hypertts-a5c43613adb3f193568396e845f92122715f9b17e7dd13d78749d444.mp3"}, {"front": "You can (formal or plural)", "back": "μπορείτε", "audio": "hypertts-616470349466effe8df6dcfd9ced248adaf52bcb7ed39ccaf2af3018.mp3"}, {"front": "You are trying (plural / formal)", "back": "προσπαθείτε", "audio": "hypertts-a59346297201fd48ac497303a150085dc6de5fc49ce4e065ae44ce59.mp3"}, {"front": "I want you guys to try", "back": "θέλω να προσπαθήσετε", "audio": "hypertts-bcf4fca31dd08a437fe3aa55e7ff68e172a27187eb09aefabec0b4ca.mp3"}, {"front": "Will you guys try?", "back": "θα προσπαθήσετε;", "audio": "hypertts-1b8607d5aa32e6ad9670e035c5b95b069e04f72b95f3ef9219d628b9.mp3"}, {"front": "Won't you guys try?", "back": "δεν θα προσπαθήσετε;", "audio": "hypertts-40e6f525216ced0debfa9f9de02b41fe4060f2f11e8e2713dd19c3e1.mp3"}, {"front": "Did you guys try?", "back": "προσπαθήσατε;", "audio": "hypertts-e7a2ad467b6b08a0d2282627a31fffbb522a0f7eb6b0093d1b740248.mp3"}, {"front": "You aren't even trying (plural / formal)", "back": "ούτε που προσπαθείτε", "audio": "hypertts-4d6291342049d441754831e0ac11934db1f9ffdcda3f2c5850621d9c.mp3"}, {"front": "I live", "back": "ζω", "audio": "hypertts-a8c3a2717120082971d4052b64c60a534192c5971ab8e4d252654872.mp3"}, {"front": "He lives", "back": "ζει", "audio": "hypertts-fd0ce7b04ea492691717e1316cba57c21f6b301f4a3a66121ba6f934.mp3"}, {"front": "You live (informal)", "back": "ζεις", "audio": "hypertts-bb3babf8c71eb2d677438be03fc018bbc04890ff85d4a2188ed36eed.mp3"}, {"front": "They live", "back": "ζούν", "audio": "hypertts-ecf77fa18a15da7aa8557175d816ba819f219393ee2d55d331778a52.mp3"}, {"front": "You live (plural / formal)", "back": "ζείτε", "audio": "hypertts-770b271f8a5b473f5aa6c9ed6538fd930b9eeaecbd72210f641da36a.mp3"}, {"front": "Where do you live? (plural / formal)", "back": "που ζείτε;", "audio": "hypertts-5a1626f44956e41c7966a25ceae33bd0bed57c645c440cf726dc5528.mp3"}, {"front": "Where do you want to live? (plural / formal)", "back": "που θέλετε να ζήσετε;", "audio": "hypertts-91263b8bca5485eb0e3a22838c3a09ac9608cca5508c8b1b4674daa0.mp3"}, {"front": "Where did you want to live? (plural / formal)", "back": "που θέλατε να ζήσετε;", "audio": "hypertts-8eb1b94b2ab658fc90724cf7eaeccc11c2492aebcdffc957dda88ff0.mp3"}, {"front": "Where did you want to live? (open period)", "back": "που θέλατε να ζείτε;", "audio": "hypertts-ac316d46d61d81fbdf8e8589f81465c60c64be516628cde1177cc21d.mp3"}, {"front": "Where would you like to live? (plural / formal)", "back": "που θα θέλατε να ζήσετε;", "audio": "hypertts-9e2524c4e1178c03ea4e075b228ca31ee3d4f64b35e1d1d68a5aa8e7.mp3"}, {"front": "Where did you live? (plural / formal)", "back": "που ζήσατε;", "audio": "hypertts-cc6c102b5879e6b57363b1b8ccac130a918c6d43db9b68253d3d1007.mp3"}, {"front": "You are speaking (plural / formal)", "back": "μιλάτε", "audio": "hypertts-f335d0ce4d8ecab11030b4f5de5b38616d7bdfaf91281da266fb68a2.mp3"}, {"front": "What are you guys talking about? (lit. about what thing)", "back": "για τι πράγμα μιλάτε", "audio": "hypertts-e3a192a483c02a603d3cbfe86059e595e4f0daadd334dfd09ee1c8a4.mp3"}, {"front": "which", "back": "ποιο", "audio": "hypertts-15a382e6098188a4bb427dd2e90cd895682cfafd26bb9866b7f18317.mp3"}, {"front": "About which thing are you talking?", "back": "για ποιο πράγμα μιλάτε;", "audio": "hypertts-d92ff48637938443062eae2ad3703a1f5241dbbb7a13e4edff0ba237.mp3"}, {"front": "About which thing did you guys speak?", "back": "Για ποιο πράγμα μιλήσατε;", "audio": "hypertts-08acf16a0be3f2c6ec97ad0e9b220b62b2cd4fadd09f4b0c4e0cd7ca.mp3"}, {"front": "You speak (informal)", "back": "μιλάς", "audio": "hypertts-30f6c125359953edd798b98ccd6ce60540b634b82577fa719bccb354.mp3"}, {"front": "What are you speaking about?", "back": "για ποιο πράγμα μιλάς;", "audio": "hypertts-8899410a17c715d4f7d4ea54485f023cf9b1ef145e98aff10b356ba5.mp3"}, {"front": "You love (informal)", "back": "αγαπάς", "audio": "hypertts-2666bc91f5b34886c28e38cb6c441446b16a735e6db1d11426acaf19.mp3"}, {"front": "You are asking (informal)", "back": "ρωτάς", "audio": "hypertts-f3464810cd758dd004022b15b6482703785db73c6facb6e5fe680a06.mp3"}, {"front": "What are you asking?", "back": "τι ρωτάς;", "audio": "hypertts-423b08b7bacfde330ab6b8bc2141626f7531ba2cfb11cdbafdde2993.mp3"}, {"front": "About what thing are you asking?", "back": "για ποιο πράγμα ρωτάς;", "audio": "hypertts-bbfc5196dc0243d4ef55c8897c9ff7dd0f8a70c0389907ad1950ddce.mp3"}, {"front": "What are you guys asking about?", "back": "για ποιο πράγμα ρωτάτε;", "audio": "hypertts-56c9528045b468386b133a632e981ebab490dd52482387ec361ca79e.mp3"}, {"front": "Do you speak Greek? (informal)", "back": "Μιλάς ελληνικά;", "audio": "hypertts-912fa61c2ab2bc09db293143c675c3039cfb8ba235762130ae4c55a5.mp3"}, {"front": "Do you speak Greek? (plural / formal)", "back": "Μιλάτε ελληνικά;", "audio": "hypertts-11e76b524dc3349a957cc609755dbbd2da4aedb45c4733e13ab4a33c.mp3"}, {"front": "You will speak (informal)", "back": "θα μιλήσεις", "audio": "hypertts-97fccaf2052e6d3273e1fff412cdadb822961b5124a2b229f81cbf39.mp3"}, {"front": "You will speak (plural / formal)", "back": "θα μιλήσετε", "audio": "hypertts-2d21d7678b733d46a77178c7bdaadc7efbc5ce1c3eb663e41b4b03c8.mp3"}, {"front": "What will you speak about? (plural / formal)", "back": "για ποιο πράγμα θα μιλήσετε;", "audio": "hypertts-23459ff26a5f3aba9f5453ad5b0c1c90684dbea54592ad7f947936af.mp3"}, {"front": "To walk", "back": "Περπατάω", "audio": "hypertts-306381a04e4ef7efcdaff0a4340671db49e2b652f4d34e8575aa0452.mp3"}, {"front": "The floor", "back": "Το πάτωμα", "audio": "hypertts-0ead682eccad017a0ce3c0700cd4f18dfdd25185380eae335f33036e.mp3"}, {"front": "Let's walk", "back": "ας περπατήσουμε", "audio": "hypertts-da812e9bb3236d037fa198c87b2afa081129129d734b6a68a0628105.mp3"}, {"front": "Are you walking? (informal)", "back": "περπατάς;", "audio": "hypertts-2b4c3d6e1e25526d054e35d04fa1fdbc547e460546e84794ce01672f.mp3"}, {"front": "Are you walking? (plural / formal)", "back": "περπατάτε;", "audio": "hypertts-f576314395b3039741c7f97556c5892b6c784c33c6e353f29cd7122d.mp3"}, {"front": "Will you guys walk?", "back": "θα περπατήσετε;", "audio": "hypertts-67518e55a3a302d2af70066ae808543c5bca4d3559c297130da5d50d.mp3"}, {"front": "Did you guys walk?", "back": "περπατήσατε;", "audio": "hypertts-dde54648474eac6337ab3a822218caf02c39c2ae579f53c8666df585.mp3"}, {"front": "Why did you guys walk?", "back": "γιατί περπατήσατε;", "audio": "hypertts-eadd4aea110ea7d4e62f901e2a22ce1bf3d909f831ed0ead237dc710.mp3"}, {"front": "Why did you ask? (informal)", "back": "γιατί ρώτησες;", "audio": "hypertts-df2d4294ae53855f10e6907f6210dfeea053655b0733affb167f874b.mp3"}, {"front": "Did you ask me something? (informal)", "back": "με ρώτησες κάτι;", "audio": "hypertts-76721245747650d52ee0038d82f79fbabf60e9079dd36f6d97057876.mp3"}, {"front": "What did you ask about? (informal)", "back": "για ποιο πράγμα ρώτησες;", "audio": "hypertts-b5f52c386861eb052013f4e6c31955f68340fb73e80fd06b8f220544.mp3"}, {"front": "I asked you already (informal)", "back": "σε ρώτησα ήδη", "audio": "hypertts-5f09db20579f526bad84b276d40f0f6c70bea2cf7427d748cb734c2f.mp3"}, {"front": "I asked you guys already", "back": "σας ρώτησα ήδη", "audio": "hypertts-522e28098922a84dab22cc46c241240c24341ea400e8f784cf9479b4.mp3"}, {"front": "Are you asking? (plural / formal)", "back": "ρωτάτε;", "audio": "hypertts-f997c3add163a4aabf15817ed4a04acd7425a650dc6fa8e1b29ce30c.mp3"}, {"front": "He/she asks", "back": "Ρωτάει", "audio": "hypertts-a6ff1830c291f0bdac0f743ef2e215584d8394c9aed660382517c80e.mp3"}, {"front": "He is not asking", "back": "δεν ρωτάει", "audio": "hypertts-066e6986ff7071fe86d4753813ddcb18d1d30e9725437b246b5632ca.mp3"}, {"front": "I love", "back": "αγαπάω", "audio": "hypertts-0bf912e0734239213b61f5e0fbc77b51cc5e1363d9661de6e0e80d95.mp3"}, {"front": "He/she loves", "back": "αγαπάει", "audio": "hypertts-8b81f0dc7fb5ec81bed45bcb3028ea60990e298c408363f9e0dfe07a.mp3"}, {"front": "You guys love", "back": "αγαπάτε", "audio": "hypertts-12e988ca9c4052fe2acd3ca3f2ee2e7360b8e040bd4ac08e58a9d0fc.mp3"}, {"front": "Who (masc.)", "back": "Ποιος", "audio": "hypertts-cb2ca7c44e86662f27e079c5d95a9843348e3b8a9c2e26d4e3a42024.mp3"}, {"front": "Who (fem.)", "back": "Ποια", "audio": "hypertts-5844cbaa02823e1469ba44ff10571df633e4ce53455a6fe3a7c9e213.mp3"}, {"front": "Who do you love?", "back": "ποιον αγαπάς;", "audio": "hypertts-2a1acafbce2bbc6a86f4a4b4f67ab3c12639eb854210686b6ba289a3.mp3"}, {"front": "You love (plural / formal - emphatic)", "back": "εσείς αγαπάτε", "audio": "hypertts-99138844e41043b71b1d36956b80e3f130ab0b560d84a6a34b5935db.mp3"}, {"front": "I love you (plural / formal)", "back": "σας αγαπάω", "audio": "hypertts-ff28bc479e58ab146d9b0b8b9818a114330ffac5e694f3448fb9eec6.mp3"}, {"front": "We speak", "back": "Μιλάμε", "audio": "hypertts-633e55b088b053cf28e058e0008a963bda49a5ecdac2035d69b7ba8b.mp3"}, {"front": "They speak", "back": "Μιλάνε", "audio": "hypertts-2f2d49b0c3beb8670339afc72720800ebbbbc8133ba8e0d4aac896f2.mp3"}, {"front": "We love", "back": "Αγαπάμε", "audio": "hypertts-b46eab16a391a274e794357b3673404733a19589dd177f02a928665c.mp3"}, {"front": "We loved", "back": "Αγαπήσαμε", "audio": "hypertts-cabb185804550b1172aacd07927a1f578bf798b2bc49da8c639d11fb.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
