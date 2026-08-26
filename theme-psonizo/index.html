@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Themes: Ψωνίζω στην Ελλάδα</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #534AB7; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #534AB7; border-color: #534AB7; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Themes</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "I shop", "back": "ψωνίζω / ψωνίσω", "audio": "hypertts-25202a0f542909f6415005961f371bcb2dc3f0cd247bba389600f55d.mp3"}, {"front": "I buy", "back": "αγοράζω / αγοράσω", "audio": "hypertts-680aaa6c386e66067c55ef95a83379100992e1763e477c5bb44f43c7.mp3"}, {"front": "I take / I get", "back": "παίρνω / πάρω", "audio": "hypertts-d2ead15108a156cf64e7587149fbcc5978c82d4939fcab0d4a360a7c.mp3"}, {"front": "I look for", "back": "ψάχνω / ψάξω", "audio": "hypertts-472c93a7f1b9d073c405f0dc55ec0415bd53e956f4366448dac882e6.mp3"}, {"front": "I find", "back": "βρίσκω / βρω", "audio": "hypertts-acc7244a4ce358ed7633aacb6a1da31dfa420596eaf61f4d1a003741.mp3"}, {"front": "I need", "back": "χρειάζομαι / χρειαστώ", "audio": "hypertts-30955375c49a91133868a4cd1688f44bedb68bcc36ff9a3027921889.mp3"}, {"front": "I pay", "back": "πληρώνω / πληρώσω", "audio": "hypertts-b848ffaba9ee2470c2979b7150bd47432df04aea836b0fa0a8138875.mp3"}, {"front": "I try / I try on", "back": "δοκιμάζω / δοκιμάσω", "audio": "hypertts-fd518e53d87aa378a8b7ed848b4afe606f5f5ed85da02b9438743dbd.mp3"}, {"front": "I change / I exchange", "back": "αλλάζω / αλλάξω", "audio": "hypertts-fa786505331614b4fda4b5360f8a2c00de964b9bcff46c673df26c06.mp3"}, {"front": "I return", "back": "επιστρέφω / επιστρέψω", "audio": "hypertts-43f073202ba276cf01d6e3e6017b9d7c29abdf9547b22c6c34362b92.mp3"}, {"front": "I ask", "back": "ρωτάω / ρωτήσω", "audio": "hypertts-5f3b34094c7f528ce308343e8989cbf6ad1ac0e425e82f93d7ed87e6.mp3"}, {"front": "I forget", "back": "ξεχνάω / ξεχάσω", "audio": "hypertts-324351fbd98a07fcb352ed475444ebaad015dfd3712b5d12eb9a78e9.mp3"}, {"front": "I finish / I run out", "back": "τελειώνω / τελειώσω", "audio": "hypertts-0f80c8704da711f7ce62a60f4687eddb9cbceecb2062d146b96ffdcc.mp3"}, {"front": "I open", "back": "ανοίγω / ανοίξω", "audio": "hypertts-0d4c2e98e8d091e81b38f2e7dca540a044cb601edcdab6e495ca0c1e.mp3"}, {"front": "I close", "back": "κλείνω / κλείσω", "audio": "hypertts-406452adeab544bfd1f467eb3e08fd26a3e9b63747442ced91185f65.mp3"}, {"front": "I'll take this", "back": "θα πάρω αυτό", "audio": "hypertts-c657034d4f414b874e453a1ab6f26170648289b66e5024ea4972f522.mp3"}, {"front": "the supermarket", "back": "το σούπερ μάρκετ", "audio": "hypertts-deb884f4db55800df5b32eccf3c913a5d9f86640e61623c33ce3da72.mp3"}, {"front": "the corner shop", "back": "το μίνι μάρκετ", "audio": "hypertts-12b8ddc6d81423ffb4b490e9135a6d63f5394d7c3d0a686b5db08d8b.mp3"}, {"front": "the pharmacy", "back": "το φαρμακείο", "audio": "hypertts-0ddda34cfac95d47474f8bdf0a0124a9e009f34da9c2a8f491c565a2.mp3"}, {"front": "the street kiosk", "back": "το περίπτερο", "audio": "hypertts-6ea43397ddb9e23e482439dcddc6c20c22b2ff5bde949f85bf49cda7.mp3"}, {"front": "the electronics shop", "back": "το κατάστημα ηλεκτρονικών", "audio": "hypertts-9c2ff1cd3e1a79540f08e9a502904f1872cc3b3870b353772dfbeadd.mp3"}, {"front": "household goods", "back": "τα είδη σπιτιού", "audio": "hypertts-60d358fabfc8f184cc2a9da915f65c549b21a5cdf757f5500302a4c7.mp3"}, {"front": "the bookshop / stationers", "back": "το βιβλιοπωλείο", "audio": "hypertts-e0b5730462f54894b9b3e3b55f1e260924dfa9cc110bb5a3d080d788.mp3"}, {"front": "the street market", "back": "η λαϊκή", "audio": "hypertts-b7fe9c28e139fe8c3d15b3d9aa68ddde003bed041c74b8f8e76ff807.mp3"}, {"front": "the town centre", "back": "το κέντρο", "audio": "hypertts-eae21f1c09a5384d049f24720e2b92fffba341065019ef645e87b39a.mp3"}, {"front": "the shampoo", "back": "το σαμπουάν", "audio": "hypertts-355e372bc5361ebd148f45f91b041ef5df81ffe1806fffbec6a2f202.mp3"}, {"front": "the shower gel", "back": "το αφρόλουτρο", "audio": "hypertts-177a29e330b10f8a2b9bfda950a845c4a7a22c9c8124fdf1a67e9a05.mp3"}, {"front": "the soap", "back": "το σαπούνι", "audio": "hypertts-c8f14a75428abfc222365cb0dd4aff7b23f2b810484194db301fdf3d.mp3"}, {"front": "the toothpaste", "back": "η οδοντόκρεμα", "audio": "hypertts-1f8b7fb0eb6d326ea6136a3f9d109043c5a846b9b8108544e31004b1.mp3"}, {"front": "the toothbrush", "back": "η οδοντόβουρτσα", "audio": "hypertts-9a50a6e75e86e37a64219b99210e39c9742eaf9f4d23f0a5f3a1434e.mp3"}, {"front": "the deodorant", "back": "το αποσμητικό", "audio": "hypertts-2a26ffd65ce3ba3c6970a7f2c2c2868d872bd41f2f09dd59409832ca.mp3"}, {"front": "the cream", "back": "η κρέμα", "audio": "hypertts-2a4f85023af71be865434c205c5e7cee201b693480e622426291b4b1.mp3"}, {"front": "the sunscreen", "back": "το αντηλιακό", "audio": "hypertts-3778f487bd33d91120d328f9daef3cfd65c39ec48abcac79942ef767.mp3"}, {"front": "the razor", "back": "το ξυραφάκι", "audio": "hypertts-0d670e66ba5c6a3af1c22bc443e717bcfa67dadd440d83848ac381c0.mp3"}, {"front": "the tissues", "back": "τα χαρτομάντηλα", "audio": "hypertts-2db94289c3374e51b25a775454d19cffbd0e8b608fd833fdbfe1bdc0.mp3"}, {"front": "the toilet paper", "back": "το χαρτί υγείας", "audio": "hypertts-376d73525318a692ecdd58f2c3c029e904a461f1e580bd3e6a3cbca1.mp3"}, {"front": "sanitary pads", "back": "οι σερβιέτες", "audio": "hypertts-05e7da4302ce38ff83726011543b2e07b4d67d9823ab80284296c75a.mp3"}, {"front": "cosmetics", "back": "τα καλλυντικά", "audio": "hypertts-82029892b8c432bc4725307baefb67013bb1da8870e43b4ead61fa15.mp3"}, {"front": "the perfume", "back": "το άρωμα", "audio": "hypertts-667b26fd155afcba1c867163c0883b11f102e191b61c36630afa6e0f.mp3"}, {"front": "the detergent", "back": "το απορρυπαντικό", "audio": "hypertts-6227e01fbd05cee1667371ea35c9e8e67d8e3e603c560dfab1d85ab8.mp3"}, {"front": "the washing-up liquid", "back": "το υγρό πιάτων", "audio": "hypertts-65ca2f63c08568bb132b56e1d747a8660d778b1970a188e1a77545b1.mp3"}, {"front": "the sponge", "back": "το σφουγγάρι", "audio": "hypertts-7ec55c2c560007ca4b035333940034747ecf6fa60d6e0ac900da1e42.mp3"}, {"front": "the bin bag", "back": "η σακούλα σκουπιδιών", "audio": "hypertts-28c98757991eeb15eb9934d989546ebb6128497bde538bdcb788c187.mp3"}, {"front": "the kitchen roll", "back": "το χαρτί κουζίνας", "audio": "hypertts-fe5cffbaa6186d1dd81695ee98855fa00f3a763d2c21b31b4d4c2fed.mp3"}, {"front": "the napkins", "back": "οι χαρτοπετσέτες", "audio": "hypertts-8f19950817b9b1303d78fb04c6131510bc1e6126fb9216d5f9098479.mp3"}, {"front": "the tin foil", "back": "το αλουμινόχαρτο", "audio": "hypertts-fd5b85dde0b14b45c08ac1de825700062e6679245f5c62fd0495827a.mp3"}, {"front": "the light bulb", "back": "η λάμπα", "audio": "hypertts-5bc34530a2290171c5d395a961827c59f9a085a8226e97bde661e22b.mp3"}, {"front": "the charger", "back": "ο φορτιστής", "audio": "hypertts-0870bfe66a135d1512b1c48252a0bf4281205e24779cd68e3e7ed06c.mp3"}, {"front": "the cable", "back": "το καλώδιο", "audio": "hypertts-368b82f65e026f86cf6a67f250fd2b0236467ac562c950108ad9a001.mp3"}, {"front": "the adapter", "back": "ο αντάπτορας", "audio": "hypertts-219fde26b6113d4b51359dd5a1e48a5f95c20a67895a8e338e41de38.mp3"}, {"front": "the socket / plug", "back": "η πρίζα", "audio": "hypertts-d44aebd24e313d69b6183b13a6202fd0cd0be47465bfaab51b362bfe.mp3"}, {"front": "the batteries", "back": "οι μπαταρίες", "audio": "hypertts-fd8e751e077e639d2753072f67b0371033fd6806ff51f65023b07c5f.mp3"}, {"front": "the headphones", "back": "τα ακουστικά", "audio": "hypertts-af85bca72315d93f8d2a698ce15ece23d6f1812083d29ae3d75a0e76.mp3"}, {"front": "the SIM card", "back": "η κάρτα SIM", "audio": "hypertts-76c51eb9215b8f36c4e98dc1bec1a131efae5ee85ef4361816b022f0.mp3"}, {"front": "I'm looking for…", "back": "Ψάχνω για…", "audio": "hypertts-40431fe40863f7a2b80e530e513ac9473cc92cd96958d085235aa201.mp3"}, {"front": "I need…", "back": "Χρειάζομαι…", "audio": "hypertts-d9487b7638ff55b174851430e260b107a332a235be8587c32ef164cd.mp3"}, {"front": "Do you have…?", "back": "Έχετε…;", "audio": "hypertts-5f038458fcfc31eb1fee821c321bc05b71a2ecc6c07abc4ceea12a9c.mp3"}, {"front": "Do you happen to have…?", "back": "Μήπως έχετε…;", "audio": "hypertts-5b3a7bf8c493454ce8822590475ea2fe0aa67194fca25a493f0b0cc7.mp3"}, {"front": "Where will I find…?", "back": "Πού θα βρω…;", "audio": "hypertts-561c9ee91e60429586fab748cbb0b5607440300d02638a4c374dbf2c.mp3"}, {"front": "Where are the…?", "back": "Πού είναι τα…;", "audio": "hypertts-e6a013a65ce0726b0b54fb0218616de93b8627358daef5e1e35b0ee4.mp3"}, {"front": "Do you have something for…?", "back": "Έχετε κάτι για…;", "audio": "hypertts-48b45ad1a4253d08950e3779438f9c06c79024f69a72cfe22143bf1f.mp3"}, {"front": "What do you recommend?", "back": "Τι μου προτείνετε;", "audio": "hypertts-b0a31af40458cefa9bd371cf8b4fa70413034152a4c24666dee3267a.mp3"}, {"front": "I'm just looking", "back": "Απλά κοιτάω", "audio": "hypertts-331502b9d104dd515da0754fd990468fc1016729a1c4175fb6f47883.mp3"}, {"front": "the size", "back": "το μέγεθος / το νούμερο", "audio": "hypertts-087f26e8a23e1b1f895546bde9d8459fb79a8ab7ed52edd5ca1aea05.mp3"}, {"front": "big / small", "back": "μεγάλο / μικρό", "audio": "hypertts-1520b10593dfc8ad8af3d45aef02098120bb931b196bb2b01d0fe2a1.mp3"}, {"front": "the bottle", "back": "το μπουκάλι", "audio": "hypertts-3bf6dfb555511ab5d3f8254d832bb40031aae654f313dea5e51a2edf.mp3"}, {"front": "the box", "back": "το κουτί", "audio": "hypertts-9310c39b53dcabbe1dae948f2f42a6d887abe5cd44137bd7567320c2.mp3"}, {"front": "the packet", "back": "το πακέτο", "audio": "hypertts-90ee88d9ad8d787dd951688c107822edcf7a96fc81fff3fdf25432f0.mp3"}, {"front": "the pack", "back": "η συσκευασία", "audio": "hypertts-2d25981610c6d63d0df50ed8e8e4bacd15f56b8d95cb7758afa98eab.mp3"}, {"front": "large pack", "back": "μεγάλη συσκευασία", "audio": "hypertts-455babc3107f747661baec0b7f18fa2533024d526672b5333649fe7b.mp3"}, {"front": "Do you have a bigger one?", "back": "Έχετε μεγαλύτερο;", "audio": "hypertts-df03f5bb01528c465986ca05f1937eeaf8bcaa4591fae2d71dcd58a9.mp3"}, {"front": "Do you have another size?", "back": "Έχετε άλλο νούμερο;", "audio": "hypertts-c6a0d156cef6ed0c3c34690ef08503bf207b3635e8d6c1508ee844a1.mp3"}, {"front": "How much is it?", "back": "Πόσο κάνει;", "audio": "hypertts-68b1112525de3c81753f9f9c92d037aef57796baa2f135eb550da88f.mp3"}, {"front": "How much does it cost?", "back": "Πόσο κοστίζει;", "audio": "hypertts-cbfa08fd26759e1ed37caf1ac17fd33b718bc1e26b1e86458c4ba58d.mp3"}, {"front": "the price", "back": "η τιμή", "audio": "hypertts-17325b2b4644d865584f413b1878a246848082b05eebac7f093c1dbd.mp3"}, {"front": "expensive / cheap", "back": "ακριβό / φτηνό", "audio": "hypertts-50e98c9130f86f05999b9cb05cde543a6d65ead939ec1303be75746d.mp3"}, {"front": "the offer", "back": "η προσφορά", "audio": "hypertts-299cfde8861e09bab7c9719655f768f8697f94a3c1d78bae58e44d4e.mp3"}, {"front": "the discount", "back": "η έκπτωση", "audio": "hypertts-cabdf12b35a0b8cbec54ef227fe5e656c350065b1f697a430ce89c4e.mp3"}, {"front": "Do you accept card?", "back": "Δέχεστε κάρτα;", "audio": "hypertts-3462307c51a10bc9a2dd626b78153331c4ae882f56a6ed734dd6b379.mp3"}, {"front": "by card / with cash", "back": "με κάρτα / με μετρητά", "audio": "hypertts-ca47400b740f2b51dcf7d8ab320e475f6636d7f9d4373c3cf35b0cfc.mp3"}, {"front": "the receipt", "back": "η απόδειξη", "audio": "hypertts-f42676998451ea0437c8200eb8323c0b80d811a24c3c696d9c4b7eaa.mp3"}, {"front": "the change", "back": "τα ρέστα", "audio": "hypertts-9dfdc86f208c9d92c5f35ff4f072d475ffcdf247b6e79bd0abd87fec.mp3"}, {"front": "the bag", "back": "η σακούλα", "audio": "hypertts-3c1c300d8aa389f0818835a5b8c877020bc9e4cb1f25f86e8fd6af93.mp3"}, {"front": "Do you want a bag?", "back": "Θέλετε σακούλα;", "audio": "hypertts-087a1568987af5f2634bf346fd792249873ce00dd7208f87846ceb81.mp3"}, {"front": "It doesn't fit me", "back": "Δεν μου κάνει", "audio": "hypertts-585f8770c2979f04f7a6a9a85edeb556d551e015f9df4a848a6e0d53.mp3"}, {"front": "It doesn't suit me", "back": "Δεν μου πάει", "audio": "hypertts-f257247b5f62db7fa63c550502bb6b3ba3acea2f9fd63d0c7b15939d.mp3"}, {"front": "I want to exchange it", "back": "Θέλω να το αλλάξω", "audio": "hypertts-02af9492ee994a4b25591b00bd46ac324ab05eaad03108422405d221.mp3"}, {"front": "Can I return it?", "back": "Μπορώ να το επιστρέψω;", "audio": "hypertts-2f59428adfea6054abcfd431cfc358450da299c34430df3991825c4f.mp3"}, {"front": "Can I try it?", "back": "Μπορώ να το δοκιμάσω;", "audio": "hypertts-f1e5bd56afd9b4e05ae1d17c2ae0b42d8d3c5a72fd9a3bef86a819b9.mp3"}, {"front": "It doesn't work", "back": "Δεν δουλεύει", "audio": "hypertts-82362e44c023aa6039f04d1e6839da817c2a039887393425d2fb5e9e.mp3"}, {"front": "There's something wrong with it", "back": "Έχει πρόβλημα", "audio": "hypertts-8c2e27dfe97111c5d196b868b447be6d80d76d0d8ee6991f90277e52.mp3"}, {"front": "I have the receipt", "back": "Έχω την απόδειξη", "audio": "hypertts-b48619996522b81e31fe39cb7ff92442f78c0e68d711aedb019e94b3.mp3"}, {"front": "I've run out of…", "back": "Μου τελείωσε το…", "audio": "hypertts-6f969d04d3b3bcc58ed55ce6b49141ea2d6186d9021a4cd98161e909.mp3"}, {"front": "I forgot to get…", "back": "Ξέχασα να πάρω…", "audio": "hypertts-823ae3942707346253afed8ee0440c5c7ff5b54ae1f2cd5d99a280cd.mp3"}, {"front": "Where can I find…?", "back": "Πού μπορώ να βρω…;", "audio": "hypertts-bca928a2a34c836cae1032ce778354f4a99c3648a145031400214ec0.mp3"}, {"front": "What time do you open / close?", "back": "Τι ώρα ανοίγετε / κλείνετε;", "audio": "hypertts-90d66c6006267988c24dc67d570447b8d95e4b356e1e0d1d865165c4.mp3"}, {"front": "Is it open?", "back": "Είναι ανοιχτά;", "audio": "hypertts-8f8e7acb50a35fb3a3a2736312fadf1ffaadcafbaecc3a0123372e09.mp3"}, {"front": "It's closed", "back": "Είναι κλειστά", "audio": "hypertts-71e4e42f86f0dc8eed5f97b3bac38ecbb85ec11150757fceec610721.mp3"}, {"front": "I'll think about it", "back": "Θα το σκεφτώ", "audio": "hypertts-ba6cd933988ffb9614e1608456007892638024f2d3ccff4d6a56d120.mp3"}, {"front": "Thanks I'll take it", "back": "Ευχαριστώ θα το πάρω", "audio": "hypertts-3de1ae7f8039a1f7f0ec080b0e371f747846577f56788716987103bd.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
