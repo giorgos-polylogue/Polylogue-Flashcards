@@ -28,7 +28,9 @@
   .tip-box-text { font-size: 13px; color: #0F6E56; line-height: 1.6; }
   .tip-box-text strong { font-weight: 500; }
   .lessons-section { margin-bottom: 2.5rem; display: flex; flex-direction: column; gap: 10px; }
-  .accordion { background: var(--card-bg); border: 1px solid var(--ink-faint); border-radius: 12px; overflow: hidden; opacity: 0; transform: translateY(12px); animation: fadeUp 0.5s ease forwards; animation-delay: 0.05s; }
+  .accordion { background: var(--card-bg); border: 1px solid var(--ink-faint); border-radius: 12px; overflow: hidden; opacity: 0; transform: translateY(12px); animation: fadeUp 0.5s ease forwards; }
+  .accordion:nth-child(1) { animation-delay: 0.05s; }
+  .accordion:nth-child(2) { animation-delay: 0.13s; }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
   .accordion-header { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.25rem; background: transparent; border: none; cursor: pointer; font-family: inherit; text-align: left; transition: background 0.15s; }
   .accordion-header:hover { background: #FAFAF8; }
@@ -69,7 +71,7 @@
   <section class="how-section">
     <div class="section-label">How it works</div>
     <div class="how-grid">
-      <div class="how-card"><div class="how-card-num">1</div><div class="how-card-title">Pick a lesson</div><div class="how-card-text">Pick a lesson below. Cards are shuffled each time you start.</div></div>
+      <div class="how-card"><div class="how-card-num">1</div><div class="how-card-title">Pick a deck</div><div class="how-card-text">Pick a lesson or theme below. Cards are shuffled each time you start.</div></div>
       <div class="how-card"><div class="how-card-num">2</div><div class="how-card-title">Tap to reveal</div><div class="how-card-text">See the English, try to say the Greek out loud, then tap to reveal the answer and hear it spoken.</div></div>
       <div class="how-card"><div class="how-card-num">3</div><div class="how-card-title">Practice again</div><div class="how-card-text">When you reach the end, hit "Practice again" to reshuffle and go through the deck again.</div></div>
     </div>
@@ -78,14 +80,14 @@
   <div class="divider"></div>
   <section class="lessons-section">
       <div class="accordion">
-        <button class="accordion-header" onclick="toggleSection('challenge')" aria-expanded="false">
+        <button class="accordion-header" onclick="toggleSection('material')" aria-expanded="false">
           <span class="accordion-title">Challenge Material</span>
           <span class="accordion-meta">
             <span class="accordion-count">14 lessons</span>
             <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6l4 4 4-4"/></svg>
           </span>
         </button>
-        <div class="accordion-body" id="challenge">
+        <div class="accordion-body" id="material">
           <div class="lesson-list">
           <a href="challenge-lesson1/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 1 — Using το to say "it"</span><span class="lesson-meta">33 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
           <a href="challenge-lesson2/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 2 — New Verbs Built on έχω</span><span class="lesson-meta">41 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
@@ -101,6 +103,20 @@
           <a href="challenge-lesson12/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 12 — αν, New Verb Patterns, and Closed Forms</span><span class="lesson-meta">48 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
           <a href="challenge-lesson13/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 13 — The -νω Verbs Concluded</span><span class="lesson-meta">20 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
           <a href="challenge-lesson14/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Lesson 14 — Plurals and Talking About Groups</span><span class="lesson-meta">26 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
+          </div>
+        </div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-header" onclick="toggleSection('themes')" aria-expanded="false">
+          <span class="accordion-title">Themes</span>
+          <span class="accordion-meta">
+            <span class="accordion-count">1 deck</span>
+            <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6l4 4 4-4"/></svg>
+          </span>
+        </button>
+        <div class="accordion-body" id="themes">
+          <div class="lesson-list">
+          <a href="theme-getting-around/" class="lesson-card"><div class="lesson-info"><span class="lesson-title">Getting Around in Greece</span><span class="lesson-meta">87 cards</span></div><div class="lesson-arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg></div></a>
           </div>
         </div>
       </div>
