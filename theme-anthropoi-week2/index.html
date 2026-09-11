@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Οι άνθρωποι · Week 2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #534AB7; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #534AB7; border-color: #534AB7; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Οι άνθρωποι · Week 2</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "I laugh (open / closed)", "back": "γελάω / γελάσω", "audio": "hypertts-833c39dd2ef06491d67176a79a9d19e5b94cb50b292d582116d3d0f2.mp3"}, {"front": "I get angry (open / closed)", "back": "θυμώνω / θυμώσω", "audio": "hypertts-568e437d8baf59153fea7fd4e358aaf22ecfbf4835d51a470e788848.mp3"}, {"front": "I get annoyed (open / closed)", "back": "εκνευρίζομαι / εκνευριστώ", "audio": "hypertts-2ca5c5e222f29866250a6e1b9821da85975f9ed4b4731b19926b5344.mp3"}, {"front": "I get stressed (open / closed)", "back": "αγχώνομαι / αγχωθώ", "audio": "hypertts-0ca996b9c3ab64592ab2cae5f8e8c452a156f53e478bd3fa0a641363.mp3"}, {"front": "I behave (open / closed)", "back": "φέρομαι / φερθώ", "audio": "hypertts-6bc3ab26e80e50c90f513beda1422cffb9718de23754ed147f8d4b7b.mp3"}, {"front": "he behaves well", "back": "φέρεται καλά", "audio": "hypertts-fa59c41083158e1c14c12b7f2dc385ca9b769ad5542b95d1924e1c4d.mp3"}, {"front": "I change (open / closed)", "back": "αλλάζω / αλλάξω", "audio": "hypertts-fa786505331614b4fda4b5360f8a2c00de964b9bcff46c673df26c06.mp3"}, {"front": "kind (masc. / fem.)", "back": "καλός / καλή", "audio": "hypertts-7e9b4cb5b902830a50e838bc5071b21f31529b761f755a6eda858150.mp3"}, {"front": "funny (masc. / fem.)", "back": "αστείος / αστεία", "audio": "hypertts-ba1c88addd1e51bf333f50bbe228a815fbf522e9e1f15ab536f1dabf.mp3"}, {"front": "serious (masc. / fem.)", "back": "σοβαρός / σοβαρή", "audio": "hypertts-17d1dc68c9abec44767085d42a79043c6df13aa81e2c700786217f90.mp3"}, {"front": "quiet (masc. / fem.)", "back": "ήσυχος / ήσυχη", "audio": "hypertts-d5a903d23c8d407fc9312d0123b7ae8847e58e35423e719ab63d6d1c.mp3"}, {"front": "lively (masc. / fem.)", "back": "ζωηρός / ζωηρή", "audio": "hypertts-10e29cb8e73bdb53bc3eb2499b9391839636f026677425dfd745eba6.mp3"}, {"front": "clever (masc. / fem.)", "back": "έξυπνος / έξυπνη", "audio": "hypertts-98e55b97dcca7585ea2a59f25b7d27687a83e345c7855e1d162d96c5.mp3"}, {"front": "calm (masc. / fem.)", "back": "ήρεμος / ήρεμη", "audio": "hypertts-4f64d505822bc02e27487b1bbded7946845c046b7084b030f57ba489.mp3"}, {"front": "short-tempered (masc. / fem.)", "back": "νευρικός / νευρική", "audio": "hypertts-0e1654f5d910de85e9f1e8a91ec081cb449ac10b28bba7be71143f21.mp3"}, {"front": "shy (masc. / fem.)", "back": "ντροπαλός / ντροπαλή", "audio": "hypertts-1bd2e7ea2fb19611ac5ec0fe81f81d643a45ee3b5f340f64b1eb8b08.mp3"}, {"front": "sociable (masc. / fem.)", "back": "κοινωνικός / κοινωνική", "audio": "hypertts-d5e8b3838836f33836b92d8b9ebdee24e43e26922fceb23300559366.mp3"}, {"front": "stubborn (masc. / fem.)", "back": "πεισματάρης / πεισματάρα", "audio": "hypertts-4628277b244169292edc0912447cdb22b8165e93f14cb9f1dd966afa.mp3"}, {"front": "generous (masc. / fem.)", "back": "γενναιόδωρος / γενναιόδωρη", "audio": "hypertts-f17267cfacc4851438dc91666899bb80c004c3d67bd9076bde1be59a.mp3"}, {"front": "selfish (masc. / fem.)", "back": "εγωιστής / εγωίστρια", "audio": "hypertts-b8db77b065ca887e719b3a710b8e924c09e8b9acc85632ad26bd1508.mp3"}, {"front": "strict (masc. / fem.)", "back": "αυστηρός / αυστηρή", "audio": "hypertts-bf411c08fdc52ae077dd60684cf5194ec765521a74eb3002a904182c.mp3"}, {"front": "polite (masc. / fem.)", "back": "ευγενικός / ευγενική", "audio": "hypertts-90a786bab607b5cc21d0cbf8e5d79ccd1c214ffcc725fe6cd648edb6.mp3"}, {"front": "rude (same form m/f)", "back": "αγενής", "audio": "hypertts-46fc7833b07a6a35f29c21815b61096a0f01cea8fc0b3cdc1f0de180.mp3"}, {"front": "patient (masc. / fem.)", "back": "υπομονετικός / υπομονετική", "audio": "hypertts-815ddf1cbc64eed357bc94dcc26fc5795c9f2cc5cb5298afda9a2449.mp3"}, {"front": "impatient (masc. / fem.)", "back": "ανυπόμονος / ανυπόμονη", "audio": "hypertts-43b8b5127ce24bdd13bcc32fe8f62a4a5480aa7184f93c9dd92de5a7.mp3"}, {"front": "hardworking (masc. / fem.)", "back": "εργατικός / εργατική", "audio": "hypertts-8978161ffbfd12f97f7eecc6073dc3b7f90962754f76bcbce4296545.mp3"}, {"front": "lazy (masc. / fem.)", "back": "τεμπέλης / τεμπέλα", "audio": "hypertts-ab177a9b2e3990a0a9b8257ae7d9016e1ffcbeb8bb61dda0db568327.mp3"}, {"front": "optimistic (masc. / fem.)", "back": "αισιόδοξος / αισιόδοξη", "audio": "hypertts-15341705e94b7fbfebb57dfdbded5500a68829c1886980470729f966.mp3"}, {"front": "pessimistic (masc. / fem.)", "back": "απαισιόδοξος / απαισιόδοξη", "audio": "hypertts-f7336edf17b037544c9b3f21d815e203de0a9a7425d88789e00f3ed3.mp3"}, {"front": "honest (same form m/f)", "back": "ειλικρινής", "audio": "hypertts-9aa58c9ad3ccfef478fab917309264bc76d9fbfb1c58e4a5b4247e3d.mp3"}, {"front": "sensitive (masc. / fem.)", "back": "ευαίσθητος / ευαίσθητη", "audio": "hypertts-74d88c231b5ea8a00a4216d13bc72d2327039991a1bb03df6e586c65.mp3"}, {"front": "warm (masc. / fem.)", "back": "ζεστός / ζεστή", "audio": "hypertts-c94ebfbad00afad67440113d8353aa1727bd708c915ecf7092da9c58.mp3"}, {"front": "cold (masc. / fem.)", "back": "ψυχρός / ψυχρή", "audio": "hypertts-31562801a8e64d7522065be840b82c362b3b45b800a1dbfe5faf7f49.mp3"}, {"front": "open (masc. / fem.)", "back": "ανοιχτός / ανοιχτή", "audio": "hypertts-ab17e5684434c2214d50c6e54a5fc93cdfb4dd6326d504fd2d3376de.mp3"}, {"front": "closed / reserved (masc. / fem.)", "back": "κλειστός / κλειστή", "audio": "hypertts-e2dfdbffc24ef08bf91d0af48fe0c66df52b5a7b3661a45f74bcc49f.mp3"}, {"front": "the character / personality", "back": "ο χαρακτήρας", "audio": "hypertts-274a55a90a320c7b44b2354525d8631e0fdff64f3f878fac5f8a9081.mp3"}, {"front": "he/she has a sense of humour", "back": "έχει χιούμορ", "audio": "hypertts-63a4f7f1bd38c1bafc2e12c3271f27e7318a3024389670ff2841dab2.mp3"}, {"front": "he/she is confident", "back": "έχει αυτοπεποίθηση", "audio": "hypertts-13d7b79ce1999e9b4db45c74eaedb78fdc4d48087aa70d0da1d6a8c9.mp3"}, {"front": "strong character", "back": "δυνατός χαρακτήρας", "audio": "hypertts-5f730e65b9c591ccacf07db6c4629d3e367888a9511a55dcf24c7d99.mp3"}, {"front": "easy / difficult person", "back": "εύκολος / δύσκολος άνθρωπος", "audio": "hypertts-14952466560aa668ead8685888e88c1b4b0872af66d6e48acadd2d9e.mp3"}, {"front": "a little", "back": "λίγο", "audio": "hypertts-a06a5dc2e2654813125343e894072c73b0570ee0e0e77001d878f030.mp3"}, {"front": "quite", "back": "αρκετά", "audio": "hypertts-78d36c494c11e11eea4ae7999a5a7822f7dac75a2f8315663ce6dc34.mp3"}, {"front": "very", "back": "πολύ", "audio": "hypertts-572dd93d638791e6f8fe0d31e26d847f84a449e733d54a2b6d47956e.mp3"}, {"front": "extremely", "back": "πάρα πολύ", "audio": "hypertts-e631140103bd4a71805f7436016448af5ce24d5d6f5522c218ca9472.mp3"}, {"front": "not at all", "back": "καθόλου", "audio": "hypertts-d7025151624306a11d1cf5229c428488aff25b8c8f995c7ca550c9eb.mp3"}, {"front": "What's his/her personality like?", "back": "Τι χαρακτήρα έχει;", "audio": "hypertts-410ffd7216bb8bbf084768a4216c4a18466e3914609b9e5f33a4e861.mp3"}, {"front": "She's a little shy at first", "back": "Είναι λίγο ντροπαλή στην αρχή", "audio": "hypertts-81d13579fd7031d255f0980bcc796c69090189ef8194b325614339c3.mp3"}, {"front": "At first… then…", "back": "Στην αρχή… μετά…", "audio": "hypertts-2f21c94ed2bf26564410d95be27168bda1b803358f03c546d0b0b62b.mp3"}, {"front": "He/she laughs at everything", "back": "Γελάει με όλα", "audio": "hypertts-f6946dada8f2cbe9e188b37cd39c8f00e06188b9006d08defbe9a6cf.mp3"}, {"front": "He/she gets angry easily", "back": "Θυμώνει εύκολα", "audio": "hypertts-7534b692fdaf91b6408582aad77904d47dd9e020cfd9f1d0717c3cf7.mp3"}, {"front": "He/she never changes", "back": "Δεν αλλάζει ποτέ", "audio": "hypertts-6304e077f60c33211340aa76ab9a19c88d74cb45832e503df300ee65.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
