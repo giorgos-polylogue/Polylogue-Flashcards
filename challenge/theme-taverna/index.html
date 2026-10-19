@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6-Week Challenge — At the Taverna</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #534AB7; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #534AB7; border-color: #534AB7; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/challenge/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Themes</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/challenge/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "Good evening (arriving)", "back": "Καλησπέρα", "audio": "hypertts-706eef99de62220e02df5b1ba9f5b86837010e3d4a24b9b8061e5fe6.mp3"}, {"front": "The taverna", "back": "η ταβέρνα", "audio": "hypertts-42f90be9fe69883a15aa13c49345573492cab46f11ea22528f2aac30.mp3"}, {"front": "The table", "back": "το τραπέζι", "audio": "hypertts-8f1cb7c461473fd258d43e98a7838b06b5595aa066292d0f2d411e84.mp3"}, {"front": "A table for two please", "back": "Ένα τραπέζι για δύο παρακαλώ", "audio": "hypertts-1695a9be159a41b727af32984b53c4d0eb9b7c4405b6eebab2222d93.mp3"}, {"front": "The menu", "back": "το μενού", "audio": "hypertts-45b81a5d9a8d29c845a5a6c08054d1cd5ebb96567e766bf73d2049a6.mp3"}, {"front": "The menu please", "back": "Το μενού παρακαλώ", "audio": "hypertts-71a000dc57bbc7909cda3fd6ed628c3f403c833218e5697dac9ea881.mp3"}, {"front": "The waiter", "back": "ο σερβιτόρος", "audio": "hypertts-0953c662597bc01ba3d9b89f9b9b32704acb8af59e659fbf55bdb7c4.mp3"}, {"front": "I'm waiting for the waiter", "back": "Περιμένω τον σερβιτόρο", "audio": "hypertts-08d83fd07758fd7924a9ba66e323c36abc8961345a56b2572c8f256d.mp3"}, {"front": "What is there today?", "back": "Τι υπάρχει σήμερα;", "audio": "hypertts-66948022ee1c26cd5fedd838201d91dd1be3258a5807b7a7925fa19a.mp3"}, {"front": "The water", "back": "το νερό", "audio": "hypertts-51a6015305377e24190dc3b7d6b32958bf8af20e0ee3a20a231bdcc1.mp3"}, {"front": "A glass of water please", "back": "Ένα ποτήρι νερό παρακαλώ", "audio": "hypertts-4ec9b6b3c729d1cd24da4ec2294c931d8a7805ee66745e0d7fe15328.mp3"}, {"front": "The bottle", "back": "το μπουκάλι", "audio": "hypertts-3bf6dfb555511ab5d3f8254d832bb40031aae654f313dea5e51a2edf.mp3"}, {"front": "The wine", "back": "το κρασί", "audio": "hypertts-c560f1c12fb418872cebad8a346926fd610d6cfb7c1c61ee5bf899bf.mp3"}, {"front": "Half a kilo of wine (half a litre)", "back": "Μισό κιλό κρασί", "audio": "hypertts-c930887219f46d71e37c4645eadc2b409a6da42d3ae300165f8cae19.mp3"}, {"front": "The beer", "back": "η μπίρα", "audio": "hypertts-fae0303db35e7ca431618fc9f68d1feef2c37f01100be1339b80b7fd.mp3"}, {"front": "The coffee", "back": "ο καφές", "audio": "hypertts-d55d0a718d99a9924b35930ba13d4d7cb0705f292a1c7a2f9b3ec2f3.mp3"}, {"front": "I want a coffee", "back": "Θέλω έναν καφέ", "audio": "hypertts-9f92d49c322f007e80fa7a443e9cded2966fdae6114e00fd4275eab4.mp3"}, {"front": "The bread", "back": "το ψωμί", "audio": "hypertts-658d87e1dcc93ce83dace314e58f6b87098af6041aa650a3fbb14b6b.mp3"}, {"front": "A little bread please", "back": "Λίγο ψωμί παρακαλώ", "audio": "hypertts-8b067f437dee83affe0f29f336fd762de4ad0fd2428184f032bd211d.mp3"}, {"front": "The salad", "back": "η σαλάτα", "audio": "hypertts-182a530f2bfb0782fc3ec726ab1a8551f76ac11390c8cb2345aaa73c.mp3"}, {"front": "I would like a salad (lit. I would want a salad)", "back": "Θα ήθελα μια σαλάτα", "audio": "hypertts-e8f368aaa5888cce7b19b69e1fd10211c3e5096a0adf6e20a13fff71.mp3"}, {"front": "The village salad (Greek salad)", "back": "η χωριάτικη", "audio": "hypertts-bb38bcbf14047433c212b7f301d2a9f998f00edae4f485f1b4e267a1.mp3"}, {"front": "I'll take the village salad", "back": "Θα πάρω τη χωριάτικη", "audio": "hypertts-af8ddea880ec5847e5f1b245b1d01220a4ea0a2770defd7a2130e6be.mp3"}, {"front": "The fish", "back": "το ψάρι", "audio": "hypertts-e19855b9d0bd0087980207e56cecbdfd3f8985c6dcde0170d4ccad91.mp3"}, {"front": "Is there fish today?", "back": "Υπάρχει ψάρι σήμερα;", "audio": "hypertts-d76324b3a541a4524e8633a9c8316995371995c70a8cdec614460dc0.mp3"}, {"front": "The meat", "back": "το κρέας", "audio": "hypertts-7bc893e7bc7babad842278e3c243003d6d4934c20a2d529c8777afd0.mp3"}, {"front": "I don't eat meat", "back": "Δεν τρώω κρέας", "audio": "hypertts-b02417fd93c0f794995dec3157b784f711cd36b41385b672a0f3777f.mp3"}, {"front": "The chicken", "back": "το κοτόπουλο", "audio": "hypertts-b66013b1d60265a77d5abe7a8093d88c49d819c3fc05da073515a611.mp3"}, {"front": "The steak", "back": "η μπριζόλα", "audio": "hypertts-b670e3f45da3b7a933cb7e46156e328365c4a1bb174daca24e32e57c.mp3"}, {"front": "I'll take the steak", "back": "Θα πάρω την μπριζόλα", "audio": "hypertts-a20815ca520ed7246f3da6411785781e3c792b975b578defcd4729c2.mp3"}, {"front": "I want to try the tzatziki", "back": "Θέλω να δοκιμάσω το τζατζίκι", "audio": "hypertts-91862818c92bf4d0b7ba1582ca57c1ef84ed1ec098b659d6a96c0cd6.mp3"}, {"front": "I want to eat something", "back": "Θέλω να φάω κάτι", "audio": "hypertts-40848347526fc549361dc91386c290a1d765b9f837c642ea3ae98367.mp3"}, {"front": "I'm hungry (lit. I hunger)", "back": "Πεινάω", "audio": "hypertts-df512b01b18e4f8c60dc01a1ee4f9902f03f2de28b72a7ee74664268.mp3"}, {"front": "I'm thirsty (lit. I thirst)", "back": "Διψάω", "audio": "hypertts-9521239c1ce7637876c46556b81cb96da1b6a4494706c3bde7286e18.mp3"}, {"front": "Another one please", "back": "Άλλο ένα παρακαλώ", "audio": "hypertts-ced95beb18f4cb6f6f82d768d7981b6f207313c444fb5dbd85879075.mp3"}, {"front": "Enjoy your meal! (lit. good appetite!)", "back": "Καλή όρεξη!", "audio": "hypertts-f88a15ebbd136ae0a000ad07b811431a34e91dc1a0f654c99bf0388b.mp3"}, {"front": "Cheers! (lit. to our health!)", "back": "Στην υγειά μας!", "audio": "hypertts-1a6022e91c1221244c43de73c66b76f23318591e14d6ce449ae9177b.mp3"}, {"front": "It's tasty", "back": "Είναι νόστιμο", "audio": "hypertts-e292054d41be4a03fcdb70e3bed8c6cbd95b38b0c956239fb11c4bd2.mp3"}, {"front": "I like it (lit. to me it pleases)", "back": "Μου αρέσει", "audio": "hypertts-45484186d5b715e96cdd6068990ea7368f31a70cd71f54e495f44863.mp3"}, {"front": "The bill", "back": "ο λογαριασμός", "audio": "hypertts-1ecbf8bc133e18d12a4748beffbdfca49894ec30a8436e556063dbe6.mp3"}, {"front": "The bill please", "back": "Τον λογαριασμό παρακαλώ", "audio": "hypertts-e335304f97fa6354083b3bd6b398d87def6de0ba4b86d93e13c75c0c.mp3"}, {"front": "How much is it? (lit. how much does it make?)", "back": "Πόσο κάνει;", "audio": "hypertts-68b1112525de3c81753f9f9c92d037aef57796baa2f135eb550da88f.mp3"}, {"front": "I'll pay (it's on me)", "back": "Θα πληρώσω εγώ", "audio": "hypertts-dbcb7a49e3a8c52c406762cf4683c8cdf7f47f286dd8668dfac9b8bf.mp3"}, {"front": "Thank you from all of us (lit. we thank you)", "back": "Ευχαριστούμε", "audio": "hypertts-ef42c6b7493a687581c3e5e83a8f7e5c6182bf6d09ae1922d4acb5af.mp3"}, {"front": "Good evening (leaving)", "back": "Καλό βράδυ", "audio": "hypertts-5627c030616dd0979c649c6d755bf16294d3a345620597c9feaea23a.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
