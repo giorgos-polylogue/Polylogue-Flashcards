@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6-Week Challenge — Meeting People</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #534AB7; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #534AB7; border-color: #534AB7; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/challenge/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Themes</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/challenge/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "I speak", "back": "μιλάω / μιλήσω", "audio": "hypertts-0a76052705444ea96fcc9ac240e261dec1e60cd04b4cda454343409a.mp3"}, {"front": "I say", "back": "λέω / πω", "audio": "hypertts-df1fea7ced4e8d837146df1b3db47649cbf207a8a3e2bf66cfa1ee36.mp3"}, {"front": "I meet, I get to know (someone)", "back": "γνωρίζω / γνωρίσω", "audio": "hypertts-ab0a586ec3129eacca1aed169eb34630e367cbbbc820b24261ece69f.mp3"}, {"front": "I love", "back": "αγαπάω / αγαπήσω", "audio": "hypertts-8c4a4ea82344d58da79b1424093145cae7230508e6bdd53a43e170c6.mp3"}, {"front": "I pass, I spend time", "back": "περνάω / περάσω", "audio": "hypertts-1ac2f8614b67c049a27681c99c793905a17905180591b269972fbf49.mp3"}, {"front": "I treat (someone to a coffee, a drink)", "back": "κερνάω / κεράσω", "audio": "hypertts-7492ac185cb4063fe7f5529e760cacdc04e37faba6385f32c8ddd802.mp3"}, {"front": "I leave", "back": "φεύγω / φύγω", "audio": "hypertts-2ab09047a7969bd1f868ecec5a6640056fc2657225b27bc9b5850dd4.mp3"}, {"front": "I send", "back": "στέλνω / στείλω", "audio": "hypertts-4da7eabd58c2a5608f53a5189c0846082fa109bea09c87a317ed3680.mp3"}, {"front": "I live, I stay", "back": "μένω / μείνω", "audio": "hypertts-ccdee057cc4f5dbff421471bd856da27105158da81d204d4d29eccff.mp3"}, {"front": "I travel", "back": "ταξιδεύω / ταξιδέψω", "audio": "hypertts-34f58c470687955f4db5c71d430e64f3d8b7875d1d8c9516d3b42f53.mp3"}, {"front": "I work", "back": "δουλεύω / δουλέψω", "audio": "hypertts-3ff23de7a47fbbc55c48002f3bea9f0f610e6b385230bceeb31c7077.mp3"}, {"front": "I learn", "back": "μαθαίνω / μάθω", "audio": "hypertts-063da2a3fe9090fedc202bb480c1eb3fe585a80e3a4ad545d59b58c1.mp3"}, {"front": "I understand", "back": "καταλαβαίνω / καταλάβω", "audio": "hypertts-c03519193df95f59dd3d57b67637db1d0a033cba8e44ee9bdb2dc54b.mp3"}, {"front": "Greece", "back": "η Ελλάδα", "audio": "hypertts-d490a932853521529b05ae1b538f1af57650d7bda32d24e11a62fbb8.mp3"}, {"front": "Lebanon", "back": "ο Λίβανος", "audio": "hypertts-254fe13989fb940157a935bcb0b588eaa04de00cf5d233078313c96a.mp3"}, {"front": "Denmark", "back": "η Δανία", "audio": "hypertts-f5d2b4ab09dc9d5c397d40465332c459c5fe7ea5fd6f56ac87f8a8cb.mp3"}, {"front": "England", "back": "η Αγγλία", "audio": "hypertts-fdb971f4abf4aced76a6c8de4bffcef37661a6097899fa98c62505c9.mp3"}, {"front": "the Greek man / the Greek woman", "back": "ο Έλληνας / η Ελληνίδα", "audio": "hypertts-51323a68025d48349f9bd54b2634441521eafdf3c46ff2746eedca4d.mp3"}, {"front": "Greek (the language)", "back": "τα ελληνικά", "audio": "hypertts-44048bc94ef9a3f6ad6f986e81e59085eaa370f4667de82dacd639ee.mp3"}, {"front": "English (the language)", "back": "τα αγγλικά", "audio": "hypertts-ff77231770da23e8ea163f24d84b4b79ca76c5efbc796e38bb087894.mp3"}, {"front": "a little Greek", "back": "λίγα ελληνικά", "audio": "hypertts-998113676c7cd2f6d033a53264c889358a895cbeb2004fe1e134ac23.mp3"}, {"front": "the family", "back": "η οικογένεια", "audio": "hypertts-b380f45940bb4bbb5a8e27bd4acc0cb58fe39378ad0f154fe0c7be37.mp3"}, {"front": "the man, the husband", "back": "ο άντρας", "audio": "hypertts-43aded03b577fba83c0ea37b6e8b57e5b3beb0853f801b03fcd35bc2.mp3"}, {"front": "the woman, the wife", "back": "η γυναίκα", "audio": "hypertts-86447fb55959f726e6875a85056df5e42fb8b1865b55f71ec66812e0.mp3"}, {"front": "married (a man / a woman)", "back": "παντρεμένος / παντρεμένη", "audio": "hypertts-e6c5ffcf76f425b494fbb61b79e1e7d0ceb5f0a3ae58d3aae0895694.mp3"}, {"front": "the child / the children", "back": "το παιδί / τα παιδιά", "audio": "hypertts-3d8fef5da47108e44484e9ebcad48be634fe72d4e51c64e16aeff401.mp3"}, {"front": "the friend", "back": "ο φίλος / η φίλη", "audio": "hypertts-45c516a8b1bed70504b14edcebeeb56505ae30ea6bd100babf48bb0b.mp3"}, {"front": "the work, the job", "back": "η δουλειά", "audio": "hypertts-e41d2fe59263cc31f505697fc63a01debb0ae596a1b0c7e4d80c4714.mp3"}, {"front": "the retired person (lit. the pensioner)", "back": "ο / η συνταξιούχος", "audio": "hypertts-abfb649be5e18c43b0f0b09a4a1fdebe7e3a4d622e0b69e9d302c0f0.mp3"}, {"front": "the holidays", "back": "οι διακοπές", "audio": "hypertts-fd9a41cae6f2b29d9176693ef31398ef4d5aa9372e76bac608a86548.mp3"}, {"front": "the week", "back": "η εβδομάδα", "audio": "hypertts-db1bfd0cdf2dc1445eb3ef3ab4da13f715b7027cd5631c32ac2420df.mp3"}, {"front": "the time", "back": "η φορά", "audio": "hypertts-66d7607fe37ebdb6025c16ed0544b05d4b2d2069db87dbabed080f3a.mp3"}, {"front": "the trip", "back": "το ταξίδι", "audio": "hypertts-ed816b089cc2b61e738cdcb12d1c82d9464baae74d7f6d21601524a1.mp3"}, {"front": "the message", "back": "το μήνυμα", "audio": "hypertts-39da8fa07a66f7aac4f9f36b0e280f7228aa7a1bfd4f8b7e11645b87.mp3"}, {"front": "the phone", "back": "το τηλέφωνο", "audio": "hypertts-e94ecb05ed4f271c0909d4b6321d56cc600c68507947af5b4a2c9722.mp3"}, {"front": "I call (lit. I take phone)", "back": "παίρνω / πάρω τηλέφωνο", "audio": "hypertts-067996b95186fa4a9141d3957cd4a03ab02638cd28c7ad431558488e.mp3"}, {"front": "Hi! / Bye! (to one person / polite, or to more than one)", "back": "Γεια σου! / Γεια σας!", "audio": "hypertts-6fe131df1b07040bcda288ba81f0c688e3961856ef8dddafbe0a4f50.mp3"}, {"front": "What's your name? (lit. how do they call you?)", "back": "Πώς σε λένε;", "audio": "hypertts-aaf520ce2e168f0614e633bf4b463ab20ad50bbb8b858c899dc9e0ff.mp3"}, {"front": "My name is… (lit. they call me…)", "back": "Με λένε…", "audio": "hypertts-f2dae7755688ba6fd3290833578ee2149c4e6e0421c373ff984f4fb6.mp3"}, {"front": "Nice to meet you!", "back": "Χαίρω πολύ!", "audio": "hypertts-88c268ae8fea369dd532ce3b538320e977783eefbb0ade21e41f37b4.mp3"}, {"front": "Where are you from? (lit. from where are you?)", "back": "Από πού είσαι;", "audio": "hypertts-5e94028cbff83339197a4a2f995d40e2fa315f6c87cda2a2524707ff.mp3"}, {"front": "Is it your first time in Greece?", "back": "Πρώτη φορά στην Ελλάδα;", "audio": "hypertts-fd68e0d7087a7067e39eca021ff942b599b883f8dff397abdf5c95df.mp3"}, {"front": "What do you do for work? (lit. what work do you do?)", "back": "Τι δουλειά κάνεις;", "audio": "hypertts-7addc9b0aae2431cdc4f4e612d88235b822da76f72d4eb60e8b269ca.mp3"}, {"front": "More slowly, please.", "back": "Πιο αργά, παρακαλώ.", "audio": "hypertts-f4b5df2681564e8b8031766c865269f4147a0039d616b9591a591c7a.mp3"}, {"front": "What does … mean?", "back": "Τι σημαίνει…;", "audio": "hypertts-82e12fff7b9d27cbbaa86976abcd23dcdaa83df3945ab615a42296e4.mp3"}, {"front": "How do you say … in Greek? (lit. how do we say … in the Greek?)", "back": "Πώς λέμε… στα ελληνικά;", "audio": "hypertts-10649edd9fc333befcd349417be5d44d58306fccbbd4024964d41e03.mp3"}, {"front": "It was really nice to meet you! (lit. I was very glad)", "back": "Χάρηκα πολύ!", "audio": "hypertts-5703ad83d3fff08425447ad587fda88ab30821b6a675c0812c154c2c.mp3"}, {"front": "See you! (lit. we say them)", "back": "Τα λέμε!", "audio": "hypertts-056368082ea80248fb82bbf6fb2ba8bd9a3ca5595ffca8df25b83380.mp3"}, {"front": "Have a good trip!", "back": "Καλό ταξίδι!", "audio": "hypertts-eccb0bc5dbf8f3ca726e38aff12559fc57ef58bdc2d31809d1ca16b9.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
