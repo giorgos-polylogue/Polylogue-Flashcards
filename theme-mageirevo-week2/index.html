@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polylogue — Μαγειρεύω · Week 2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; color: #1a1a1a; }
+  #app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .back-link { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .back-link:hover { color: #1a1a1a; }
+  .deck-tag { font-size: 12px; color: #888; background: #fff; border: 1px solid #e5e5e5; padding: 4px 12px; border-radius: 99px; }
+  .progress-bar { height: 3px; background: #e5e5e5; border-radius: 99px; overflow: hidden; margin-bottom: 1.25rem; }
+  .progress-fill { height: 100%; background: #534AB7; border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .counter { text-align: center; font-size: 13px; color: #888; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .counter strong { color: #1a1a1a; font-weight: 600; }
+  .card-scene { perspective: 1200px; margin-bottom: 1rem; cursor: pointer; user-select: none; }
+  .card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4,0,0.2,1); }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+  .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotateY(180deg); }
+  .card-label { font-size: 11px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-text { font-size: 24px; font-weight: 500; color: #1a1a1a; text-align: center; line-height: 1.35; }
+  .card-text.greek { font-size: 26px; }
+  .audio-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1px solid #e0e0e0; border-radius: 99px; background: transparent; color: #888; font-size: 13px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .audio-btn:hover { background: #f5f4f0; color: #555; }
+  .audio-btn.playing { color: #534AB7; border-color: #534AB7; }
+  .tap-hint { text-align: center; font-size: 13px; color: #bbb; margin-bottom: 1rem; height: 20px; }
+  .nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn { padding: 14px 4px; border-radius: 10px; border: 1px solid #e5e5e5; background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; color: #1a1a1a; transition: background 0.15s, opacity 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; }
+  .nav-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .nav-btn.primary:hover { opacity: 0.9; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .done-screen { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; }
+  .done-title { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+  .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { padding: 11px 28px; border: 1px solid #e0e0e0; border-radius: 10px; background: transparent; color: #1a1a1a; font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.15s, opacity 0.15s; text-decoration: none; display: inline-block; }
+  .action-btn:hover { background: #f5f4f0; }
+  .action-btn.primary { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .action-btn.primary:hover { opacity: 0.9; }
+  @media (max-width: 400px) { .card-text { font-size: 18px; } .card-text.greek { font-size: 20px; } .card-face { padding: 2rem 1.25rem; min-height: 170px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      All lessons
+    </a>
+    <span class="deck-tag">Μαγειρεύω · Week 2</span>
+  </header>
+  <div id="study-view">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="counter"><strong id="current-num">1</strong> of <span id="total-num">0</span></div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face">
+          <span class="card-label">English</span>
+          <div class="card-text" id="eng-text">—</div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-label">Greek</span>
+          <div class="card-text greek" id="greek-text">—</div>
+          <button class="audio-btn" id="audio-btn" onclick="event.stopPropagation(); playAudio()">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 6H1v4h2l4 3V3L3 6zM11.5 8c0-1.5-.8-2.8-2-3.5v7c1.2-.7 2-2 2-3.5zM14 8c0-2.8-1.6-5.2-4-6.3v1.1C11.8 3.7 13 5.7 13 8s-1.2 4.3-3 5.2v1.1C12.4 13.2 14 10.8 14 8z"/></svg>
+            Listen
+          </button>
+        </div>
+      </div>
+    </div>
+    <p class="tap-hint" id="tap-hint">Tap to reveal the Greek</p>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" onclick="nextCard()" id="next-btn">Next →</button>
+    </div>
+  </div>
+  <div id="done-view" class="done-screen hidden">
+    <div class="done-title">Deck complete</div>
+    <div class="done-sub">You've gone through all the cards. Practice makes perfect — go again!</div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="restart()">Practice again</button>
+      <a href="/" class="action-btn">All lessons</a>
+    </div>
+  </div>
+</div>
+<script>
+const AUDIO_PATH='audio/';
+const CARDS=[{"front": "I make (open / closed)", "back": "φτιάχνω / φτιάξω", "audio": "hypertts-4d28397ed6eb7adbba3d1274fbc5fecc635057817fa51788d5fdab4b.mp3"}, {"front": "Every Sunday I make a pie for the whole family.", "back": "Κάθε Κυριακή φτιάχνω πίτα για όλη την οικογένεια.", "audio": "hypertts-ecd9ebfaeff7602a188df69fe0bd4be3e789b70a08bce462e52d70b0.mp3"}, {"front": "I wash (open / closed)", "back": "πλένω / πλύνω", "audio": "hypertts-d1084496029b82508bb61766a7cf6003baccb0a0f093a5b9f91c5437.mp3"}, {"front": "We wash the tomatoes and cut them in half.", "back": "Πλένουμε τις ντομάτες και τις κόβουμε στη μέση.", "audio": "hypertts-2ec047b7349105930e78fe0b5535a562331bbeff01d996349534cf3c.mp3"}, {"front": "I peel (open / closed)", "back": "ξεφλουδίζω / ξεφλουδίσω", "audio": "hypertts-bcdc7e426a08712d8386c70aff3bb12484f8bf54dcc66c8e4146b48b.mp3"}, {"front": "We peel the potatoes with a small knife.", "back": "Ξεφλουδίζουμε τις πατάτες με ένα μικρό μαχαίρι.", "audio": "hypertts-c577a315a01170aa3af3fbd648fe5fbdf5c2c5f7bde335a985f91040.mp3"}, {"front": "I cut / I chop (open / closed)", "back": "κόβω / κόψω", "audio": "hypertts-0aa6386280e530e596467018b99377a01676753a15f35bb9e20c371f.mp3"}, {"front": "We chop the onion into small pieces.", "back": "Κόβουμε το κρεμμύδι σε μικρά κομμάτια.", "audio": "hypertts-a13ae9e9052a323a583ad1b9ed74fa313c7f44be68134a0cfa5905ef.mp3"}, {"front": "I stir / I mix (open / closed)", "back": "ανακατεύω / ανακατέψω", "audio": "hypertts-94aff441739c63fb74d732f7e24c355142d216d3d12d1f6efff15ee7.mp3"}, {"front": "We mix the flour with the eggs in a bowl.", "back": "Ανακατεύουμε το αλεύρι με τα αυγά σε ένα μπολ.", "audio": "hypertts-380e31d91655e84c46326d8508b6a47be3cfb210e6298d83ccdc58f3.mp3"}, {"front": "I throw in / I add (open / closed)", "back": "ρίχνω / ρίξω", "audio": "hypertts-c4f3f35b7565dac6cb1996e7e078ede1d07db0c7b524a4a083b875e5.mp3"}, {"front": "We add a little salt to the water.", "back": "Ρίχνουμε λίγο αλάτι στο νερό.", "audio": "hypertts-99e02b1169d643fca5eb041bde6702e8c74806682b3b558fac34bdf0.mp3"}, {"front": "I put (in / on) (open / closed)", "back": "βάζω / βάλω", "audio": "hypertts-ed9b56f97f52c68e661e5eb31afd3ffb81173d61f37c1d19ad2ab576.mp3"}, {"front": "We put the pot on the ring.", "back": "Βάζουμε την κατσαρόλα στο μάτι.", "audio": "hypertts-200b53da25f759a5b63442267c63357712fa1ed1e5078fad994040d4.mp3"}, {"front": "I turn on (the oven) / I light (open / closed)", "back": "ανάβω / ανάψω", "audio": "hypertts-cb56bd9711aa1b980c30198570f28b497dbd937f86f8026e46cc5554.mp3"}, {"front": "We turn the oven on to 180 degrees.", "back": "Ανάβουμε τον φούρνο στους 180 βαθμούς.", "audio": "hypertts-5e2f98df6439ef94a5e58f666284e2e7c760f5cb17a092a6a09ed21b.mp3"}, {"front": "I heat up / I warm up (open / closed)", "back": "ζεσταίνω / ζεστάνω", "audio": "hypertts-f92652761ab555f7fa63137ae5b2a640e9fb3297ca67f547cd85b653.mp3"}, {"front": "We heat the milk but we don't let it boil.", "back": "Ζεσταίνουμε το γάλα αλλά δεν το αφήνουμε να βράσει.", "audio": "hypertts-041baff7fc3722e0000cb39a88965f024fd3f1fed3a80feb723430fb.mp3"}, {"front": "I boil (open / closed)", "back": "βράζω / βράσω", "audio": "hypertts-3513552118f93bba0db6ffd952bbb9953f4ef5347f17656eb11974ae.mp3"}, {"front": "We boil the pasta for ten minutes.", "back": "Βράζουμε τα μακαρόνια για δέκα λεπτά.", "audio": "hypertts-0a26ab54b6d82b1ae9359aae98094f3606f2b16a47104aa3805c33a5.mp3"}, {"front": "I fry (open / closed)", "back": "τηγανίζω / τηγανίσω", "audio": "hypertts-871e0f97b17466ec52250ac852314fc173be130b40d3f1d3f67987a7.mp3"}, {"front": "We fry the eggs in a little butter.", "back": "Τηγανίζουμε τα αυγά σε λίγο βούτυρο.", "audio": "hypertts-d08ad33be2340e0dfc65c9b08d69ec7253b2f624fb97cf0e719a5754.mp3"}, {"front": "I bake / I roast / I grill (open / closed)", "back": "ψήνω / ψήσω", "audio": "hypertts-58eb6921b2797bad4970b0f40a95ce371fc1b4a50785ef7b875b6f5c.mp3"}, {"front": "We roast the chicken in the oven for an hour.", "back": "Ψήνουμε το κοτόπουλο στον φούρνο για μια ώρα.", "audio": "hypertts-ff4a7175bb42476aed762d9e67249d101c929ca24780815ee2ab68ab.mp3"}, {"front": "I take out (open / closed)", "back": "βγάζω / βγάλω", "audio": "hypertts-5a81270f0fce0f69a4a8fc06424ffe82be9a430b2d5823b10de334b9.mp3"}, {"front": "We take the tray out of the oven.", "back": "Βγάζουμε το ταψί από τον φούρνο.", "audio": "hypertts-edc64a316193bc2d42d4462a9ef013d0a31ec12f2b38ff4f99fb0906.mp3"}, {"front": "I taste / I try (open / closed)", "back": "δοκιμάζω / δοκιμάσω", "audio": "hypertts-fd518e53d87aa378a8b7ed848b4afe606f5f5ed85da02b9438743dbd.mp3"}, {"front": "We taste the sauce. Does it need salt?", "back": "Δοκιμάζουμε τη σάλτσα. Θέλει αλάτι;", "audio": "hypertts-5c6923e6418f1462d929a9b4aa8ccf8e05937862f4a56729ee7e7d5c.mp3"}, {"front": "I turn off / I put out (open / closed)", "back": "σβήνω / σβήσω", "audio": "hypertts-30f3e0ad8a79c6cd7f8aa34c1dc0ed2d7aba6b506eeeff133a52ae38.mp3"}, {"front": "We turn off the ring and let the soup cool down.", "back": "Σβήνουμε το μάτι και αφήνουμε τη σούπα να κρυώσει.", "audio": "hypertts-8c41849025278638d1eda1cf8f6dfc215d01a12d21a4700efb6f907e.mp3"}, {"front": "the recipe / the prescription", "back": "η συνταγή", "audio": "hypertts-cc083e0db2ec52a6c458bc26d915ea1003d56fab1d45f27c7e669bb4.mp3"}, {"front": "I have the recipe on my phone.", "back": "Έχω τη συνταγή στο κινητό μου.", "audio": "hypertts-07f314bf82d3bdc0abb089ddcfac4de9de6cfb79cb85709778984ae6.mp3"}, {"front": "the ingredients", "back": "τα υλικά", "audio": "hypertts-25cfd40d28e69c24af9f2d1811d02a02439b01fe7d91262a16d37890.mp3"}, {"front": "Do we have all the ingredients?", "back": "Έχουμε όλα τα υλικά;", "audio": "hypertts-5e81bca92096976c84f3a5a5af9239a86541104c6e01fac8c7f5e637.mp3"}, {"front": "the onion", "back": "το κρεμμύδι", "audio": "hypertts-49258da06308441928c7415a018bc9b3c99afb12a33e4496dbcfd695.mp3"}, {"front": "Onion makes me cry!", "back": "Το κρεμμύδι με κάνει να κλαίω!", "audio": "hypertts-bc23bb2d139dffe4b001ffe7e75105dd7abaef5ccb128d1fafe9a500.mp3"}, {"front": "the garlic", "back": "το σκόρδο", "audio": "hypertts-c7501dd860d715ec06849d47f41d2884b70dccd49a6f1804d6cc8e25.mp3"}, {"front": "We peel the garlic and chop it.", "back": "Ξεφλουδίζουμε το σκόρδο και το κόβουμε.", "audio": "hypertts-6b75931f382eb1304cd6754939dab242541578e113a522d5e423e65b.mp3"}, {"front": "the tomato", "back": "η ντομάτα", "audio": "hypertts-cc3b8ba068ff53eb52ee32f8140f18434fe809ed56164926d14f5933.mp3"}, {"front": "For gemista we need tomatoes and rice.", "back": "Για τα γεμιστά χρειαζόμαστε ντομάτες και ρύζι.", "audio": "hypertts-b00956cfe559b1e99d59332f82115bb2479db390846cc32699eae02e.mp3"}, {"front": "the potato", "back": "η πατάτα", "audio": "hypertts-ede6816d55c45cb518be8910864db3853c1f797f41aaf0eac114584b.mp3"}, {"front": "Oven potatoes need lemon and oregano.", "back": "Οι πατάτες στον φούρνο θέλουν λεμόνι και ρίγανη.", "audio": "hypertts-8df2d0d2bba2f68609679199820ee0eed2eb86b6d1072bd62c9775d6.mp3"}, {"front": "the lemon", "back": "το λεμόνι", "audio": "hypertts-784e7122a20579b9cbb3ce55b599317aa50ce252cd625742623dfa26.mp3"}, {"front": "In Greece we put lemon on everything!", "back": "Στην Ελλάδα βάζουμε λεμόνι σε όλα!", "audio": "hypertts-a9c617957a642303750f9f4abb6dd52df760dd3a34838fe29b7cd602.mp3"}, {"front": "the meat / the chicken", "back": "το κρέας / το κοτόπουλο", "audio": "hypertts-fef5345c6f8ad73570ea2d842f1cfbc3f9fb0084e70bb8fad98f6bc0.mp3"}, {"front": "What would you like? Meat or chicken?", "back": "Τι θέλετε; Κρέας ή κοτόπουλο;", "audio": "hypertts-d85cf33b5e4d56c90e1e814a9835a2df6212f4f8fee7531eae1a79aa.mp3"}, {"front": "the eggs", "back": "τα αυγά", "audio": "hypertts-fd3b0abc4f69d8011f40e5d1fc35860a491714dc7746f0f5f78f4274.mp3"}, {"front": "For the omelette we need three eggs.", "back": "Για την ομελέτα χρειαζόμαστε τρία αυγά.", "audio": "hypertts-0afc1bb392769b0a883412c374ce2c1f302b61c3adf20280ca2ebc59.mp3"}, {"front": "the flour", "back": "το αλεύρι", "audio": "hypertts-92f59fbd1e87951d22892a4ef3830df190065cab60512c59afbc52c7.mp3"}, {"front": "We add the flour little by little.", "back": "Ρίχνουμε το αλεύρι λίγο λίγο.", "audio": "hypertts-507370cc2f01237b1e5a7ae67ceba56d36c09e2dc40c40633681785b.mp3"}, {"front": "the oil / the olive oil", "back": "το λάδι / το ελαιόλαδο", "audio": "hypertts-6f238151f30685a7f391bd65f965f5c36a516a24d91a72e99c4a3e6d.mp3"}, {"front": "At home we only fry with olive oil.", "back": "Στο σπίτι τηγανίζουμε μόνο με ελαιόλαδο.", "audio": "hypertts-d8bb6264093842639cd4a0cb814fab81d2c9356484005d0adfb03fa9.mp3"}, {"front": "the salt / the pepper", "back": "το αλάτι / το πιπέρι", "audio": "hypertts-0df4e8550925fc61571ad75141a5add52979c87bfb49d145225ec1d5.mp3"}, {"front": "A little salt… a little pepper… and it's ready!", "back": "Λίγο αλάτι… λίγο πιπέρι… και είναι έτοιμο!", "audio": "hypertts-46209100db03126e4d085642cce246bd0284ecb36159d257e41e7b33.mp3"}, {"front": "the spoonful / the tablespoon", "back": "η κουταλιά", "audio": "hypertts-ac5fe5c97d5deb9efb4e7b29670678dbcbca15f56fc894ba5c0c2f1b.mp3"}, {"front": "We put in two tablespoons of sugar.", "back": "Βάζουμε δύο κουταλιές ζάχαρη.", "audio": "hypertts-afcc4a88eb1be966160e68531755b8b04366dc3acf3dbceb54efed25.mp3"}, {"front": "the teaspoon", "back": "το κουταλάκι", "audio": "hypertts-e11437f1bd212d4364421d39ac9d320b57d4b3a9ea4f4bc48fa26c48.mp3"}, {"front": "I put a teaspoon of honey in my tea.", "back": "Βάζω ένα κουταλάκι μέλι στο τσάι μου.", "audio": "hypertts-d42759d8bd5250ab380b34f6cfc3bac381461d41cbf3896e8e2a7708.mp3"}, {"front": "the cup (to measure)", "back": "το φλιτζάνι", "audio": "hypertts-8ae963b141542ecd31f8f065de9e50f7aa84741a8ab95027b742a0d0.mp3"}, {"front": "The recipe needs two cups of flour.", "back": "Η συνταγή θέλει δύο φλιτζάνια αλεύρι.", "audio": "hypertts-90894c76c531d982fbfa8fe6c390bc27d5a5623851883a8fdd04b641.mp3"}, {"front": "a pinch", "back": "μια πρέζα", "audio": "hypertts-1ccce0a5c06f4e5809317fbcdcc2ec839c220fdcce256b1716ffa80a.mp3"}, {"front": "It only needs a pinch of salt.", "back": "Θέλει μόνο μια πρέζα αλάτι.", "audio": "hypertts-3f1ebf10ee07213c9927084acf927c23b6b14e6b6b74f59597665b7b.mp3"}, {"front": "the oven", "back": "ο φούρνος", "audio": "hypertts-c2dfe8fb0476a398d2aa52cdbac137eaf5c3ccfd1cefe9700838cb3e.mp3"}, {"front": "The food is still in the oven.", "back": "Το φαγητό είναι ακόμα στον φούρνο.", "audio": "hypertts-641fc588556f570d590724dbede4b3e26f56d65b40b4a01ebabecca2.mp3"}, {"front": "the ring / the burner (also: the eye)", "back": "το μάτι", "audio": "hypertts-6c71d7a52c4d79c58c8097fe36fecc2a56185a2fcf9143efeb67ebd4.mp3"}, {"front": "Our cooker has four rings.", "back": "Η κουζίνα μας έχει τέσσερα μάτια.", "audio": "hypertts-007d71fae2cb121ea7e5d4f6b0c2670a5dc066d01dbea1ce890f6a72.mp3"}, {"front": "on low / high heat", "back": "σε χαμηλή / δυνατή φωτιά", "audio": "hypertts-ba81c5b85c313d74a92c2674db8d004d7b1549451dfa6b7a68038fd2.mp3"}, {"front": "The sauce simmers on low heat for twenty minutes.", "back": "Η σάλτσα βράζει σε χαμηλή φωτιά για είκοσι λεπτά.", "audio": "hypertts-c5d424df8ded82f7baffc05d61ff4dd40b63c4fa0d5fd94e16c2f70c.mp3"}, {"front": "the pot", "back": "η κατσαρόλα", "audio": "hypertts-901e43cb6064e7202d81dbc5cea9785f1ee2e771c76e64a5535570ea.mp3"}, {"front": "We boil the lentils in a big pot.", "back": "Βράζουμε τις φακές σε μια μεγάλη κατσαρόλα.", "audio": "hypertts-aea099637eff03455d36f192d75b53d71b990feef453eb181c389a26.mp3"}, {"front": "the frying pan", "back": "το τηγάνι", "audio": "hypertts-8e887ab87fd5e23c2f43d67f1105646c0e7e18796d3f1c93fa6e2c0b.mp3"}, {"front": "We heat a little oil in the frying pan.", "back": "Ζεσταίνουμε λίγο λάδι στο τηγάνι.", "audio": "hypertts-bc6f114474e309fa11896c42bb9aec08e3fbe3d8fde486670974ead7.mp3"}, {"front": "the baking tray", "back": "το ταψί", "audio": "hypertts-40bbab25f0228549dc9abcee0722df0a53a510c9270caf0367905df9.mp3"}, {"front": "We put the chicken and the potatoes in the same tray.", "back": "Βάζουμε το κοτόπουλο και τις πατάτες στο ίδιο ταψί.", "audio": "hypertts-ae922a6285c75474f0c8094dc792e707662e7f10ee084fa3b32e80e0.mp3"}, {"front": "the bowl", "back": "το μπολ", "audio": "hypertts-7cac85e66458e358c688b4b4b055af3dfdc4d145f8c33e8a98b3e641.mp3"}, {"front": "We put the salad in a big bowl.", "back": "Βάζουμε τη σαλάτα σε ένα μεγάλο μπολ.", "audio": "hypertts-636b136f7a055ad9a12ae6873bf11bd01bb431bb87b76776835a5140.mp3"}, {"front": "the knife", "back": "το μαχαίρι", "audio": "hypertts-27e5a3156163e7999126cac90ead0ccf9f95208483e18534173de6f4.mp3"}, {"front": "We cut the bread with the big knife.", "back": "Κόβουμε το ψωμί με το μεγάλο μαχαίρι.", "audio": "hypertts-7a4b3c0f7c103949caf359cd5dfcf14bfadac3e0a5bf1dffbe6daecd.mp3"}, {"front": "raw (masc. / fem. / neuter)", "back": "ωμός / ωμή / ωμό", "audio": "hypertts-914459b32a50c3e19d73edf03180928fbd630b513cae303d9cb3f80a.mp3"}, {"front": "The meat is still raw inside.", "back": "Το κρέας είναι ακόμα ωμό μέσα.", "audio": "hypertts-fbe816c58bef2b9c6456e1db4ed259cd264ad3251fa8c4302db2fbef.mp3"}, {"front": "boiled (masc. / fem. / neuter)", "back": "βραστός / βραστή / βραστό", "audio": "hypertts-0f493ba6dc95effb742773c80c9b1616f4394bacfc284b7e6c97d739.mp3"}, {"front": "I eat a boiled egg every morning.", "back": "Τρώω ένα βραστό αυγό κάθε πρωί.", "audio": "hypertts-ef9fc39ed9d692265554eee618b9a6c6c52ccf6662ce554be2d798e9.mp3"}, {"front": "roast / grilled (masc. / fem. / neuter)", "back": "ψητός / ψητή / ψητό", "audio": "hypertts-adb6b8e77f13d68725c7d2889b84ac06c73ce0accd8862da64dcccfe.mp3"}, {"front": "In summer we eat a lot of grilled fish.", "back": "Το καλοκαίρι τρώμε πολύ ψητό ψάρι.", "audio": "hypertts-155dfbd98ed4ba8e72c87649030a21ce9e52a5ed77c1efb8d826e4ab.mp3"}, {"front": "fried (masc. / fem. / neuter)", "back": "τηγανητός / τηγανητή / τηγανητό", "audio": "hypertts-230cb4cf7026a7ffca22bf9d78010b215107d2b55b208c80c84902ed.mp3"}, {"front": "The kids always want French fries.", "back": "Τα παιδιά θέλουν πάντα πατάτες τηγανητές.", "audio": "hypertts-56cb8563474b4b0b46dcb2f91519b53dacbe6a3c23f345e8a630744d.mp3"}, {"front": "first", "back": "πρώτα", "audio": "hypertts-383977fe1c4eaa600ebcd33156f001496ad4a603a4214fb10ccabfa2.mp3"}, {"front": "First we wash the vegetables.", "back": "Πρώτα πλένουμε τα λαχανικά.", "audio": "hypertts-4617f8532cac539637e6e0193b5a407448b6639efdc545b1610e9024.mp3"}, {"front": "then / at the end", "back": "μετά / στο τέλος", "audio": "hypertts-e5a94c120f3625725c1c210f20ffc10af051a13c2d124a81e15a1fb6.mp3"}, {"front": "Then we cut them and at the end we add oil and salt.", "back": "Μετά τα κόβουμε και στο τέλος ρίχνουμε λάδι και αλάτι.", "audio": "hypertts-9c1e7ac52c31f2f6126e45231dce4ea3cca6a8ec7bb1bb5a27fe0580.mp3"}, {"front": "until… (+ closed form)", "back": "μέχρι να…", "audio": "hypertts-6ccf994bdda3d9830ce75cede442dba60834e3b76380d49e18682980.mp3"}, {"front": "We stir until it boils.", "back": "Ανακατεύουμε μέχρι να βράσει.", "audio": "hypertts-746b85fbe5c17774238bad482cde9ca20e3b0efb8f1ff285a38cfeab.mp3"}, {"front": "How do you make it? (το γλυκό)", "back": "Πώς το φτιάχνεις;", "audio": "hypertts-a1ca7ab98cdf6ebd1eb3fc3f2bb1941e1b963a554ae7c2023a5e3a3b.mp3"}, {"front": "How do you make it? (ο μουσακάς)", "back": "Πώς τον φτιάχνεις;", "audio": "hypertts-8a7dd5f76f204cab7550b62f768a37a90f97e00dd3b5bf3a606e9f7f.mp3"}, {"front": "How do you make it? (η πίτα)", "back": "Πώς τη φτιάχνεις;", "audio": "hypertts-66e98de574a1bd706eda1f39fe42ad7b222252c66118560549b2a9a1.mp3"}, {"front": "What a lovely pie! How do you make it?", "back": "Τι ωραία πίτα! Πώς τη φτιάχνεις;", "audio": "hypertts-e9f17cfd77980160a47c974a74d5bc45b301d57ed1e45b71f814bd8f.mp3"}, {"front": "How long does it take?", "back": "Πόση ώρα θέλει;", "audio": "hypertts-d7ea3f758cfe8015638844d4349290562a92e1b2f6947c2c0808b471.mp3"}, {"front": "It takes an hour", "back": "Θέλει μια ώρα", "audio": "hypertts-7caff5dc954e4732b2b2f70459e6cb260846f0e93380bc6842c57ff3.mp3"}, {"front": "How long does the rice take? Twenty minutes.", "back": "Πόση ώρα θέλει το ρύζι; Είκοσι λεπτά.", "audio": "hypertts-3a172e77a034cf22ee454f4149fcdc973d4b736ec1a9d8514f40b198.mp3"}, {"front": "It needs a bit longer", "back": "Θέλει λίγο ακόμα", "audio": "hypertts-f424c19bdc75946893b37cfd5fc982c792741af624172e3f7fd175d6.mp3"}, {"front": "Is the food ready? No. It needs a bit longer.", "back": "Είναι έτοιμο το φαγητό; Όχι. Θέλει λίγο ακόμα.", "audio": "hypertts-67de6e9060e031eceaf7180ac2a6449b3690ec31ce0fd3d68455832d.mp3"}, {"front": "Can you give me the recipe?", "back": "Μου δίνεις τη συνταγή;", "audio": "hypertts-08051aabfa62a609a064677ed8cedc16c236eb6e67ab94dae018c4df.mp3"}, {"front": "Your moussaka is perfect! Can you give me the recipe?", "back": "Τέλειος ο μουσακάς σου! Μου δίνεις τη συνταγή;", "audio": "hypertts-77206bee020b2af0c69f8499a560da2de3d319806c068b108013b60f.mp3"}];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let deck=shuffle(CARDS);let pos=0;let currentAudio=null;
+function updateProgress(){
+  document.getElementById('current-num').textContent=pos+1;
+  document.getElementById('total-num').textContent=deck.length;
+  document.getElementById('prog').style.width=Math.round(((pos+1)/deck.length)*100)+'%';
+  document.getElementById('prev-btn').disabled=pos===0;
+}
+function showCard(){
+  const card=deck[pos];
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('eng-text').textContent=card.front;
+  document.getElementById('greek-text').textContent=card.back;
+  document.getElementById('audio-btn').classList.remove('playing');
+  document.getElementById('tap-hint').style.display='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  updateProgress();
+}
+function flipCard(){
+  const flipped=document.getElementById('card-inner').classList.toggle('flipped');
+  if(flipped){document.getElementById('tap-hint').style.display='none';playAudio();}
+  else{document.getElementById('tap-hint').style.display='';}
+}
+function playAudio(){
+  const card=deck[pos];
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=document.getElementById('audio-btn');
+  const audio=new Audio(AUDIO_PATH+card.audio);
+  currentAudio=audio;btn.classList.add('playing');
+  audio.play().catch(()=>{});
+  audio.onended=()=>{btn.classList.remove('playing');currentAudio=null;};
+  audio.onerror=()=>{btn.classList.remove('playing');currentAudio=null;};
+}
+function nextCard(){if(pos<deck.length-1){pos++;showCard();}else{showDone();}}
+function prevCard(){if(pos>0){pos--;showCard();}}
+function showDone(){
+  document.getElementById('study-view').classList.add('hidden');
+  document.getElementById('done-view').classList.remove('hidden');
+}
+function restart(){
+  deck=shuffle(CARDS);pos=0;
+  document.getElementById('done-view').classList.add('hidden');
+  document.getElementById('study-view').classList.remove('hidden');
+  showCard();
+}
+showCard();
+</script>
+</body>
+</html>
